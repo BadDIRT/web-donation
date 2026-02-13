@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', ['donatur', 'pengelola', 'admin'])->default('donatur');
+            $table->boolean('is_approved')->default(false); // untuk pengelola
             $table->rememberToken();
             $table->timestamps();
         });
