@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @vite('resources/css/app.css')
+    <script src="https://unpkg.com/alpinejs" defer></script>
+
 
     {{-- Midtrans Snap --}}
     <script 
@@ -13,13 +15,18 @@
         data-client-key="{{ config('services.midtrans.client_key') }}">
     </script>
 </head>
+
 <body class="bg-gray-100 text-gray-800">
 
+{{-- NAVBAR FIXED --}}
 @include('components.navbar')
 
-<div class="container mx-auto px-4 py-8">
+{{-- ALERT (OFFSET NAVBAR) --}}
+<div class="pt-24">
     @include('components.alert')
-    @yield('content')
+
+    {{-- PAGE CONTENT --}}
+@yield('content')
 </div>
 
 @include('components.footer')

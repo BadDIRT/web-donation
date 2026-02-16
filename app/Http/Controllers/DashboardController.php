@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donation;
+use App\Models\Campaign;
 
 class DashboardController extends Controller
 {
@@ -15,14 +16,17 @@ class DashboardController extends Controller
         }
 
         if ($user->role === 'pengelola') {
-            return view('dashboard.pengelola');
+            $campaigns = Campaign::where('user_id', $user->id)->get();
+            return view('dashboard.pengelola', compact('campaigns'));
         }
 
-        $donations = Donation::where('user_id',$user->id)
+        // DONATUR
+        $donations = Donation::where('user_id', $user->id)
             ->latest()
             ->get();
 
-        return view('dashboard.donatur',compact('donations'));
+        return view('dashboard.donatur', compact('donations'));
     }
 }
+
 

@@ -20,6 +20,10 @@ return new class extends Migration
             $table->bigInteger('target_amount');
             $table->bigInteger('collected_amount')->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->foreignId('category_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
             $table->timestamps();
         });
     }
