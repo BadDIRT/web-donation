@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('campaign_id')->constrained();
+            $table->foreignId('campaign_id')->constrained()->cascadeOnDelete();
             $table->string('midtrans_order_id');
             $table->bigInteger('amount');
             $table->string('status')->default('pending');

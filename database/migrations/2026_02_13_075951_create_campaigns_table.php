@@ -16,8 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('title');
             $table->text('description');
+            $table->text('article')->nullable();
             $table->string('image')->nullable();
             $table->bigInteger('target_amount');
+            $table->decimal('current_amount', 15, 2)->default(0);
             $table->bigInteger('collected_amount')->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->foreignId('category_id')
