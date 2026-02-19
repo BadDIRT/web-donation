@@ -11,16 +11,22 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
+        return match ($user->role) {
+            'admin'     => redirect()->route('admin.dashboard'),
+            'pengelola' => $this->pengelolaDashboard($user),
+            default     => $this->donaturDashboard($user),
+        };
+    }
 
-        if ($user->role === 'pengelola') {
-            $campaigns = Campaign::where('user_id', $user->id)->get();
-            return view('dashboard.pengelola', compact('campaigns'));
-        }
+    protected function pengelolaDashboard($user)
+    {
+        $campaigns = Campaign::where('user_id', $user->id)->latest()->get();
 
-        // DONATUR
+        return view('dashboard.pengelola', compact('campaigns'));
+    }
+
+    protected function donaturDashboard($user)
+    {
         $donations = Donation::where('user_id', $user->id)
             ->latest()
             ->get();

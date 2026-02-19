@@ -39,10 +39,12 @@
 
                 {{-- ARTICLE --}}
                 @if ($campaign->article)
-                    <div class="prose prose-lg max-w-none">
-                        {!! nl2br(e($campaign->article)) !!}
-                    </div>
+                    <article class="prose prose-lg lg:prose-xl max-w-none">
+                        {!! $campaign->article !!}
+                    </article>
                 @endif
+
+
 
             </div>
 

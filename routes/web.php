@@ -28,6 +28,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
 Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])->name('campaign.show');
 
+
 Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 
 Route::middleware('auth')->group(function () {
@@ -58,12 +59,14 @@ Route::middleware('auth')->group(function () {
             ->name('admin.pengelola');
 
         Route::post('/admin/approve-pengelola/{user}',
-            [AdminController::class, 'approvePengelola']);
+            [AdminController::class, 'approvePengelola'])
+            ->name('admin.approve.pengelola');
 
         Route::get('/admin/campaign', [AdminController::class, 'campaignList'])
             ->name('admin.campaign');
 
         Route::post('/admin/approve-campaign/{campaign}',
-            [AdminController::class, 'approveCampaign']);
+            [AdminController::class, 'approveCampaign'])
+            ->name('admin.approve.campaign');
     });
 });
