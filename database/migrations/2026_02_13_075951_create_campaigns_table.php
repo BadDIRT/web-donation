@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->bigInteger('target_amount');
             $table->decimal('current_amount', 15, 2)->default(0);
-            $table->bigInteger('collected_amount')->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->foreignId('category_id')
                 ->nullable()

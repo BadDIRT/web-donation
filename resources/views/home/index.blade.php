@@ -184,7 +184,7 @@
 
         @auth
             @if (auth()->user()->role === 'donatur')
-                <form action="{{ route('pengelola.request') }}" method="POST" class="mt-6">
+                <form action="{{ route('pengelola.terms') }}" method="GET" class="mt-6">
                     @csrf
                     <button class="bg-white text-green-600 px-8 py-3 rounded-xl font-semibold">
                         Ajukan Jadi Pengelola

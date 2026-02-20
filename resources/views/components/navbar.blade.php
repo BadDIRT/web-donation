@@ -107,9 +107,6 @@
 
                 </form>
             @else
-                <a href="{{ route('dashboard') }}" class="hover:text-green-600">
-                    Dashboard
-                </a>
 
                 <a href="{{ route('login') }}" class="hover:text-green-600">
                     Login
@@ -174,9 +171,6 @@
 
                 </form>
             @else
-                <a href="{{ route('dashboard') }}" class="block py-2 hover:text-green-600">
-                    Dashboard
-                </a>
                 
                 <a href="{{ route('login') }}" class="block py-2 hover:text-green-600">
                     Login

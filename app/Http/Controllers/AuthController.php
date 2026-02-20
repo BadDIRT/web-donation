@@ -21,14 +21,13 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email'    => 'required|email',
             'password' => 'required'
-        ],
-        [
+        ], [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.'
         ]);
 
-        if (!auth()->attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             return back()->withErrors([
                 'email' => 'Email atau password salah.'
             ]);
@@ -38,23 +37,15 @@ class AuthController extends Controller
 
         $user = auth()->user();
 
-        /**
-         * 🔥 AUTO UPGRADE DONATUR → PENGELOLA
-         */
-        if ($user->role === 'donatur') {
-            $user->update([
-                'role'        => 'pengelola',
-                'is_approved' => false
-            ]);
-        }
-
-        /**
-         * 🔀 REDIRECT BERDASARKAN ROLE
-         */
         return match ($user->role) {
-            'admin'     => redirect()->route('home')->with('success', 'Login berhasil, selamat datang admin!'),
-            'pengelola' => redirect()->route('home')->with('success', 'Login berhasil, selamat datang pengelola!'),
-            default     => redirect()->route('home')->with('success', 'Login berhasil, selamat datang donatur!'),
+            'admin'     => redirect()->route('home')
+                ->with('success', 'Login berhasil, selamat datang admin!'),
+
+            'pengelola' => redirect()->route('home')
+                ->with('success', 'Login berhasil, selamat datang pengelola!'),
+
+            default     => redirect()->route('home')
+                ->with('success', 'Login berhasil, selamat datang donatur!'),
         };
     }
 

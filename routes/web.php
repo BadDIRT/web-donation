@@ -14,11 +14,11 @@ use App\Http\Controllers\{
 
 // AUTH
 Route::middleware('guest.custom')->group(function () {
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -39,8 +39,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    Route::post('/register-pengelola', [PengelolaController::class, 'request'])
-        ->name('pengelola.request');
+    Route::get('/pengelola/terms', [PengelolaController::class, 'terms'])
+        ->name('pengelola.terms');
+
+    Route::get('/pengelola/form', [PengelolaController::class, 'showForm'])
+        ->name('pengelola.form');
+
+    Route::post('/pengelola/submit', [PengelolaController::class, 'submit'])
+        ->name('pengelola.submit');
 
     Route::middleware('role:pengelola')->group(function () {
         Route::get('/campaign/create', [CampaignController::class, 'create'])
@@ -58,15 +64,27 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/pengelola', [AdminController::class, 'pengelolaList'])
             ->name('admin.pengelola');
 
-        Route::post('/admin/approve-pengelola/{user}',
-            [AdminController::class, 'approvePengelola'])
+        Route::post(
+            '/admin/approve-pengelola/{user}',
+            [AdminController::class, 'approvePengelola']
+        )
             ->name('admin.approve.pengelola');
 
         Route::get('/admin/campaign', [AdminController::class, 'campaignList'])
             ->name('admin.campaign');
 
-        Route::post('/admin/approve-campaign/{campaign}',
-            [AdminController::class, 'approveCampaign'])
+        Route::post(
+            '/admin/approve-campaign/{campaign}',
+            [AdminController::class, 'approveCampaign']
+        )
             ->name('admin.approve.campaign');
+
+        Route::get('/admin/pengelola/{user}', [AdminController::class, 'showPengelola'])
+            ->name('admin.pengelola.show');
+
+        Route::post(
+            '/admin/pengelola/{user}/reject',
+            [AdminController::class, 'rejectPengelola']
+        )->name('admin.reject.pengelola');
     });
 });

@@ -17,8 +17,8 @@ class EnsurePengelolaApproved
     {
         $user = auth()->user();
 
-        if ($user->role === 'pengelola' && !$user->is_approved) {
-            abort(403, 'Akun kamu belum disetujui admin');
+        if ($user->role !== 'pengelola' || !$user->is_approved) {
+            abort(403, 'Akses ditolak. Akun pengelola Anda belum disetujui oleh admin.');
         }
 
         return $next($request);

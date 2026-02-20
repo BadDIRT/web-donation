@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['donatur', 'pengelola', 'admin'])->default('donatur');
             $table->boolean('is_approved')->default(false); // untuk pengelola
+            $table->string('phone')->nullable();
+            $table->string('ktp_path')->nullable();
+            $table->string('bank_account')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
