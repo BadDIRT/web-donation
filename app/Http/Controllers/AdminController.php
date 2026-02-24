@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\Donation;
+use App\Models\Notification;
 use App\Models\User;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -20,15 +21,17 @@ class AdminController extends Controller
 
     public function pengelolaList()
     {
-        $users = User::where('role', 'donatur')
+        $users = User::where('role', 'pengelola')
             ->where('is_approved', false)
             ->get();
 
         return view('admin.pengelola', compact('users'));
     }
 
-    public function approvePengelola(User $user)
+    public function approvePengelola(Request $request, $id)
     {
+        $user = User::findOrFail($id);
+
         $user->update([
             'role' => 'pengelola',
             'is_approved' => true
@@ -39,13 +42,16 @@ class AdminController extends Controller
 
     public function campaignList()
     {
-        $campaigns = Campaign::where('status', 'pending')->get();
+        $campaigns = Campaign::where('role', 'pengelola')
+            ->where('is_approved', false)
+            ->get();
+
         return view('admin.campaign', compact('campaigns'));
     }
 
     public function approveCampaign(Campaign $campaign)
     {
-        $campaign->update(['status' => 'approved']);
+        $campaign->update(['is_approved' => true]);
 
         return back()->with('success', 'Campaign disetujui');
     }
@@ -55,18 +61,26 @@ class AdminController extends Controller
         return view('admin.pengelola-detail', compact('user'));
     }
 
-    public function rejectPengelola(Request $request, User $user)
+    public function rejectPengelola(Request $request, $id)
     {
         $request->validate([
-            'reason' => 'required|min:10'
+            'reason' => 'required|string|min:5'
         ]);
+
+        $user = User::findOrFail($id);
 
         $user->update([
             'role' => 'donatur',
-            'is_approved' => false,
-            'reject_reason' => $request->reason
+            'is_approved' => false
         ]);
 
-        return back()->with('success', 'Pengajuan pengelola berhasil ditolak.');
+        Notification::create([
+            'user_id' => $user->id,
+            'title' => 'Pengajuan Ditolak',
+            'message' => $request->reason,
+            'type' => 'pengelola_reject'
+        ]);
+
+        return back()->with('success', 'Pengajuan berhasil ditolak.');
     }
 }

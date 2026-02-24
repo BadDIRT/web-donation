@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsurePengelolaApproved
@@ -15,7 +16,7 @@ class EnsurePengelolaApproved
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->role !== 'pengelola' || !$user->is_approved) {
             abort(403, 'Akses ditolak. Akun pengelola Anda belum disetujui oleh admin.');

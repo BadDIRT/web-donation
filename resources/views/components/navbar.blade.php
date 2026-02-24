@@ -5,6 +5,7 @@
     mobileOpen: false,
     mobileCampaignOpen: false,
     logoutOpen: false,
+    notificationOpen: false,
 
     categories: [
         { label: 'Agama', slug: 'agama' },
@@ -99,6 +100,68 @@
                     Dashboard
                 </a>
 
+                @auth
+                    {{-- NOTIFICATION --}}
+                    <div class="relative">
+                        <button @click="notificationOpen = !notificationOpen"
+                            class="relative hover:text-green-600 focus:outline-none">
+
+                            {{-- ICON --}}
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 00-12 0v3a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0" />
+                            </svg>
+
+                            {{-- BADGE --}}
+                            @if ($unreadCount > 0)
+                                <span
+                                    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs
+                       w-5 h-5 flex items-center justify-center rounded-full">
+                                    {{ $unreadCount }}
+                                </span>
+                            @endif
+                        </button>
+
+                        {{-- DROPDOWN --}}
+                        <div x-show="notificationOpen" @click.outside="notificationOpen = false" x-transition x-cloak
+                            class="absolute right-0 mt-3 w-80 bg-white rounded-2xl
+                shadow-xl border overflow-hidden z-50">
+
+                            <div class="px-4 py-3 font-semibold text-gray-700 border-b">
+                                Notifikasi
+                            </div>
+
+                            <div class="max-h-96 overflow-y-auto">
+                                @forelse($notifications as $notif)
+                                    <div
+                                        class="px-4 py-3 text-sm border-b last:border-0
+                           {{ !$notif->is_read ? 'bg-green-50' : 'hover:bg-gray-50' }}">
+                                        <p class="font-medium text-gray-800">
+                                            {{ $notif->title }}
+                                        </p>
+                                        <p class="text-gray-500 text-xs mt-1">
+                                            {{ $notif->message }}
+                                        </p>
+                                        <p class="text-[11px] text-gray-400 mt-1">
+                                            {{ $notif->created_at->diffForHumans() }}
+                                        </p>
+                                    </div>
+                                @empty
+                                    <div class="px-4 py-6 text-center text-gray-500 text-sm">
+                                        Tidak ada notifikasi
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <a href="{{ route('notifications.index') }}"
+                                class="block text-center text-sm font-medium text-green-600
+                  py-3 hover:bg-gray-50 border-t">
+                                Lihat Semua
+                            </a>
+                        </div>
+                    </div>
+                @endauth
+
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="button" @click="logoutOpen = true" class="text-red-500 hover:underline">
@@ -107,7 +170,6 @@
 
                 </form>
             @else
-
                 <a href="{{ route('login') }}" class="hover:text-green-600">
                     Login
                 </a>
@@ -163,6 +225,19 @@
                     Dashboard
                 </a>
 
+                @auth
+                    <a href="{{ route('notifications.index') }}"
+                        class="flex items-center justify-between py-2 hover:text-green-600">
+                        <span>Notifikasi</span>
+
+                        @if ($unreadCount > 0)
+                            <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                {{ $unreadCount }}
+                            </span>
+                        @endif
+                    </a>
+                @endauth
+
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="button" @click="logoutOpen = true" class="text-red-500 py-2">
@@ -171,7 +246,6 @@
 
                 </form>
             @else
-                
                 <a href="{{ route('login') }}" class="block py-2 hover:text-green-600">
                     Login
                 </a>

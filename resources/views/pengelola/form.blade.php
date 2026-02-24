@@ -16,6 +16,16 @@
             </p>
         </div>
 
+        @if ($errors->any())
+            <div class="mb-4 rounded-xl bg-red-50 border border-red-200 p-4">
+                <ul class="text-sm text-red-600 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         {{-- FORM --}}
         <form method="POST" action="{{ route('pengelola.submit') }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
@@ -30,6 +40,21 @@
                        focus:ring-2 focus:ring-green-500 focus:outline-none"
                     required>
             </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">
+                    Nomor Handphone
+                </label>
+
+                <input type="text" name="phone" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx"
+                    class="w-full border rounded-xl p-3 text-sm
+               focus:ring-2 focus:ring-green-500 focus:outline-none
+               @error('phone') border-red-500 @enderror"
+                    required>
+
+                @error('phone')
+                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
             {{-- KTP --}}
             <div x-data="{ preview: null }">
@@ -37,7 +62,7 @@
                     Foto KTP
                 </label>
 
-                <input type="file" id="ktp" name="ktp" accept="image/*" required
+                <input type="file" id="ktp" name="ktp" accept="image/*"
                     @change="preview = URL.createObjectURL($event.target.files[0])"
                     class="block w-full text-sm text-gray-600
                file:mr-4 file:py-2 file:px-4
@@ -45,9 +70,14 @@
                file:text-sm file:font-semibold
                file:bg-green-50 file:text-green-700
                hover:file:bg-green-100
-               border rounded-xl p-2">
+               border rounded-xl p-2
+               @error('ktp') border-red-500 @enderror"
+                    required>
 
-                {{-- PREVIEW --}}
+                @error('ktp')
+                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+
                 <template x-if="preview">
                     <img :src="preview" class="mt-3 w-full max-h-48 object-contain rounded-xl border"
                         alt="Preview KTP">
@@ -59,37 +89,44 @@
             </div>
 
             {{-- BANK --}}
-            <div x-data="{ bank: '' }">
+            <div x-data="{ bank: '{{ old('bank_name') }}' }">
                 <label class="block text-sm font-medium mb-1">
                     Pilih Bank
                 </label>
 
-                <select x-model="bank"
+                <select x-model="bank" name="bank_name"
                     class="w-full border rounded-xl p-3 text-sm
-               focus:ring-2 focus:ring-green-500 focus:outline-none"
+               focus:ring-2 focus:ring-green-500 focus:outline-none
+               @error('bank_name') border-red-500 @enderror"
                     required>
                     <option value="">-- Pilih Bank --</option>
-                    <option value="BCA">BCA</option>
-                    <option value="BRI">BRI</option>
-                    <option value="BNI">BNI</option>
-                    <option value="Mandiri">Mandiri</option>
-                    <option value="CIMB">CIMB Niaga</option>
-                    <option value="BTN">BTN</option>
-                    <option value="BSI">BSI</option>
-                    <option value="Lainnya">Lainnya</option>
+                    @foreach (['BCA', 'BRI', 'BNI', 'Mandiri', 'CIMB', 'BTN', 'BSI', 'Lainnya'] as $bank)
+                        <option value="{{ $bank }}" {{ old('bank_name') === $bank ? 'selected' : '' }}>
+                            {{ $bank }}
+                        </option>
+                    @endforeach
                 </select>
 
-                {{-- NOMOR REKENING --}}
+                @error('bank_name')
+                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+
                 <template x-if="bank">
                     <div class="mt-3">
                         <label class="block text-sm font-medium mb-1">
-                            Nomor Rekening {{ ' ' }} <span class="text-green-600" x-text="bank"></span>
+                            Nomor Rekening <span class="text-green-600" x-text="bank"></span>
                         </label>
 
-                        <input type="text" name="bank_account" placeholder="Masukkan nomor rekening"
+                        <input type="text" name="bank_account" value="{{ old('bank_account') }}"
+                            placeholder="Masukkan nomor rekening"
                             class="w-full border rounded-xl p-3 text-sm
-                       focus:ring-2 focus:ring-green-500 focus:outline-none"
+                       focus:ring-2 focus:ring-green-500 focus:outline-none
+                       @error('bank_account') border-red-500 @enderror"
                             required>
+
+                        @error('bank_account')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </template>
             </div>

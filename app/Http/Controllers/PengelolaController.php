@@ -19,10 +19,12 @@ class PengelolaController extends Controller
 
     public function submit(Request $request)
     {
+
         $request->validate(
             [
                 'phone'         => 'required|string|min:10|max:15',
                 'ktp'           => 'required|image|mimes:jpg,jpeg,png|max:2048',
+                'bank_name'     => 'required|string|max:50',
                 'bank_account'  => 'required|string|max:100',
             ],
             [
@@ -36,8 +38,14 @@ class PengelolaController extends Controller
 
         $user = Auth::user();
 
+        if ($user->is_approved === false && $user->ktp_path) {
+            return redirect()
+                ->back()
+                ->withErrors(['Anda sudah mengajukan permohonan.']);
+        }
+
         // Simpan file KTP
-        $ktpPath = $request->file('ktp')->store('ktp', 'public');
+        $ktpPath = $request->file('ktp')->store('ktp');
 
         // Update user → jadi pengelola (menunggu approval)
         $user->update([

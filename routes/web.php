@@ -1,16 +1,8 @@
 <?php
 
+use App\Http\Controllers\{HomeController, CampaignController, DonationController, DashboardController, AdminController, PengelolaController, MidtransController, AuthController,};
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{
-    HomeController,
-    CampaignController,
-    DonationController,
-    DashboardController,
-    AdminController,
-    PengelolaController,
-    MidtransController,
-    AuthController,
-};
 
 // AUTH
 Route::middleware('guest.custom')->group(function () {
@@ -31,6 +23,12 @@ Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])->name('c
 
 Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 
+
+
+
+
+
+
 Route::middleware('auth')->group(function () {
 
     Route::post('/donate/{campaign}', [DonationController::class, 'donate'])
@@ -48,13 +46,34 @@ Route::middleware('auth')->group(function () {
     Route::post('/pengelola/submit', [PengelolaController::class, 'submit'])
         ->name('pengelola.submit');
 
-    Route::middleware('role:pengelola')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])
+        ->name('notifications.read');
+
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
+        ->name('notifications.destroy');
+
+
+
+
+
+
+
+    Route::middleware('approved')->group(function () {
         Route::get('/campaign/create', [CampaignController::class, 'create'])
             ->name('campaign.create');
 
         Route::post('/campaign', [CampaignController::class, 'store'])
             ->name('campaign.store');
     });
+
+
+
+
+
+
 
     Route::middleware('role:admin')->group(function () {
 
@@ -83,8 +102,13 @@ Route::middleware('auth')->group(function () {
             ->name('admin.pengelola.show');
 
         Route::post(
-            '/admin/pengelola/{user}/reject',
+            '/admin/pengelola/{id}/reject',
             [AdminController::class, 'rejectPengelola']
         )->name('admin.reject.pengelola');
+
+        Route::post(
+            '/admin/pengelola/{id}/Approve',
+            [AdminController::class, 'approvePengelola']
+        )->name('admin.approve.pengelola');
     });
 });

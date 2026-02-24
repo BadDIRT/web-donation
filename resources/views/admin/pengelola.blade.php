@@ -57,39 +57,75 @@
                         </div>
 
                         {{-- ACTION --}}
-                        <div
-                            class="md:col-span-3 flex flex-col sm:flex-row
-                                md:justify-end gap-2">
+                        <div x-data="{ openReject: false }" class="md:col-span-3 flex flex-col sm:flex-row md:justify-end gap-2">
 
                             {{-- DETAIL --}}
                             <a href="{{ route('admin.pengelola.show', $user->id) }}"
                                 class="px-4 py-2 rounded-xl text-sm font-medium
-                                  border border-gray-300 text-gray-700
-                                  hover:bg-gray-100 transition text-center">
+              border border-gray-300 text-gray-700
+              hover:bg-gray-100 transition text-center">
                                 Detail
                             </a>
 
                             {{-- REJECT --}}
-                            <form method="POST" action="{{ route('admin.reject.pengelola', $user->id) }}">
-                                @csrf
-                                <button @click="openReject = true; selectedUser = {{ $user->id }}"
-                                    class="w-full px-4 py-2 rounded-xl text-sm font-medium
-           border border-red-300 text-red-600
-           hover:bg-red-50 transition">
-                                    Reject
-                                </button>
-                            </form>
+                            <button @click="openReject = true"
+                                class="px-4 py-2 rounded-xl text-sm font-medium
+               border border-red-300 text-red-600
+               hover:bg-red-50 transition">
+                                Reject
+                            </button>
 
                             {{-- APPROVE --}}
                             <form method="POST" action="{{ route('admin.approve.pengelola', $user->id) }}">
                                 @csrf
                                 <button
                                     class="w-full px-4 py-2 rounded-xl text-sm font-semibold
-                                       bg-green-500 hover:bg-green-600
-                                       text-white transition">
+                   bg-green-500 hover:bg-green-600
+                   text-white transition">
                                     Approve
                                 </button>
                             </form>
+
+                            {{-- MODAL --}}
+                            <div x-show="openReject" x-cloak
+                                class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+
+                                <div @click.outside="openReject = false"
+                                    class="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
+
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                                        Tolak Pengajuan
+                                    </h3>
+                                    <p class="text-sm text-gray-500 mb-4">
+                                        Berikan alasan penolakan untuk {{ $user->name }}
+                                    </p>
+
+                                    <form method="POST" action="{{ route('admin.reject.pengelola', $user->id) }}"
+                                        class="space-y-4">
+                                        @csrf
+
+                                        <textarea name="reason" rows="4" required placeholder="Contoh: Data tidak lengkap / foto KTP tidak jelas"
+                                            class="w-full border rounded-xl p-3 text-sm
+                           focus:ring-2 focus:ring-red-500 focus:outline-none"></textarea>
+
+                                        <div class="flex justify-end gap-2">
+                                            <button type="button" @click="openReject = false"
+                                                class="px-4 py-2 rounded-xl text-sm
+                               border border-gray-300 text-gray-600">
+                                                Batal
+                                            </button>
+
+                                            <button type="submit"
+                                                class="px-4 py-2 rounded-xl text-sm font-semibold
+                               bg-red-500 hover:bg-red-600 text-white">
+                                                Tolak Pengajuan
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
