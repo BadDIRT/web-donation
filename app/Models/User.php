@@ -23,6 +23,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_approved',
+        'phone',
+        'ktp_path',
+        'bank_account',
     ];
 
     public function donations(): HasMany
@@ -33,6 +37,11 @@ class User extends Authenticatable
     public function campaigns(): HasMany
     {
         return $this->hasMany(Campaign::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
     }
 
     /**

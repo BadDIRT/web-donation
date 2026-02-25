@@ -35,15 +35,6 @@
                 <label class="block text-sm font-medium mb-1">
                     Nomor Handphone
                 </label>
-                <input type="text" name="phone" placeholder="08xxxxxxxxxx"
-                    class="w-full border rounded-xl p-3 text-sm
-                       focus:ring-2 focus:ring-green-500 focus:outline-none"
-                    required>
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">
-                    Nomor Handphone
-                </label>
 
                 <input type="text" name="phone" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx"
                     class="w-full border rounded-xl p-3 text-sm

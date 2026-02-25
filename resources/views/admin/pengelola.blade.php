@@ -57,7 +57,7 @@
                         </div>
 
                         {{-- ACTION --}}
-                        <div x-data="{ openReject: false }" class="md:col-span-3 flex flex-col sm:flex-row md:justify-end gap-2">
+                        <div x-data="{ openReject: false, openApprove: false }" class="md:col-span-3 flex flex-col sm:flex-row md:justify-end gap-2">
 
                             {{-- DETAIL --}}
                             <a href="{{ route('admin.pengelola.show', $user->id) }}"
@@ -75,16 +75,13 @@
                                 Reject
                             </button>
 
-                            {{-- APPROVE --}}
-                            <form method="POST" action="{{ route('admin.approve.pengelola', $user->id) }}">
-                                @csrf
-                                <button
-                                    class="w-full px-4 py-2 rounded-xl text-sm font-semibold
-                   bg-green-500 hover:bg-green-600
-                   text-white transition">
-                                    Approve
-                                </button>
-                            </form>
+                            {{-- APPROVE (TRIGGER MODAL) --}}
+                            <button type="button" @click="openApprove = true"
+                                class="w-full px-4 py-2 rounded-xl text-sm font-semibold
+           bg-green-500 hover:bg-green-600
+           text-white transition">
+                                Approve
+                            </button>
 
                             {{-- MODAL --}}
                             <div x-show="openReject" x-cloak
@@ -123,6 +120,56 @@
                                         </div>
                                     </form>
 
+                                </div>
+                            </div>
+                            {{-- MODAL APPROVE --}}
+                            <div x-show="openApprove" x-cloak
+                                class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+
+                                <div @click.outside="openApprove = false"
+                                    class="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
+
+                                    {{-- ICON --}}
+                                    <div class="flex justify-center mb-4">
+                                        <div
+                                            class="w-12 h-12 rounded-full bg-green-100
+                        flex items-center justify-center text-green-600">
+                                            ✓
+                                        </div>
+                                    </div>
+
+                                    <h3 class="text-lg font-semibold text-gray-800 text-center">
+                                        Setujui Pengajuan?
+                                    </h3>
+
+                                    <p class="text-sm text-gray-500 text-center mt-2">
+                                        Apakah kamu yakin ingin menyetujui
+                                        <span class="font-medium text-gray-700">
+                                            {{ $user->name }}
+                                        </span>
+                                        sebagai pengelola campaign?
+                                    </p>
+
+                                    <div class="flex justify-center gap-3 mt-6">
+
+                                        <button @click="openApprove = false"
+                                            class="px-4 py-2 rounded-xl text-sm
+                       border border-gray-300 text-gray-600
+                       hover:bg-gray-100 transition">
+                                            Batal
+                                        </button>
+
+                                        <form method="POST" action="{{ route('admin.approve.pengelola', $user->id) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                class="px-4 py-2 rounded-xl text-sm font-semibold
+                           bg-green-500 hover:bg-green-600
+                           text-white transition">
+                                                Ya, Approve
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </div>
                             </div>
 

@@ -181,10 +181,20 @@
         </div>
 
         {{-- HAMBURGER (MOBILE) --}}
-        <button @click="mobileOpen = !mobileOpen" class="md:hidden text-gray-700 focus:outline-none">
+        <button @click="mobileOpen = !mobileOpen" class="relative md:hidden text-gray-700 focus:outline-none">
+
             <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
+
+            {{-- BADGE NOTIF MOBILE --}}
+            @if ($unreadCount > 0)
+                <span
+                    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs
+                   w-5 h-5 flex items-center justify-center rounded-full">
+                    {{ $unreadCount }}
+                </span>
+            @endif
         </button>
 
     </div>
@@ -227,7 +237,8 @@
 
                 @auth
                     <a href="{{ route('notifications.index') }}"
-                        class="flex items-center justify-between py-2 hover:text-green-600">
+                        class="flex items-center justify-between py-2
+          {{ $unreadCount > 0 ? 'text-green-600 font-semibold' : '' }}">
                         <span>Notifikasi</span>
 
                         @if ($unreadCount > 0)

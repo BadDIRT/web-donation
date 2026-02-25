@@ -24,7 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useTailwind();
 
-        view()->composer('*', function ($view) {
+        view()->composer('components.navbar', function ($view) {
+            $notifications = collect();
+            $unreadCount = 0;
+
             if (Auth::check()) {
                 $notifications = Notification::where('user_id', Auth::id())
                     ->latest()
@@ -34,9 +37,9 @@ class AppServiceProvider extends ServiceProvider
                 $unreadCount = Notification::where('user_id', Auth::id())
                     ->where('is_read', false)
                     ->count();
-
-                $view->with(compact('notifications', 'unreadCount'));
             }
+
+            $view->with(compact('notifications', 'unreadCount'));
         });
     }
 }
