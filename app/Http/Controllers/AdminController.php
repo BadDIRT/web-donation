@@ -48,14 +48,36 @@ class AdminController extends Controller
 
     public function campaignList()
     {
-        $campaigns = Campaign::where('is_approved', false)->get();
+        $campaigns = Campaign::where('status', 'pending')->get();
 
         return view('admin.campaign', compact('campaigns'));
     }
 
+    public function showCampaign(Campaign $campaign)
+    {
+        return view('admin.campaign-detail', compact('campaign'));
+    }
+
+    public function rejectCampaign(Request $request, Campaign $campaign)
+    {
+        $request->validate([
+            'reason' => 'required|string|min:5'
+        ]);
+
+        $campaign->update(['status' => 'rejected']);
+
+        $campaign->user->notifications()->create([
+            'title' => 'Campaign Ditolak',
+            'message' => "Maaf, campaign Anda '{$campaign->title}' ditolak. Alasan: " . $request->reason,
+            'type' => 'campaign_reject'
+        ]);
+
+        return back()->with('success', 'Campaign ditolak');
+    }
+
     public function approveCampaign(Campaign $campaign)
     {
-        $campaign->update(['is_approved' => true]);
+        $campaign->update(['status' => 'approved']);
 
         $campaign->user->notifications()->create([
             'title' => 'Campaign Disetujui',
@@ -100,5 +122,16 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Pengajuan berhasil ditolak.');
+    }
+
+    public function viewKtp(User $user)
+    {
+        if (!$user->ktp_path || !Storage::disk('local')->exists($user->ktp_path)) {
+            abort(404);
+        }
+
+        $path = storage_path('app/private/' . $user->ktp_path);
+
+        return response()->file($path);
     }
 }

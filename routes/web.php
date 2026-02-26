@@ -92,11 +92,22 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/campaign', [AdminController::class, 'campaignList'])
             ->name('admin.campaign');
 
+        Route::get('/admin/campaign/{campaign}', [AdminController::class, 'showCampaign'])
+            ->name('admin.campaign.show');
+
         Route::post(
             '/admin/approve-campaign/{campaign}',
             [AdminController::class, 'approveCampaign']
         )
             ->name('admin.approve.campaign');
+
+        Route::post(
+            '/admin/reject-campaign/{campaign}',
+            [
+                AdminController::class,
+                'rejectCampaign'
+            ]
+        )->name('admin.reject.campaign');
 
         Route::get('/admin/pengelola/{user}', [AdminController::class, 'showPengelola'])
             ->name('admin.pengelola.show');
@@ -110,5 +121,8 @@ Route::middleware('auth')->group(function () {
             '/admin/pengelola/{id}/Approve',
             [AdminController::class, 'approvePengelola']
         )->name('admin.approve.pengelola');
+
+        Route::get('/admin/ktp/{user}', [AdminController::class, 'viewKtp'])
+            ->name('admin.pengelola.ktp');
     });
 });
