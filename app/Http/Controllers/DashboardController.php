@@ -20,9 +20,18 @@ class DashboardController extends Controller
 
     protected function pengelolaDashboard($user)
     {
-        $campaigns = Campaign::where('user_id', $user->id)->latest()->get();
+        $user = auth()->user();
 
-        return view('dashboard.pengelola', compact('campaigns'));
+        $campaigns = Campaign::where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('dashboard.pengelola', [
+            'campaigns' => $campaigns,
+            'totalCampaign' => $campaigns->count(),
+            'approvedCampaign' => $campaigns->where('status', 'approved')->count(),
+            'pendingCampaign' => $campaigns->where('status', 'pending')->count(),
+        ]);
     }
 
     protected function donaturDashboard($user)
@@ -34,5 +43,3 @@ class DashboardController extends Controller
         return view('dashboard.donatur', compact('donations'));
     }
 }
-
-

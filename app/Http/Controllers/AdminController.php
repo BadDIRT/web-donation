@@ -19,13 +19,23 @@ class AdminController extends Controller
         ]);
     }
 
-    public function pengelolaList()
+    public function pengelolaList(Request $request)
     {
+        $search = $request->query('q');
+
         $users = User::where('role', 'pengelola')
             ->where('is_approved', false)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('id', $search);
+                });
+            })
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.pengelola', compact('users'));
+        return view('admin.pengelola', compact('users', 'search'));
     }
 
     public function approvePengelola(Request $request, $id)
@@ -46,11 +56,25 @@ class AdminController extends Controller
         return back()->with('success', 'Pengelola disetujui');
     }
 
-    public function campaignList()
+    public function campaignList(Request $request)
     {
-        $campaigns = Campaign::where('status', 'pending')->get();
+        $search = $request->query('q');
 
-        return view('admin.campaign', compact('campaigns'));
+        $campaigns = Campaign::where('status', 'pending')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('id', $search)
+                        ->orWhereHas('user', function ($u) use ($search) {
+                            $u->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.campaign', compact('campaigns', 'search'));
     }
 
     public function showCampaign(Campaign $campaign)

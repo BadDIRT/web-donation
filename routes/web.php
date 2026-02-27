@@ -4,6 +4,23 @@ use App\Http\Controllers\{HomeController, CampaignController, DonationController
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/campaign', [CampaignController::class, 'index'])->middleware('guest.custom')->name('campaign.index');
+
+
+
+Route::middleware(['auth', 'approved'])->group(function () {
+
+    Route::get('/campaign/create', [CampaignController::class, 'createCampaign'])
+        ->name('campaign.create');
+
+    Route::post('/campaign', [CampaignController::class, 'storeCampaign'])
+        ->name('campaign.store');
+});
+
+
+
+
+
 // AUTH
 Route::middleware('guest.custom')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -17,8 +34,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
-Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])->name('campaign.show');
+Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])
+    ->whereNumber('campaign')
+    ->name('campaign.show');
 
 
 Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
@@ -54,21 +72,6 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
         ->name('notifications.destroy');
-
-
-
-
-
-
-
-    Route::middleware('approved')->group(function () {
-        Route::get('/campaign/create', [CampaignController::class, 'create'])
-            ->name('campaign.create');
-
-        Route::post('/campaign', [CampaignController::class, 'store'])
-            ->name('campaign.store');
-    });
-
 
 
 
@@ -116,11 +119,6 @@ Route::middleware('auth')->group(function () {
             '/admin/pengelola/{id}/reject',
             [AdminController::class, 'rejectPengelola']
         )->name('admin.reject.pengelola');
-
-        Route::post(
-            '/admin/pengelola/{id}/Approve',
-            [AdminController::class, 'approvePengelola']
-        )->name('admin.approve.pengelola');
 
         Route::get('/admin/ktp/{user}', [AdminController::class, 'viewKtp'])
             ->name('admin.pengelola.ktp');

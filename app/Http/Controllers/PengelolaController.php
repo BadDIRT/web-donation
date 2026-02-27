@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,8 +64,25 @@ class PengelolaController extends Controller
             'is_approved'  => false,
         ]);
 
+        // Ambil semua admin
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'title'   => 'Pengajuan Pengelola Baru',
+                'message' => "{$user->name} mengajukan diri sebagai penggalang dana.",
+                'type'    => 'pengelola',
+            ]);
+        }
+
         return redirect()
             ->route('home')
             ->with('success', 'Pengajuan berhasil. Akun Anda sedang menunggu persetujuan admin.');
+    }
+
+    public function createCampaign()
+    {
+        return view('campaign.create');
     }
 }

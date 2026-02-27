@@ -16,6 +16,64 @@
                 </p>
             </div>
 
+            {{-- SEARCH --}}
+<form method="GET" class="mb-6">
+    <div class="relative max-w-md flex items-center gap-2">
+
+        {{-- INPUT --}}
+        <div class="relative flex-1">
+            <input
+                type="text"
+                name="q"
+                value="{{ request('q') }}"
+                placeholder="Cari nama, email, atau ID..."
+                class="w-full rounded-xl border border-gray-300 pl-11 pr-10 py-2.5 text-sm
+                       focus:ring-2 focus:ring-green-500 focus:border-green-500">
+
+            {{-- SVG SEARCH ICON --}}
+            <div class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="h-5 w-5"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                </svg>
+            </div>
+
+            {{-- CLEAR BUTTON --}}
+            @if (request('q'))
+                <a href="{{ route('admin.pengelola') }}"
+                   class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
+                   title="Reset">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-4 w-4"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </a>
+            @endif
+        </div>
+
+        {{-- SUBMIT BUTTON --}}
+        <button
+            type="submit"
+            class="px-4 py-2.5 rounded-xl text-sm font-medium
+                   bg-green-500 hover:bg-green-600
+                   text-white transition">
+            Cari
+        </button>
+    </div>
+</form>
+
             {{-- CONTAINER --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
@@ -179,7 +237,14 @@
                 @empty
                     <div class="px-6 py-16 text-center">
                         <p class="text-gray-500">
-                            Tidak ada pengelola pending saat ini
+                            @if (request('q'))
+                                Tidak ditemukan pengelola dengan kata kunci
+                                <span class="font-medium text-gray-700">
+                                    "{{ request('q') }}"
+                                </span>
+                            @else
+                                Tidak ada pengelola pending saat ini
+                            @endif
                         </p>
                     </div>
                 @endforelse

@@ -12,8 +12,7 @@
                 Dashboard Pengelola
             </h1>
             <p class="text-gray-500 mt-2 max-w-2xl">
-                Kelola campaign penggalangan dana Anda, pantau status verifikasi,
-                dan perkembangan campaign secara real-time.
+                Pantau status campaign Anda dan kelola penggalangan dana dengan mudah.
             </p>
         </div>
 
@@ -22,35 +21,35 @@
 
             {{-- TOTAL --}}
             <div class="bg-white rounded-2xl shadow-sm p-6
-                        border-l-4 border-green-500 hover:shadow-md transition">
+                        border border-gray-100 hover:shadow-md transition">
                 <p class="text-sm text-gray-500">Total Campaign</p>
                 <p class="text-3xl font-bold mt-2 text-gray-800">
-                    {{ $campaigns->count() }}
+                    {{ $totalCampaign }}
                 </p>
             </div>
 
             {{-- AKTIF --}}
             <div class="bg-white rounded-2xl shadow-sm p-6
-                        border-l-4 border-emerald-500 hover:shadow-md transition">
+                        border border-green-100 hover:shadow-md transition">
                 <p class="text-sm text-gray-500">Campaign Aktif</p>
-                <p class="text-3xl font-bold mt-2 text-emerald-600">
-                    {{ $campaigns->where('status','approved')->count() }}
+                <p class="text-3xl font-bold mt-2 text-green-600">
+                    {{ $approvedCampaign }}
                 </p>
             </div>
 
             {{-- PENDING --}}
             <div class="bg-white rounded-2xl shadow-sm p-6
-                        border-l-4 border-yellow-400 hover:shadow-md transition">
+                        border border-yellow-100 hover:shadow-md transition">
                 <p class="text-sm text-gray-500">Menunggu Verifikasi</p>
                 <p class="text-3xl font-bold mt-2 text-yellow-500">
-                    {{ $campaigns->where('status','pending')->count() }}
+                    {{ $pendingCampaign }}
                 </p>
             </div>
 
         </div>
 
         {{-- CAMPAIGN LIST --}}
-        <div class="bg-white rounded-2xl shadow-sm p-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div>
@@ -58,7 +57,7 @@
                         Campaign Saya
                     </h2>
                     <p class="text-sm text-gray-500">
-                        Daftar campaign yang pernah Anda buat
+                        Riwayat campaign yang pernah Anda buat
                     </p>
                 </div>
 
@@ -67,7 +66,7 @@
                           bg-green-500 hover:bg-green-600
                           text-white px-5 py-2.5
                           rounded-xl text-sm font-semibold
-                          shadow-sm transition">
+                          transition">
                     + Buat Campaign
                 </a>
             </div>
@@ -79,7 +78,7 @@
                             <th class="py-3">Judul</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Target</th>
-                            <th class="text-center">Dibuat</th>
+                            <th class="text-center">Tanggal</th>
                         </tr>
                     </thead>
 
@@ -91,25 +90,17 @@
                                 </td>
 
                                 <td class="text-center">
-                                    @if ($campaign->status === 'approved')
-                                        <span class="inline-flex px-3 py-1 rounded-full
-                                                     text-xs font-medium
-                                                     bg-green-100 text-green-700">
-                                            Aktif
-                                        </span>
-                                    @elseif ($campaign->status === 'pending')
-                                        <span class="inline-flex px-3 py-1 rounded-full
-                                                     text-xs font-medium
-                                                     bg-yellow-100 text-yellow-700">
-                                            Pending
-                                        </span>
-                                    @else
-                                        <span class="inline-flex px-3 py-1 rounded-full
-                                                     text-xs font-medium
-                                                     bg-red-100 text-red-700">
-                                            Ditolak
-                                        </span>
-                                    @endif
+                                    @php
+                                        $statusStyle = match($campaign->status) {
+                                            'approved' => 'bg-green-100 text-green-700',
+                                            'pending' => 'bg-yellow-100 text-yellow-700',
+                                            default => 'bg-red-100 text-red-700',
+                                        };
+                                    @endphp
+
+                                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium {{ $statusStyle }}">
+                                        {{ ucfirst($campaign->status) }}
+                                    </span>
                                 </td>
 
                                 <td class="text-center text-gray-700">
@@ -122,8 +113,13 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-12 text-gray-500">
-                                    Anda belum memiliki campaign
+                                <td colspan="4" class="text-center py-14 text-gray-500">
+                                    <p class="font-medium">
+                                        Belum ada campaign
+                                    </p>
+                                    <p class="text-sm mt-1">
+                                        Mulai buat campaign pertama Anda sekarang
+                                    </p>
                                 </td>
                             </tr>
                         @endforelse
