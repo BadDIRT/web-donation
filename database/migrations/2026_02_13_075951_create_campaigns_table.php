@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('title');
             $table->text('description');
-            $table->text('article')->nullable();
-            $table->string('image')->nullable();
+            $table->text('article');
+            $table->string('image');
+            $table->string('slug')->unique();
             $table->bigInteger('target_amount');
             $table->decimal('current_amount', 15, 2)->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

@@ -18,8 +18,14 @@ class EnsurePengelolaApproved
     {
         $user = Auth::user();
 
-        if ($user->role !== 'pengelola' || !$user->is_approved) {
-            abort(403, 'Akses ditolak. Akun pengelola Anda belum disetujui oleh admin.');
+        if ($user->role !== 'pengelola') {
+            abort(403);
+        }
+
+        if (!$user->is_approved) {
+            return redirect()
+                ->route('dashboard')
+                ->with('warning', 'Akun pengelola Anda masih menunggu persetujuan admin.');
         }
 
         return $next($request);

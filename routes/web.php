@@ -13,7 +13,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/campaign/create', [CampaignController::class, 'createCampaign'])
         ->name('campaign.create');
 
-    Route::post('/campaign', [CampaignController::class, 'storeCampaign'])
+    Route::post('/campaign/{campaign}', [CampaignController::class, 'storeCampaign'])
         ->name('campaign.store');
 });
 

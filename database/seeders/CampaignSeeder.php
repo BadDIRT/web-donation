@@ -33,6 +33,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 6, // Agama
                 'image' => 'https://source.unsplash.com/400x300/?mosque',
                 'current_amount' => 15000000,
+                'slug' => 'bantu-pembangunan-masjid',
                 'created_at' => now()->subDays(10),
             ],
             [
@@ -45,6 +46,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 13, // Bencana Alam
                 'image' => 'https://source.unsplash.com/400x300/?disaster',
                 'current_amount' => 50000000,
+                'slug' => 'bantuan-bencana-alam',
                 'created_at' => now()->subDays(5),
             ],
             [
@@ -57,6 +59,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 1, // Pendidikan
                 'image' => 'https://source.unsplash.com/400x300/?education',
                 'current_amount' => 30000000,
+                'slug' => 'pendidikan-anak-kurang-mampu',
                 'created_at' => now()->subDays(3),
             ],
             [
@@ -69,6 +72,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 2, // Kesehatan
                 'image' => 'https://source.unsplash.com/400x300/?healthcare',
                 'current_amount' => 20000000,
+                'slug' => 'bantuan-kesehatan-masyarakat',
                 'created_at' => now()->subDays(1),
             ],
             [
@@ -81,6 +85,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 7, // Hewan
                 'image' => 'https://source.unsplash.com/400x300/?livestock',
                 'current_amount' => 10000000,
+                'slug' => 'bantuan-hewan-ternak',
                 'created_at' => now()->subDays(2),
             ],
             [
@@ -93,6 +98,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 1, // Pendidikan
                 'image' => 'https://source.unsplash.com/400x300/?orphanage',
                 'current_amount' => 25000000,
+                'slug' => 'bantuan-untuk-panti-asuhan',
                 'created_at' => now()->subDays(4),
             ],
             [
@@ -105,6 +111,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 5, // Kemanusiaan
                 'image' => 'https://source.unsplash.com/400x300/?elderly',
                 'current_amount' => 15000000,
+                'slug' => 'bantuan-untuk-lansia',
                 'created_at' => now()->subDays(6),
             ],
             [
@@ -117,6 +124,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 2, // Kesehatan
                 'image' => 'https://source.unsplash.com/400x300/?chronic-illness',
                 'current_amount' => 40000000,
+                'slug' => 'bantuan-untuk-penderita-penyakit-kronis',
                 'created_at' => now()->subDays(7),
             ],
             [
@@ -129,6 +137,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 1, // Pendidikan
                 'image' => 'https://source.unsplash.com/400x300/?orphan-education',
                 'current_amount' => 35000000,
+                'slug' => 'bantuan-untuk-pendidikan-anak-yatim',
                 'created_at' => now()->subDays(8),
             ],
             [
@@ -141,6 +150,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 5, // Kemanusiaan
                 'image' => 'https://source.unsplash.com/400x300/?violence-help',
                 'current_amount' => 25000000,
+                'slug' => 'bantuan-untuk-korban-kekerasan',
                 'created_at' => now()->subDays(9),
             ],
             [
@@ -153,6 +163,7 @@ class CampaignSeeder extends Seeder
                 'category_id' => 1, // Pendidikan
                 'image' => 'https://source.unsplash.com/400x300/?school',
                 'current_amount' => 60000000,
+                'slug' => 'bantuan-untuk-pembangunan-sekolah',
                 'created_at' => now()->subDays(11),
             ]
         ]);
@@ -166,6 +177,7 @@ class CampaignSeeder extends Seeder
             'article' => 'Anak-anak yatim piatu seringkali menghadapi banyak tantangan dalam mendapatkan kebutuhan dasar mereka. Oleh karena itu, kami menggalang dana untuk memberikan santunan kepada anak-anak yatim piatu di daerah kami. Dana yang terkumpul akan digunakan untuk memberikan bantuan berupa kebutuhan sehari-hari, pendidikan, serta bantuan keuangan bagi mereka yang membutuhkan. Kami sangat berharap dukungan dari semua pihak untuk membantu anak-anak yatim piatu ini mendapatkan kehidupan yang layak. Setiap donasi yang diberikan akan sangat berarti bagi mereka yang sedang berjuang untuk mendapatkan kebutuhan dasar mereka. Terima kasih atas dukungan dan partisipasi Anda dalam membantu anak-anak yatim piatu di daerah kami. Semoga Allah SWT membalas kebaikan Anda dengan pahala yang berlipat ganda. Aamiin.',
             'category_id' => 1, // Pendidikan
             'image' => 'https://source.unsplash.com/400x300/?orphan',
+            'slug' => 'santunan-anak-yatim',
             'created_at' => now()->subDays(12),
         ]);
     }

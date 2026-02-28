@@ -24,23 +24,23 @@ class PengelolaController extends Controller
 
         $request->validate(
             [
-                'phone'         => 'required|string|min:10|max:15',
+                'phone'         => 'required|string|unique:users,phone|min:10|max:15',
                 'ktp'           => 'required|image|mimes:jpg,jpeg,png|max:2048', // 2MB
                 'bank_name'     => 'required|string|max:50',
-                'bank_account'  => 'required|string|max:100',
+                'bank_account'  => 'required|string|unique:users,bank_account|max:100',
             ],
             [
                 'phone.required'        => 'Nomor handphone wajib diisi.',
                 'phone.min'             => 'Nomor handphone minimal 10 digit.',
                 'phone.max'             => 'Nomor handphone maksimal 15 digit.',
-
+                'phone.unique'          => 'Nomor handphone sudah terdaftar.',
                 'ktp.required'          => 'Foto KTP wajib diunggah.',
                 'ktp.image'             => 'File KTP harus berupa gambar.',
                 'ktp.mimes'             => 'Format KTP harus JPG atau PNG.',
                 'ktp.max'               => 'Ukuran foto KTP tidak boleh lebih dari 2MB.',
-
                 'bank_name.required'    => 'Nama bank wajib dipilih.',
                 'bank_account.required' => 'Nomor rekening wajib diisi.',
+                'bank_account.unique'   => 'Nomor rekening sudah terdaftar.',
             ]
         );
 

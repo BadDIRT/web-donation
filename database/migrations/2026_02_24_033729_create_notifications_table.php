@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('message');
-            $table->string('type')->nullable(); // approve, reject, campaign, dll
+            $table->string('type')->nullable();
             $table->boolean('is_read')->default(false);
             $table->timestamps();
         });

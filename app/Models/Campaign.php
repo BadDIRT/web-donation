@@ -12,6 +12,7 @@ class Campaign extends Model
         'user_id',
         'category_id',
         'title',
+        'slug',
         'description',
         'article',
         'target_amount',
