@@ -16,6 +16,8 @@
 
 <body class="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center">
 
+    
+
     {{-- BACK BUTTON --}}
     <a href="{{ url()->previous() ?? '/' }}"
         class="absolute top-6 left-6 flex items-center gap-2 text-gray-600 hover:text-green-600 transition">

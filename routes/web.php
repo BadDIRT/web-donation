@@ -4,6 +4,9 @@ use App\Http\Controllers\{HomeController, CampaignController, DonationController
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::post('/campaign/{campaign}/donate', [DonationController::class, 'donate'])
+    ->name('donate');
 Route::get('/campaign', [CampaignController::class, 'index'])->middleware('guest.custom')->name('campaign.index');
 
 
@@ -48,9 +51,6 @@ Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 
 
 Route::middleware('auth')->group(function () {
-
-    Route::post('/donate/{campaign}', [DonationController::class, 'donate'])
-        ->name('donate');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');

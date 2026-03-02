@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('admin123'),
             'role' => 'admin',
             'is_approved' => true,
+            'phone' => '081234567890',
         ]);
 
         // PENGELOLA APPROVED
@@ -30,6 +31,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('pengelola123'),
             'role' => 'pengelola',
             'is_approved' => true,
+            'phone' => '081234567891',
         ]);
 
         // PENGELOLA BELUM APPROVED
@@ -39,6 +41,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('pengelola_pending123'),
             'role' => 'pengelola',
             'is_approved' => false,
+            'phone' => '081234567892',
         ]);
 
         // DONATUR

@@ -8,11 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Donation extends Model
 {
     protected $fillable = [
-        'user_id',
         'campaign_id',
-        'midtrans_order_id',
+        'order_id',
         'amount',
+        'donor_name',
+        'anonymous',
+        'message',
         'status',
+    ];
+
+    protected $casts = [
+        'anonymous' => 'boolean',
     ];
 
     public function user(): BelongsTo

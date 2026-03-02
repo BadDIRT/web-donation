@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Donation;
 use App\Models\Campaign;
+use App\Models\Donation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -13,37 +15,47 @@ class DonationController extends Controller
     public function donate(Request $request, Campaign $campaign)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:1000'
+            'amount' => 'required|integer|min:1000',
+            'donor_name' => 'nullable|string|max:100',
+            'anonymous' => 'boolean',
+            'message' => 'nullable|string|max:255',
         ]);
 
-        Config::$serverKey = config('services.midtrans.server_key');
-        Config::$isProduction = false;
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
+        \Midtrans\Config::$serverKey = config('services.midtrans.serverKey');
+        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
 
         $orderId = 'DON-' . uniqid();
 
-        Donation::create([
-            'user_id' => auth()->id(),
-            'campaign_id' => $campaign->id,
-            'midtrans_order_id' => $orderId,
-            'amount' => $request->amount,
-            'status' => 'pending'
-        ]);
-
-        $params = [
+        $snapToken = \Midtrans\Snap::getSnapToken([
             'transaction_details' => [
                 'order_id' => $orderId,
-                'gross_amount' => $request->amount,
+                'gross_amount' => (int) $request->amount,
             ],
+            'item_details' => [[
+                'id' => $campaign->id,
+                'price' => (int) $request->amount,
+                'quantity' => 1,
+                'name' => $campaign->title,
+            ]],
             'customer_details' => [
-                'first_name' => auth()->user()->name,
-                'email' => auth()->user()->email,
+                'first_name' => $request->donor_name ?? 'Donatur',
             ],
-        ];
+        ]);
 
-        $snapToken = Snap::getSnapToken($params);
+        Donation::create([
+            'campaign_id' => $campaign->id,
+            'order_id' => $orderId,
+            'amount' => $request->amount,
+            'donor_name' => $request->boolean('anonymous') ? null : $request->donor_name,
+            'anonymous' => $request->boolean('anonymous'),
+            'message' => $request->message,
+            'status' => 'pending',
+        ]);
 
-        return response()->json(['snap_token' => $snapToken]);
+        return response()->json([
+            'snapToken' => $snapToken
+        ]);
     }
 }

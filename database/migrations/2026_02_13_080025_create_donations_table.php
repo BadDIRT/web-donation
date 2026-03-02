@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('campaign_id')->constrained()->cascadeOnDelete();
-            $table->string('midtrans_order_id');
-            $table->bigInteger('amount');
-            $table->string('status')->default('pending');
+            $table->string('order_id')->unique();
+            $table->integer('amount');
+            $table->string('donor_name')->nullable();
+            $table->boolean('anonymous')->default(false);
+            $table->string('message')->nullable();
+            $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
             $table->timestamps();
         });
     }
