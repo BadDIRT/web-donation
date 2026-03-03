@@ -112,6 +112,7 @@
 
                             <form id="donation-form" class="space-y-4">
                                 @csrf
+                                @method('POST')
 
                                 {{-- AMOUNT --}}
                                 <div>
@@ -173,8 +174,34 @@
     </div>
 
     <script src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+        data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 
+    @if (request('payment'))
+        <div id="payment-alert"
+            class="fixed top-6 right-6 z-50 px-6 py-4 rounded-xl shadow-lg text-white
+        @if (request('payment') == 'success') bg-green-500
+        @elseif(request('payment') == 'pending') bg-yellow-500
+        @elseif(request('payment') == 'failed') bg-red-500
+        @else bg-gray-600 @endif">
+
+            @if (request('payment') == 'success')
+                Pembayaran berhasil 🎉
+            @elseif(request('payment') == 'pending')
+                Menunggu pembayaran ⏳
+            @elseif(request('payment') == 'failed')
+                Pembayaran gagal ❌
+            @else
+                Transaksi dibatalkan
+            @endif
+        </div>
+
+        <script>
+            setTimeout(() => {
+                const alertBox = document.getElementById('payment-alert');
+                if (alertBox) alertBox.remove();
+            }, 3000);
+        </script>
+    @endif
 @endsection
 @push('scripts')
     <script>
@@ -253,21 +280,20 @@
 
                     window.snap.pay(data.snapToken, {
                         onSuccess: function() {
-                            alert('Pembayaran berhasil');
-                            location.reload();
+                            window.location.href =
+                                "{{ url('campaign/' . $campaign->id) }}?payment=success";
                         },
                         onPending: function() {
-                            alert('Menunggu pembayaran');
-                            location.reload();
+                            window.location.href =
+                                "{{ url('campaign/' . $campaign->id) }}?payment=pending";
                         },
                         onError: function() {
-                            alert('Pembayaran gagal');
-                            btn.disabled = false;
-                            btn.innerText = 'Donasi Sekarang';
+                            window.location.href =
+                                "{{ url('campaign/' . $campaign->id) }}?payment=failed";
                         },
                         onClose: function() {
-                            btn.disabled = false;
-                            btn.innerText = 'Donasi Sekarang';
+                            window.location.href =
+                                "{{ url('campaign/' . $campaign->id) }}?payment=cancel";
                         }
                     });
                 })

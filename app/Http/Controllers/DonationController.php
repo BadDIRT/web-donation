@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\Donation;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -21,7 +22,7 @@ class DonationController extends Controller
             'message' => 'nullable|string|max:255',
         ]);
 
-        \Midtrans\Config::$serverKey = config('services.midtrans.serverKey');
+        \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
         \Midtrans\Config::$isProduction = false;
         \Midtrans\Config::$isSanitized = true;
         \Midtrans\Config::$is3ds = true;
@@ -41,6 +42,8 @@ class DonationController extends Controller
             ]],
             'customer_details' => [
                 'first_name' => $request->donor_name ?? 'Donatur',
+                'email'            => $request->user()->email ?? null,
+                'phone'            => $request->user()->phone ?? null,
             ],
         ]);
 

@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\{HomeController, CampaignController, DonationController, DashboardController, AdminController, PengelolaController, MidtransController, AuthController,};
+use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::post('/campaign/{campaign}/donate', [DonationController::class, 'donate'])
     ->name('donate');
-Route::get('/campaign', [CampaignController::class, 'index'])->middleware('guest.custom')->name('campaign.index');
+Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
 
 
 
@@ -42,8 +43,6 @@ Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])
     ->name('campaign.show');
 
 
-Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
-
 
 
 
@@ -72,6 +71,9 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
         ->name('notifications.destroy');
+
+    Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
+        ->name('midtrans.callback');
 
 
 
