@@ -51,5 +51,19 @@ class UserSeeder extends Seeder
             'password' => Hash::make('donatur123'),
             'role' => 'donatur',
         ]);
+
+        User::create([
+            'name' => 'Donatur2',
+            'email' => 'donatur2@example.com',
+            'password' => Hash::make('donatur2123'),
+            'role' => 'donatur',
+        ]);
+
+        User::create([
+            'name' => 'Donatur3',
+            'email' => 'donatur3@example.com',
+            'password' => Hash::make('donatur3123'),
+            'role' => 'donatur',
+        ]);
     }
 }

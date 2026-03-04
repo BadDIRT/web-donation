@@ -70,7 +70,7 @@
 
         {{-- CTA --}}
         <a
-            href="{{ route('campaign.show', $campaign) }}"
+            href="{{ route('campaign.show', $campaign->slug) }}"
             class="mt-auto block text-center
                    bg-green-500 hover:bg-green-600
                    text-white py-2.5 rounded-xl font-semibold

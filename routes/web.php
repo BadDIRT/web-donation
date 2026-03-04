@@ -38,8 +38,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])
-    ->whereNumber('campaign')
+Route::get('/campaign/{campaign:slug}', [CampaignController::class, 'show'])
     ->name('campaign.show');
 
 
