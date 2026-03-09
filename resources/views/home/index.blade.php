@@ -12,14 +12,14 @@
     
         slidesDesktop: [
             '{{ asset('storage/images/Hijau Putih Donasi Banner Lanskap - Desktop1.svg') }}',
-            '{{ asset('storage/images/banner-desktop-2.svg') }}',
-            '{{ asset('storage/images/banner-desktop-3.svg') }}'
+            '{{ asset('storage/images/donasi desktop 1.svg') }}',
+            '{{ asset('storage/images/donasi desktop 2.svg') }}'
         ],
     
         slidesMobile: [
             '{{ asset('storage/images/Hijau Putih Donasi Banner Lanskap - Mobile1.svg') }}',
-            '{{ asset('storage/images/banner-mobile-2.svg') }}',
-            '{{ asset('storage/images/banner-mobile-3.svg') }}'
+            '{{ asset('storage/images/donasi_1_(mobile).svg') }}',
+            '{{ asset('storage/images/donasi_2_(mobile).svg') }}'
         ],
     
         get slides() {

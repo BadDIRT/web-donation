@@ -5,6 +5,8 @@ use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
+Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
+    ->name('midtrans.callback');
 
 Route::post('/campaign/{campaign}/donate', [DonationController::class, 'donate'])
     ->name('donate');
@@ -71,8 +73,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
         ->name('notifications.destroy');
 
-    Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
-        ->name('midtrans.callback');
 
 
 

@@ -53,7 +53,11 @@
                         <h2 class="text-2xl font-bold mb-6">💬 Doa & Dukungan</h2>
 
                         <div class="space-y-4">
-                            @forelse ($campaign->donations()->latest()->take(5)->get() as $donation)
+                            @forelse ($campaign->donations()
+                                                    ->where('status','success')
+                                                    ->latest()
+                                                    ->take(5)
+                                                    ->get() as $donation)
                                 <div class="bg-gray-50 rounded-xl p-4 border">
                                     <p class="font-semibold text-gray-700">
                                         {{ $donation->anonymous ? 'Anonim' : $donation->donor_name }}
@@ -177,31 +181,113 @@
         data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 
     @if (request('payment'))
-        <div id="payment-alert"
-            class="fixed top-6 right-6 z-50 px-6 py-4 rounded-xl shadow-lg text-white
-        @if (request('payment') == 'success') bg-green-500
-        @elseif(request('payment') == 'pending') bg-yellow-500
-        @elseif(request('payment') == 'failed') bg-red-500
-        @else bg-gray-600 @endif">
 
-            @if (request('payment') == 'success')
-                Pembayaran berhasil 🎉
-            @elseif(request('payment') == 'pending')
-                Menunggu pembayaran ⏳
-            @elseif(request('payment') == 'failed')
-                Pembayaran gagal ❌
-            @else
-                Transaksi dibatalkan
-            @endif
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2500)" x-show="show" x-cloak
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0" class="fixed top-24 right-6 z-[9999] w-full max-w-sm">
+
+            <div
+                class="relative overflow-hidden rounded-2xl bg-white shadow-xl
+@if (request('payment') == 'success') border border-green-100
+@elseif(request('payment') == 'pending') border border-yellow-100
+@elseif(request('payment') == 'failed') border border-red-100
+@else border border-gray-200 @endif">
+
+                <div class="flex items-start gap-4 p-5">
+
+                    {{-- ICON --}}
+                    <div class="flex-shrink-0">
+
+                        @if (request('payment') == 'success')
+                            <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        @elseif(request('payment') == 'pending')
+                            <div class="w-9 h-9 rounded-full bg-yellow-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l2 2" />
+                                </svg>
+                            </div>
+                        @elseif(request('payment') == 'failed')
+                            <div class="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        @else
+                            <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                        @endif
+
+                    </div>
+
+                    {{-- MESSAGE --}}
+                    <div class="flex-1 text-sm text-gray-700 leading-relaxed">
+
+                        @if (request('payment') == 'success')
+                            Pembayaran berhasil 🎉 Terima kasih atas donasi Anda.
+                        @elseif(request('payment') == 'pending')
+                            Pembayaran sedang diproses ⏳
+                        @elseif(request('payment') == 'failed')
+                            Pembayaran gagal ❌ Silakan coba lagi.
+                        @else
+                            Transaksi dibatalkan.
+                        @endif
+
+                    </div>
+
+                    {{-- CLOSE --}}
+                    <button @click="show=false" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                </div>
+
+                {{-- PROGRESS BAR --}}
+                <div
+                    class="absolute bottom-0 left-0 h-1
+@if (request('payment') == 'success') bg-green-500
+@elseif(request('payment') == 'pending') bg-yellow-500
+@elseif(request('payment') == 'failed') bg-red-500
+@else bg-gray-500 @endif
+animate-[shrink_2.5s_linear_forwards]">
+                </div>
+
+            </div>
+
         </div>
 
-        <script>
-            setTimeout(() => {
-                const alertBox = document.getElementById('payment-alert');
-                if (alertBox) alertBox.remove();
-            }, 3000);
-        </script>
     @endif
+
+    <script>
+        setTimeout(() => {
+            const el = document.getElementById('payment-alert');
+            if (el) el.remove();
+        }, 3000);
+    </script>
+
+    <script>
+        setTimeout(() => {
+            const alertBox = document.getElementById('payment-alert');
+            if (alertBox) alertBox.remove();
+        }, 3000);
+    </script>
 @endsection
 @push('scripts')
     <script>
@@ -278,22 +364,41 @@
                         throw new Error('Snap token tidak ditemukan');
                     }
 
+                    const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+                    const userRole = "{{ auth()->user()->role ?? '' }}";
+
                     window.snap.pay(data.snapToken, {
                         onSuccess: function() {
-                            window.location.href =
-                                "{{ url('campaign/' . $campaign->id) }}?payment=success";
+
+                            if (!isAuthenticated) {
+                                window.location.href =
+                                    "{{ route('campaign.show', $campaign->slug) }}?payment=success";
+                                return;
+                            }
+
+                            if (userRole === 'admin') {
+                                window.location.href =
+                                    "{{ route('admin.dashboard') }}?payment=success";
+                            } else if (userRole === 'pengelola') {
+                                window.location.href = "{{ route('dashboard') }}?payment=success";
+                            } else {
+                                window.location.href = "{{ route('dashboard') }}?payment=success";
+                            }
                         },
+
                         onPending: function() {
                             window.location.href =
-                                "{{ url('campaign/' . $campaign->id) }}?payment=pending";
+                                "{{ route('campaign.show', $campaign->slug) }}?payment=pending";
                         },
+
                         onError: function() {
                             window.location.href =
-                                "{{ url('campaign/' . $campaign->id) }}?payment=failed";
+                                "{{ route('campaign.show', $campaign->slug) }}?payment=failed";
                         },
+
                         onClose: function() {
                             window.location.href =
-                                "{{ url('campaign/' . $campaign->id) }}?payment=cancel";
+                                "{{ route('campaign.show', $campaign->slug) }}?payment=cancel";
                         }
                     });
                 })

@@ -15,6 +15,7 @@ class Donation extends Model
         'anonymous',
         'message',
         'status',
+        'paid_at',
     ];
 
     protected $casts = [

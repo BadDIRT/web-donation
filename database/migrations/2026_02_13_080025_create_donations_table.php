@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('anonymous')->default(false);
             $table->string('message')->nullable();
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });
     }

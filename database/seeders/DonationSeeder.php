@@ -33,6 +33,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -45,6 +46,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -57,6 +59,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -69,6 +72,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -81,6 +85,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -93,6 +98,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -105,6 +111,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -117,6 +124,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -129,6 +137,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -141,6 +150,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -153,6 +163,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -165,6 +176,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -177,6 +189,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -189,6 +202,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -201,6 +215,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -213,6 +228,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -225,6 +241,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -237,6 +254,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -249,6 +267,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -261,6 +280,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -273,6 +293,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
             [
                 'user_id' => $donatur->id,
@@ -285,6 +306,7 @@ class DonationSeeder extends Seeder
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'paid_at' => null,
             ],
         ]);
     }

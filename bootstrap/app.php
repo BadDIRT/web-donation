@@ -19,6 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
         'guest.custom' => RedirectIfAuthenticatedCustom::class,
         'approved' => EnsurePengelolaApproved::class,
     ]);
+
+    // Konfigurasi pengecualian CSRF di sini
+        $middleware->validateCsrfTokens(except: [
+            'midtrans/callback',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
