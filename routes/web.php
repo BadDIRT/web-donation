@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{HomeController, CampaignController, DonationController, DashboardController, AdminController, PengelolaController, MidtransController, AuthController,};
+use App\Http\Controllers\Admin\PayoutController;
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -123,5 +124,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/admin/ktp/{user}', [AdminController::class, 'viewKtp'])
             ->name('admin.pengelola.ktp');
+
+        Route::post(
+            '/admin/campaign/{campaign}/payout',
+            [PayoutController::class, 'store']
+        )->name('admin.payout');
     });
 });

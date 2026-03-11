@@ -6,10 +6,11 @@
     <title>@yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="Mid-client-3mFZL4m3OBRI3IuX"></script>
 
-    @vite('resources/css/app.css')
     <!-- Alpine Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
 

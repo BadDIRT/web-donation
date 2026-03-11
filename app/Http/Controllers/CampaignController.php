@@ -64,7 +64,15 @@ class CampaignController extends Controller
             abort(404);
         }
 
-        return view('campaign.show', compact('campaign'));
+        $topDonors = $campaign->donations()
+            ->where('status', 'success')
+            ->selectRaw('donor_name, SUM(amount) as total')
+            ->groupBy('donor_name')
+            ->orderByDesc('total')
+            ->take(5)
+            ->get();
+
+        return view('campaign.show', compact('campaign', 'topDonors'));
     }
 
     /**

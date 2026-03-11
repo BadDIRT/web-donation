@@ -54,10 +54,10 @@
 
                         <div class="space-y-4">
                             @forelse ($campaign->donations()
-                                                    ->where('status','success')
-                                                    ->latest()
-                                                    ->take(5)
-                                                    ->get() as $donation)
+                                                                                                        ->where('status','success')
+                                                                                                        ->latest()
+                                                                                                        ->take(5)
+                                                                                                        ->get() as $donation)
                                 <div class="bg-gray-50 rounded-xl p-4 border">
                                     <p class="font-semibold text-gray-700">
                                         {{ $donation->anonymous ? 'Anonim' : $donation->donor_name }}
@@ -93,8 +93,11 @@
                             </div>
 
                             <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                                <div class="bg-green-500 h-full rounded-full transition-all"
-                                    style="width: {{ $campaign->progress_percent }}%">
+                                <div id="progress-bar"
+                                    class="bg-gradient-to-r from-green-400 via-green-500 to-green-600
+h-full rounded-full transition-all duration-1000 ease-out
+relative overflow-hidden"
+                                    style="width:0%">
                                 </div>
                             </div>
 
@@ -108,6 +111,54 @@
                                     ⏳ Berakhir dalam: <span id="countdown"></span>
                                 </p>
                             @endif
+                        </div>
+
+                        <div class="bg-white rounded-3xl shadow-lg p-8">
+
+                            <h3 class="font-bold text-lg mb-6">
+                                🏆 Top Donatur
+                            </h3>
+
+                            <div class="space-y-4">
+
+                                @foreach ($topDonors as $index => $donor)
+                                    <div class="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
+
+                                        <div class="flex items-center gap-3">
+
+                                            <div
+                                                class="w-8 h-8 rounded-full
+@if ($index == 0) bg-yellow-400
+@elseif($index == 1) bg-gray-300
+@elseif($index == 2) bg-orange-400
+@else bg-green-100 @endif
+flex items-center justify-center text-sm font-bold">
+
+                                                {{ $index + 1 }}
+
+                                            </div>
+
+                                            <div>
+
+                                                <p class="font-semibold text-gray-700">
+                                                    {{ $donor->donor_name ?? 'Anonim' }}
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                        <p class="text-sm font-semibold text-green-600">
+
+                                            Rp {{ number_format($donor->total) }}
+
+                                        </p>
+
+                                    </div>
+                                @endforeach
+
+                            </div>
+
                         </div>
 
                         {{-- DONATION FORM --}}
@@ -129,16 +180,72 @@
                                             Rp
                                         </span>
 
-                                        <input type="text" id="amount_display" placeholder="10.000"
+                                        <input id="amount_display" placeholder="10.000"
                                             class="w-full pl-12 pr-4 py-3 rounded-xl border
-                      focus:ring-2 focus:ring-green-500">
+focus:ring-2 focus:ring-green-500
+text-lg font-semibold">
 
                                         <input type="hidden" name="amount" id="amount" required>
                                     </div>
 
-                                    <p class="text-xs text-gray-400 mt-1">
-                                        Minimal donasi Rp 1.000
-                                    </p>
+                                    <div class="grid lg:grid-cols-3 md:grid-cols-6 gap-2 mt-3">
+
+                                        <button type="button"
+                                            class="quick-amount px-3 py-2 rounded-lg border text-sm hover:bg-green-50"
+                                            data-amount="10000">
+                                            10rb
+                                        </button>
+
+                                        <button type="button"
+                                            class="quick-amount px-3 py-2 rounded-lg border text-sm hover:bg-green-50"
+                                            data-amount="20000">
+                                            20rb
+                                        </button>
+
+                                        <button type="button"
+                                            class="quick-amount px-3 py-2 rounded-lg border text-sm hover:bg-green-50"
+                                            data-amount="50000">
+                                            50rb
+                                        </button>
+
+                                        <button type="button"
+                                            class="quick-amount px-3 py-2 rounded-lg border text-sm hover:bg-green-50"
+                                            data-amount="100000">
+                                            100rb
+                                        </button>
+
+                                        <button type="button"
+                                            class="quick-amount px-3 py-2 rounded-lg border text-sm hover:bg-green-50"
+                                            data-amount="200000">
+                                            200rb
+                                        </button>
+
+                                        <button type="button"
+                                            class="quick-amount px-3 py-2 rounded-lg border text-sm hover:bg-green-50"
+                                            data-amount="500000">
+                                            500rb
+                                        </button>
+
+                                    </div>
+
+                                    <div id="donation-alert" class="hidden fixed top-24 right-6 z-[9999] w-full max-w-sm">
+
+                                        <div class="bg-white border border-red-100 rounded-2xl shadow-xl p-5 flex gap-4">
+
+                                            <div class="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor"
+                                                    stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+
+                                            <div class="text-sm text-gray-700">
+                                                Minimal donasi Rp 1.000
+                                            </div>
+
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <input type="text" name="donor_name" placeholder="Nama Donatur (opsional)"
@@ -203,16 +310,16 @@
 
                         @if (request('payment') == 'success')
                             <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
+                                    stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                         @elseif(request('payment') == 'pending')
                             <div class="w-9 h-9 rounded-full bg-yellow-100 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor"
+                                    stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l2 2" />
                                 </svg>
                             </div>
@@ -241,7 +348,7 @@
                         @if (request('payment') == 'success')
                             Pembayaran berhasil 🎉 Terima kasih atas donasi Anda.
                         @elseif(request('payment') == 'pending')
-                            Pembayaran sedang diproses ⏳
+                            Pembayaran Dalam keadaan pending ⏳
                         @elseif(request('payment') == 'failed')
                             Pembayaran gagal ❌ Silakan coba lagi.
                         @else
@@ -258,8 +365,6 @@
                     </button>
 
                 </div>
-
-                {{-- PROGRESS BAR --}}
                 <div
                     class="absolute bottom-0 left-0 h-1
 @if (request('payment') == 'success') bg-green-500
@@ -281,12 +386,37 @@ animate-[shrink_2.5s_linear_forwards]">
             if (el) el.remove();
         }, 3000);
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const percent = {{ $campaign->progress_percent }};
+            const bar = document.getElementById("progress-bar");
+
+            setTimeout(() => {
+
+                bar.style.width = percent + "%";
+
+            }, 300);
+
+        });
+    </script>
 
     <script>
         setTimeout(() => {
             const alertBox = document.getElementById('payment-alert');
             if (alertBox) alertBox.remove();
         }, 3000);
+    </script>
+    <script>
+        function showDonationAlert() {
+            const alertBox = document.getElementById('donation-alert');
+
+            alertBox.classList.remove('hidden');
+
+            setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, 3000);
+        }
     </script>
 @endsection
 @push('scripts')
@@ -327,6 +457,24 @@ animate-[shrink_2.5s_linear_forwards]">
 
             this.value = new Intl.NumberFormat('id-ID').format(value);
         });
+        document.querySelectorAll('.quick-amount').forEach(btn => {
+
+            btn.addEventListener('click', function() {
+
+                const value = this.dataset.amount;
+
+                realInput.value = value;
+                displayInput.value = new Intl.NumberFormat('id-ID').format(value);
+
+                document.querySelectorAll('.quick-amount').forEach(b => {
+                    b.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+                });
+
+                this.classList.add('bg-green-500', 'text-white', 'border-green-500');
+
+            });
+
+        });
     </script>
 @endpush
 @push('scripts')
@@ -338,7 +486,7 @@ animate-[shrink_2.5s_linear_forwards]">
             const amount = document.getElementById('amount').value;
 
             if (!amount || parseInt(amount) < 1000) {
-                alert('Minimal donasi Rp 1.000');
+                showDonationAlert();
                 return;
             }
 
@@ -378,11 +526,11 @@ animate-[shrink_2.5s_linear_forwards]">
 
                             if (userRole === 'admin') {
                                 window.location.href =
-                                    "{{ route('admin.dashboard') }}?payment=success";
+                                    "{{ route('campaign.show', $campaign->slug) }}?payment=success";
                             } else if (userRole === 'pengelola') {
-                                window.location.href = "{{ route('dashboard') }}?payment=success";
+                                window.location.href = "{{ route('campaign.show', $campaign->slug) }}?payment=success";
                             } else {
-                                window.location.href = "{{ route('dashboard') }}?payment=success";
+                                window.location.href = "{{ route('campaign.show', $campaign->slug) }}?payment=success";
                             }
                         },
 

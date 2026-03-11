@@ -11,15 +11,15 @@
         isMobile: window.innerWidth < 768,
     
         slidesDesktop: [
-            '{{ asset('storage/images/Hijau Putih Donasi Banner Lanskap - Desktop1.svg') }}',
-            '{{ asset('storage/images/donasi desktop 1.svg') }}',
-            '{{ asset('storage/images/donasi desktop 2.svg') }}'
+            '{{ asset('storage/images/Hijau-Putih-Donasi-Banner-Lanskap-Desktop1.svg') }}',
+            '{{ asset('storage/images/donasi-desktop-1.svg') }}',
+            '{{ asset('storage/images/donasi-desktop-2.svg') }}'
         ],
     
         slidesMobile: [
-            '{{ asset('storage/images/Hijau Putih Donasi Banner Lanskap - Mobile1.svg') }}',
-            '{{ asset('storage/images/donasi_1_(mobile).svg') }}',
-            '{{ asset('storage/images/donasi_2_(mobile).svg') }}'
+            '{{ asset('storage/images/Hijau-Putih-Donasi-Banner-Lanskap-Mobile1.svg') }}',
+            '{{ asset('storage/images/donasi-1-(mobile).svg') }}',
+            '{{ asset('storage/images/donasi-2-(mobile).svg') }}'
         ],
     
         get slides() {
@@ -39,7 +39,7 @@
         <div class="relative h-[420px] md:h-[520px]">
 
             <template x-for="(slide, index) in slides" :key="index">
-                <img :src="slide" x-show="active === index" x-transition:enter="transition-opacity duration-700"
+                <img :src="slide" x-show="active === index" x-cloak x-transition:enter="transition-opacity duration-700"
                     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                     class="absolute inset-0 w-full h-full object-cover will-change-transform"
                     :style="`transform: translateY(${scrollY * 0.25}px)`">

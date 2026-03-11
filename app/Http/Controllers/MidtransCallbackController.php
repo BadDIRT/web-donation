@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\Notification;
 use App\Models\User;
@@ -63,24 +64,6 @@ class MidtransCallbackController extends Controller
         }
 
         $donation->save();
-
-        /*
-        |--------------------------------------------------------------------------
-        | CREATE NOTIFICATION
-        |--------------------------------------------------------------------------
-        */
-
-        $admins = User::where('role', 'admin')->get();
-
-        foreach ($admins as $admin) {
-            Notification::create([
-                'user_id' => $admin->id,
-                'title' => 'Update Donasi',
-                'message' => "Donasi sebesar Rp " . number_format($donation->amount) .
-                    " untuk campaign {$donation->campaign->title} berstatus {$donation->status}.",
-                'type' => 'donation',
-            ]);
-        }
 
         return response()->json(['message' => 'Callback processed']);
     }

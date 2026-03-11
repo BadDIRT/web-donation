@@ -127,6 +127,17 @@
                             </div>
                         </div>
 
+                        <form method="POST" action="{{ route('admin.payout', $campaign->id) }}">
+                            @csrf
+
+                            <input type="number" name="amount" placeholder="Jumlah payout" class="border p-2 rounded">
+
+                            <button class="bg-green-500 text-white px-4 py-2 rounded">
+                                Cairkan Dana
+                            </button>
+
+                        </form>
+
                         {{-- MODAL REJECT --}}
                         <div x-show="reject" x-cloak
                             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">

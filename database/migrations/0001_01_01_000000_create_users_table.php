@@ -20,7 +20,8 @@ return new class extends Migration
             $table->boolean('is_approved')->default(false); // untuk pengelola
             $table->string('phone')->nullable()->unique();
             $table->string('ktp_path')->nullable();
-            $table->string('bank_account')->nullable()->unique();
+            $table->string('bank_name')->nullable();
+            $table->string('bank_account')->nullable()->unique(); //bank number
             $table->rememberToken();
             $table->timestamps();
         });

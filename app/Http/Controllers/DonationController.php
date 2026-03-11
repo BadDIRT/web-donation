@@ -48,6 +48,7 @@ class DonationController extends Controller
         ]);
 
         Donation::create([
+            'user_id' => auth()->id(),
             'campaign_id' => $campaign->id,
             'order_id' => $orderId,
             'amount' => $request->amount,

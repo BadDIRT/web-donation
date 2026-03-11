@@ -36,6 +36,18 @@ class Campaign extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function payouts(): HasMany
+    {
+        return $this->hasMany(Payout::class);
+    }
+
+    public function getAvailableBalanceAttribute()
+    {
+        $paid = $this->payouts()->sum('amount');
+
+        return $this->current_amount - $paid;
+    }
+
     // 🔥 progress percentage realtime
     public function getProgressPercentAttribute()
     {
@@ -44,5 +56,3 @@ class Campaign extends Model
         return min(100, ($this->current_amount / $this->target_amount) * 100);
     }
 }
-
-
