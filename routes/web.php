@@ -125,9 +125,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/ktp/{user}', [AdminController::class, 'viewKtp'])
             ->name('admin.pengelola.ktp');
 
-        Route::post(
-            '/admin/campaign/{campaign}/payout',
-            [PayoutController::class, 'store']
-        )->name('admin.payout');
+
+        Route::get('/admin/active', [AdminController::class, 'active'])
+            ->name('admin.campaign.active');
     });
 });

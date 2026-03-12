@@ -158,4 +158,66 @@ class AdminController extends Controller
 
         return response()->file($path);
     }
+
+    public function active(Request $request)
+    {
+        $query = Campaign::with('user');
+
+        /*
+    |--------------------------------------------------------------------------
+    | STATUS FILTER
+    |--------------------------------------------------------------------------
+    */
+        if ($request->status) {
+            $query->where('status', $request->status);
+        } else {
+            $query->where('status', 'approved'); // default aktif
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+        if ($request->q) {
+            $query->where(function ($q) use ($request) {
+
+                $q->where('title', 'like', '%' . $request->q . '%')
+                    ->orWhere('id', $request->q)
+                    ->orWhereHas('user', function ($u) use ($request) {
+                        $u->where('name', 'like', '%' . $request->q . '%');
+                    });
+            });
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | SORT
+    |--------------------------------------------------------------------------
+    */
+        switch ($request->sort) {
+
+            case 'target':
+                $query->orderBy('target_amount', 'desc');
+                break;
+
+            case 'donation':
+                $query->orderBy('current_amount', 'desc');
+                break;
+
+            case 'oldest':
+                $query->oldest();
+                break;
+
+            default:
+                $query->latest();
+                break;
+        }
+
+        $campaigns = $query
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.active-campaign', compact('campaigns'));
+    }
 }

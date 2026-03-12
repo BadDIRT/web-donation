@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->bigInteger('target_amount');
             $table->decimal('current_amount', 15, 2)->default(0);
-            $table->enum('status', ['pending', 'approved', 'rejected', 'closed'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'closed', 'ended'])->default('pending');
             $table->foreignId('category_id')
                 ->nullable()
                 ->constrained()

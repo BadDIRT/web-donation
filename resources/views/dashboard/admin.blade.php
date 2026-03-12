@@ -79,7 +79,7 @@
             </div>
 
             {{-- QUICK ACTION --}}
-            <div class="grid gap-6 md:grid-cols-2">
+            <div class="grid gap-6 md:grid-cols-3">
 
                 {{-- PENGELOLA --}}
                 <a href="{{ route('admin.pengelola') }}"
@@ -115,6 +115,30 @@
                         </div>
                         <span class="text-green-500 text-xl">→</span>
                     </div>
+                </a>
+
+                {{-- KELOLA CAMPAIGN AKTIF --}}
+                <a href="{{ route('admin.campaign.active') }}"
+                    class="group bg-white rounded-2xl p-6
+   shadow-sm border border-gray-100
+   hover:shadow-lg transition block">
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition">
+                                Kelola Campaign Aktif
+                            </h2>
+
+                            <p class="text-sm text-gray-500 mt-1">
+                                Lihat, edit, atau tutup campaign yang sedang berjalan.
+                            </p>
+                        </div>
+
+                        <span class="text-green-500 text-xl">→</span>
+
+                    </div>
+
                 </a>
 
             </div>
