@@ -2,58 +2,85 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payout;
+use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AdminPayoutController extends Controller
 {
-
-    public function store(Request $request, Campaign $campaign)
+    public function withdraw(Request $request, Campaign $campaign)
     {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+            'bank_name' => 'required|in:BCA,BRI,BNI,Mandiri,CIMB,BTN,BSI',
+            'bank_account' => 'required|string'
+        ]);
 
-        $user = $campaign->user; // pengelola
+        DB::beginTransaction();
 
-        $amount = $campaign->current_amount;
+        try {
 
-        if ($amount <= 0) {
-            return back()->with('error', 'Dana kosong');
+            $user = $campaign->user;
+            $amount = $request->amount;
+
+            // VALIDASI SALDO
+            if (empty($campaign->current_amount_rd) || $campaign->current_amount_rd <= 0 || $amount > $campaign->current_amount_rd) {
+                return redirect()
+                    ->route('admin.campaign.show', $campaign->id)
+                    ->with('error', '❌ Gagal! Saldo campaign tidak mencukupi.');
+            }
+
+            // VALIDASI STATUS (biar lebih aman)
+            if ($campaign->status !== 'approved') {
+                return redirect()
+                    ->route('admin.campaign.show', $campaign->id)
+                    ->with('error', '❌ Campaign belum aktif / tidak bisa ditarik.');
+            }
+
+            // PROSES
+            $campaign->current_amount_rd -= $amount;
+            $campaign->save();
+
+            $user->wallet = ($user->wallet ?? 0) + $amount;
+            $user->total_withdrawal = ($user->total_withdrawal ?? 0) + $amount;
+
+            $user->wallet += $amount;
+            $user->total_withdrawal += $amount;
+            $user->save();
+
+            DB::commit();
+
+            // Ambil semua admin
+            $admins = User::where('role', 'admin')->get();
+
+            foreach ($admins as $admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'title'   => 'informasi penarikan',
+                    'message' => "{$admin->name} berhasil menarik dana sebesar {$amount}",
+                    'type'    => 'withdrawal',
+                ]);
+            }
+
+            return redirect()
+                ->route('admin.campaign.show', $campaign->id)
+                ->with(
+                    'success',
+                    '✅ Penarikan berhasil sebesar Rp ' .
+                        number_format($amount, 0, ',', '.') .
+                        ' ke bank ' . $request->bank_name
+                );
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->with(
+                'error',
+                '❌ Terjadi kesalahan sistem: ' . $e->getMessage()
+            );
         }
-
-        $reference = 'PAYOUT-' . Str::uuid();
-
-        $response = Http::withBasicAuth(
-            config('services.midtrans.server_key'),
-            ''
-        )->post(
-            'https://api.sandbox.midtrans.com/v2/disbursement',
-            [
-                "bank" => $user->bank_name,
-                "account" => $user->bank_account,
-                "amount" => $amount,
-                "remark" => "Payout campaign {$campaign->title}",
-                "reference" => $reference
-            ]
-        );
-
-        if ($response->successful()) {
-
-            Payout::create([
-                'campaign_id' => $campaign->id,
-                'user_id' => $user->id,
-                'amount' => $amount,
-                'bank_name' => $user->bank_name,
-                'bank_account' => $user->bank_account,
-                'recipient_name' => $user->name,
-                'reference' => $reference,
-                'status' => 'processing'
-            ]);
-
-            return back()->with('success', 'Payout diproses');
-        }
-
-        return back()->with('error', 'Payout gagal');
     }
 }

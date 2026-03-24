@@ -28,6 +28,27 @@
                 </span>
             </div>
 
+            {{-- ALERT MESSAGE --}}
+            @if ($errors->any())
+                <div class="mb-4 p-4 rounded-xl bg-red-100 text-red-700 border border-red-200">
+                    @foreach ($errors->all() as $error)
+                        <div>❌ {{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="mb-4 p-4 rounded-xl bg-green-100 text-green-700 border border-green-200">
+                    ✅ {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-4 p-4 rounded-xl bg-red-100 text-red-700 border border-red-200">
+                    ❌ {{ session('error') }}
+                </div>
+            @endif
+
             {{-- CARD --}}
             <div class="bg-white rounded-2xl shadow-sm border p-6 space-y-6">
 
@@ -75,6 +96,72 @@
                 <p class="text-xs text-gray-400 mt-1">
                     Dibuat {{ $campaign->created_at->translatedFormat('d F Y') }}
                 </p>
+
+                <div x-data="{ withdraw: false }" class="pt-6 border-t flex justify-end">
+
+
+                    <button @click="withdraw=true"
+                        class="px-5 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold">
+                        Tarik Dana
+                    </button>
+
+                    {{-- MODAL --}}
+                    <div x-show="withdraw" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+
+                        <div @click.outside="withdraw=false" class="bg-white w-full max-w-md rounded-2xl p-6">
+
+                            <h3 class="text-lg font-semibold mb-4">
+                                Tarik Dana Campaign
+                            </h3>
+
+                            <form method="POST" action="{{ route('admin.withdraw', $campaign->id) }}" class="space-y-4">
+                                @csrf
+
+                                {{-- SALDO --}}
+                                <div class="text-sm text-gray-500">
+                                    Saldo tersedia:
+                                    <span class="font-semibold text-green-600">
+                                        Rp {{ number_format($campaign->current_amount_rd, 0, ',', '.') }}
+                                    </span>
+                                </div>
+
+                                {{-- AMOUNT --}}
+                                <input type="number" name="amount" required placeholder="Jumlah penarikan"
+                                    class="w-full border rounded-xl p-3 text-sm">
+
+                                {{-- BANK --}}
+                                <select name="bank_name" required class="w-full border rounded-xl p-3 text-sm">
+                                    <option value="">Pilih Bank</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="BRI">BRI</option>
+                                    <option value="BNI">BNI</option>
+                                    <option value="Mandiri">Mandiri</option>
+                                    <option value="CIMB">CIMB</option>
+                                    <option value="BTN">BTN</option>
+                                    <option value="BSI">BSI</option>
+                                </select>
+
+                                {{-- REKENING --}}
+                                <input type="text" name="bank_account" required placeholder="Nomor rekening tujuan"
+                                    class="w-full border rounded-xl p-3 text-sm">
+
+                                {{-- ACTION --}}
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" @click="withdraw=false"
+                                        class="px-4 py-2 border rounded-xl text-sm">
+                                        Batal
+                                    </button>
+
+                                    <button
+                                        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold">
+                                        Tarik
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
 
                 {{-- ACTION --}}
@@ -126,7 +213,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         {{-- MODAL REJECT --}}
                         <div x-show="reject" x-cloak
                             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">

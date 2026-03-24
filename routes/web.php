@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\{HomeController, CampaignController, DonationController, DashboardController, AdminController, PengelolaController, MidtransController, AuthController,};
-use App\Http\Controllers\Admin\PayoutController;
+use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -128,5 +128,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/admin/active', [AdminController::class, 'active'])
             ->name('admin.campaign.active');
+
+        Route::post(
+            '/admin/campaign/{campaign}',
+            [AdminPayoutController::class, 'withdraw']
+        )->name('admin.withdraw');
     });
 });

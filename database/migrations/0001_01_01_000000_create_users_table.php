@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('ktp_path')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('bank_account')->nullable()->unique(); //bank number
+            $table->decimal('wallet', 15, 2)->nullable();
+            $table->decimal('total_withdrawal', 15, 2)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

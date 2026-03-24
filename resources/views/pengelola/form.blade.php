@@ -91,7 +91,7 @@
                @error('bank_name') border-red-500 @enderror"
                     required>
                     <option value="">-- Pilih Bank --</option>
-                    @foreach (['BCA', 'BRI', 'BNI', 'Mandiri', 'CIMB', 'BTN', 'BSI', 'Lainnya'] as $bank)
+                    @foreach (['BCA', 'BRI', 'BNI', 'Mandiri', 'CIMB', 'BTN', 'BSI'] as $bank)
                         <option value="{{ $bank }}" {{ old('bank_name') === $bank ? 'selected' : '' }}>
                             {{ $bank }}
                         </option>
