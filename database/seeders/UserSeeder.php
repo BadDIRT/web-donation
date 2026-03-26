@@ -22,8 +22,6 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'is_approved' => true,
             'phone' => '081234567890',
-            'bank_name' => 'BCA',
-            'bank_account' => '1234567890',
         ]);
 
         // PENGELOLA APPROVED

@@ -2,20 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Storage;
 use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\User;
+use App\Models\UserBank;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
+        // ambil semua bank milik user login + relasi bank
+        $userBanks = UserBank::with('bank')
+            ->where('user_id', $user->id)
+            ->get();
+
+        // total saldo user login
+        $totalBankBalance = $userBanks->sum('balance');
+
         return view('dashboard.admin', [
             'totalUsers' => User::count(),
             'totalCampaigns' => Campaign::count(),
-            'totalDonations' => Donation::sum('amount'),
+            'totalDonations' => Campaign::sum('current_amount'),
+
+            // 🔥 INI YANG DIPAKE
+            'userBanks' => $userBanks,
+            'totalBankBalance' => $totalBankBalance,
         ]);
     }
 

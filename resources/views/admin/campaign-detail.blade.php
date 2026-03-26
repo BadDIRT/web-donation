@@ -28,27 +28,6 @@
                 </span>
             </div>
 
-            {{-- ALERT MESSAGE --}}
-            @if ($errors->any())
-                <div class="mb-4 p-4 rounded-xl bg-red-100 text-red-700 border border-red-200">
-                    @foreach ($errors->all() as $error)
-                        <div>❌ {{ $error }}</div>
-                    @endforeach
-                </div>
-            @endif
-
-            @if (session('success'))
-                <div class="mb-4 p-4 rounded-xl bg-green-100 text-green-700 border border-green-200">
-                    ✅ {{ session('success') }}
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="mb-4 p-4 rounded-xl bg-red-100 text-red-700 border border-red-200">
-                    ❌ {{ session('error') }}
-                </div>
-            @endif
-
             {{-- CARD --}}
             <div class="bg-white rounded-2xl shadow-sm border p-6 space-y-6">
 
@@ -58,20 +37,66 @@
                         class="w-full h-full object-cover">
                 </div>
 
-                {{-- INFO --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-xs text-gray-500 mb-1">Target Dana</p>
-                        <p class="text-lg font-semibold">
+                {{-- FINANCIAL SUMMARY --}}
+                @php
+                    $withdrawn = $campaign->current_amount - $campaign->current_amount_rd;
+                @endphp
+
+                <div class="space-y-4">
+
+                    {{-- TARGET FULL --}}
+                    <div class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-2xl p-6 shadow-sm">
+                        <p class="text-sm opacity-80">Target Dana</p>
+                        <p class="text-2xl font-bold mt-1">
                             Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}
                         </p>
                     </div>
 
-                    <div>
-                        <p class="text-xs text-gray-500 mb-1">Dana Terkumpul</p>
-                        <p class="text-lg font-semibold text-green-600">
-                            Rp {{ number_format($campaign->current_amount, 0, ',', '.') }}
-                        </p>
+                    {{-- 3 CARD --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                        {{-- TERKUMPUL --}}
+                        <div class="bg-white rounded-2xl p-5 shadow-sm">
+                            <p class="text-xs text-gray-400">Dana Terkumpul</p>
+                            <p class="text-lg font-semibold text-gray-800 mt-1">
+                                Rp {{ number_format($campaign->current_amount, 0, ',', '.') }}
+                            </p>
+                        </div>
+
+                        {{-- SALDO --}}
+                        <div class="bg-green-50 rounded-2xl p-5 shadow-sm">
+                            <p class="text-xs text-green-700">Saldo Tersedia</p>
+                            <p class="text-lg font-semibold text-green-600 mt-1">
+                                Rp {{ number_format($campaign->current_amount_rd, 0, ',', '.') }}
+                            </p>
+                        </div>
+
+                        {{-- WITHDRAW --}}
+                        <div class="bg-blue-50 rounded-2xl p-5 shadow-sm">
+                            <p class="text-xs text-blue-700">Sudah Ditarik</p>
+                            <p class="text-lg font-semibold text-blue-600 mt-1">
+                                Rp {{ number_format($withdrawn, 0, ',', '.') }}
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                @php
+                    $progress =
+                        $campaign->target_amount > 0 ? ($campaign->current_amount / $campaign->target_amount) * 100 : 0;
+                @endphp
+
+                <div class="mt-4">
+                    <div class="flex justify-between text-xs text-gray-500 mb-1">
+                        <span>Progress Campaign</span>
+                        <span>{{ number_format($progress, 0) }}%</span>
+                    </div>
+
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full transition-all" style="width: {{ $progress }}%">
+                        </div>
                     </div>
                 </div>
 
@@ -101,7 +126,7 @@
 
 
                     <button @click="withdraw=true"
-                        class="px-5 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold">
+                        class="px-5 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold shadow-sm">
                         Tarik Dana
                     </button>
 
@@ -130,15 +155,16 @@
                                     class="w-full border rounded-xl p-3 text-sm">
 
                                 {{-- BANK --}}
-                                <select name="bank_name" required class="w-full border rounded-xl p-3 text-sm">
-                                    <option value="">Pilih Bank</option>
-                                    <option value="BCA">BCA</option>
-                                    <option value="BRI">BRI</option>
-                                    <option value="BNI">BNI</option>
-                                    <option value="Mandiri">Mandiri</option>
-                                    <option value="CIMB">CIMB</option>
-                                    <option value="BTN">BTN</option>
-                                    <option value="BSI">BSI</option>
+                                <select name="user_bank_id" required class="w-full border rounded-xl p-3 text-sm">
+
+                                    @forelse (auth()->user()->userBanks as $bank)
+                                        <option value="{{ $bank->id }}">
+                                            {{ $bank->bank->name ?? '-' }} - {{ $bank->account_number }}
+                                        </option>
+                                    @empty
+                                        <option disabled>Tidak ada rekening</option>
+                                    @endforelse
+
                                 </select>
 
                                 {{-- REKENING --}}

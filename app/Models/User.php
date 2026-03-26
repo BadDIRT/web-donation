@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -26,7 +27,6 @@ class User extends Authenticatable
         'is_approved',
         'phone',
         'ktp_path',
-        'bank_account',
     ];
 
     public function donations(): HasMany
@@ -47,6 +47,18 @@ class User extends Authenticatable
     public function payouts(): HasMany
     {
         return $this->hasMany(Payout::class);
+    }
+
+    public function banks(): BelongsToMany
+    {
+        return $this->belongsToMany(Bank::class, 'user_banks')
+            ->withPivot('id', 'account_number', 'balance', 'is_primary')
+            ->withTimestamps();
+    }
+
+    public function userBanks(): HasMany
+    {
+        return $this->hasMany(UserBank::class);
     }
 
     /**

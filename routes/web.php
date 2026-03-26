@@ -4,6 +4,7 @@ use App\Http\Controllers\{HomeController, CampaignController, DonationController
 use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\UserBankController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
@@ -73,6 +74,9 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
         ->name('notifications.destroy');
+
+    Route::get('/bank/create', [UserBankController::class, 'create'])->name('bank.create');
+    Route::post('/bank/store', [UserBankController::class, 'store'])->name('bank.store');
 
 
 
