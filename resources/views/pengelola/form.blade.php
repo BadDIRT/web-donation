@@ -80,42 +80,45 @@
             </div>
 
             {{-- BANK --}}
-            <div x-data="{ bank: '{{ old('bank_name') }}' }">
+            <div x-data="{ selectedBank: '{{ old('bank_id') }}' }">
                 <label class="block text-sm font-medium mb-1">
                     Pilih Bank
                 </label>
 
-                <select x-model="bank" name="bank_name"
+                <select x-model="selectedBank" name="bank_id"
                     class="w-full border rounded-xl p-3 text-sm
-               focus:ring-2 focus:ring-green-500 focus:outline-none
-               @error('bank_name') border-red-500 @enderror"
+        focus:ring-2 focus:ring-green-500 focus:outline-none
+        @error('bank_id') border-red-500 @enderror"
                     required>
+
                     <option value="">-- Pilih Bank --</option>
-                    @foreach (['BCA', 'BRI', 'BNI', 'Mandiri', 'CIMB', 'BTN', 'BSI'] as $bank)
-                        <option value="{{ $bank }}" {{ old('bank_name') === $bank ? 'selected' : '' }}>
-                            {{ $bank }}
+
+                    @foreach ($banks as $item)
+                        <option value="{{ $item->id }}" {{ old('bank_id') == $item->id ? 'selected' : '' }}>
+                            {{ $item->name }}
                         </option>
                     @endforeach
                 </select>
 
-                @error('bank_name')
+                @error('bank_id')
                     <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                 @enderror
 
-                <template x-if="bank">
+                {{-- INPUT REKENING --}}
+                <template x-if="selectedBank">
                     <div class="mt-3">
                         <label class="block text-sm font-medium mb-1">
-                            Nomor Rekening <span class="text-green-600" x-text="bank"></span>
+                            Nomor Rekening
                         </label>
 
-                        <input type="text" name="bank_account" value="{{ old('bank_account') }}"
+                        <input type="text" name="account_number" value="{{ old('account_number') }}"
                             placeholder="Masukkan nomor rekening"
                             class="w-full border rounded-xl p-3 text-sm
-                       focus:ring-2 focus:ring-green-500 focus:outline-none
-                       @error('bank_account') border-red-500 @enderror"
+                focus:ring-2 focus:ring-green-500 focus:outline-none
+                @error('account_number') border-red-500 @enderror"
                             required>
 
-                        @error('bank_account')
+                        @error('account_number')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
                     </div>

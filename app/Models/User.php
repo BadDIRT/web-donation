@@ -61,6 +61,11 @@ class User extends Authenticatable
         return $this->hasMany(UserBank::class);
     }
 
+    public function withdrawls(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

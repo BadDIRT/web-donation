@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserBankController;
+use App\Http\Controllers\WithdrawController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
@@ -77,6 +78,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/bank/create', [UserBankController::class, 'create'])->name('bank.create');
     Route::post('/bank/store', [UserBankController::class, 'store'])->name('bank.store');
+
+    Route::get('/withdraw', [WithdrawController::class, 'create'])->name('withdraw.create');
+    Route::post('/withdraw', [WithdrawController::class, 'store'])->name('withdraw.store');
 
 
 

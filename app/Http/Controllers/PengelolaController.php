@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bank;
 use App\Models\Notification;
 use App\Models\User;
+use App\Models\UserBank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,55 +18,64 @@ class PengelolaController extends Controller
 
     public function showForm()
     {
-        return view('pengelola.form');
+        $banks = Bank::all();
+
+        return view('pengelola.form', compact('banks'));
     }
 
     public function submit(Request $request)
     {
-
         $request->validate(
             [
-                'phone'         => 'required|string|unique:users,phone|min:10|max:15',
-                'ktp'           => 'required|image|mimes:jpg,jpeg,png|max:2048', // 2MB
-                'bank_name'     => 'required|string|max:50',
-                'bank_account'  => 'required|string|unique:users,bank_account|max:100',
+                'phone'           => 'required|string|unique:users,phone|min:10|max:15',
+                'ktp'             => 'required|image|mimes:jpg,jpeg,png|max:2048',
+                'bank_id'         => 'required|exists:banks,id',
+                'account_number'  => 'required|string|max:100',
             ],
             [
-                'phone.required'        => 'Nomor handphone wajib diisi.',
-                'phone.min'             => 'Nomor handphone minimal 10 digit.',
-                'phone.max'             => 'Nomor handphone maksimal 15 digit.',
-                'phone.unique'          => 'Nomor handphone sudah terdaftar.',
-                'ktp.required'          => 'Foto KTP wajib diunggah.',
-                'ktp.image'             => 'File KTP harus berupa gambar.',
-                'ktp.mimes'             => 'Format KTP harus JPG atau PNG.',
-                'ktp.max'               => 'Ukuran foto KTP tidak boleh lebih dari 2MB.',
-                'bank_name.required'    => 'Nama bank wajib dipilih.',
-                'bank_account.required' => 'Nomor rekening wajib diisi.',
-                'bank_account.unique'   => 'Nomor rekening sudah terdaftar.',
+                'phone.required'          => 'Nomor handphone wajib diisi.',
+                'phone.unique'            => 'Nomor handphone sudah terdaftar.',
+                'ktp.required'            => 'Foto KTP wajib diunggah.',
+                'bank_id.required'        => 'Bank wajib dipilih.',
+                'account_number.required' => 'Nomor rekening wajib diisi.',
             ]
         );
 
         $user = Auth::user();
 
-        if ($user->is_approved === false && $user->ktp_path) {
-            return redirect()
-                ->back()
-                ->withErrors(['Anda sudah mengajukan permohonan.']);
+        // 🚫 CEK SUDAH PERNAH AJUAN
+        if ($user->ktp_path && $user->is_approved === false) {
+            return back()->withErrors(['Anda sudah mengajukan permohonan.']);
         }
 
-        // Simpan file KTP
+        // 🚫 CEK DUPLIKASI REKENING GLOBAL
+        $isExist = UserBank::where('account_number', $request->account_number)->exists();
+
+        if ($isExist) {
+            return back()->withErrors(['Nomor rekening sudah terdaftar.']);
+        }
+
+        // 📁 SIMPAN KTP
         $ktpPath = $request->file('ktp')->store('ktp');
 
-        // Update user → jadi pengelola (menunggu approval)
+        // 🔄 UPDATE USER
         $user->update([
             'phone'        => $request->phone,
             'ktp_path'     => $ktpPath,
-            'bank_account' => $request->bank_account,
             'role'         => 'pengelola',
             'is_approved'  => false,
         ]);
 
-        // Ambil semua admin
+        // 💳 SIMPAN KE PIVOT
+        UserBank::create([
+            'user_id'        => $user->id,
+            'bank_id'        => $request->bank_id, // 🔥 langsung pakai ini
+            'account_number' => $request->account_number,
+            'balance'        => 0,
+            'is_primary'     => true,
+        ]);
+
+        // 🔔 NOTIF
         $admins = User::where('role', 'admin')->get();
 
         foreach ($admins as $admin) {
@@ -78,7 +89,7 @@ class PengelolaController extends Controller
 
         return redirect()
             ->route('home')
-            ->with('success', 'Pengajuan berhasil. Akun Anda sedang menunggu persetujuan admin.');
+            ->with('success', 'Pengajuan berhasil. Menunggu persetujuan admin.');
     }
 
     public function createCampaign()

@@ -22,16 +22,26 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $campaigns = Campaign::where('user_id', $user->id)
-            ->latest()
-            ->get();
+        $campaigns = $user->campaigns()->latest()->get();
 
-        return view('dashboard.pengelola', [
-            'campaigns' => $campaigns,
-            'totalCampaign' => $campaigns->count(),
-            'approvedCampaign' => $campaigns->where('status', 'approved')->count(),
-            'pendingCampaign' => $campaigns->where('status', 'pending')->count(),
-        ]);
+        $totalCampaign = $campaigns->count();
+        $approvedCampaign = $campaigns->where('status', 'approved')->count();
+        $pendingCampaign = $campaigns->where('status', 'pending')->count();
+
+        // 🔥 ambil bank user (pivot)
+        $userBanks = $user->userBanks()->with('bank')->get();
+
+        // 🔥 total saldo
+        $totalBalance = $userBanks->sum('balance');
+
+        return view('dashboard.pengelola', compact(
+            'campaigns',
+            'totalCampaign',
+            'approvedCampaign',
+            'pendingCampaign',
+            'userBanks',
+            'totalBalance'
+        ));
     }
 
     protected function donaturDashboard($user)

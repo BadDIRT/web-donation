@@ -142,20 +142,23 @@ class AdminController extends Controller
 
         $user = User::findOrFail($id);
 
+        // 🗑️ HAPUS FILE KTP
         if ($user->ktp_path && Storage::disk('local')->exists($user->ktp_path)) {
             Storage::disk('local')->delete($user->ktp_path);
         }
 
-        // Reset data user
+        // 🗑️ HAPUS SEMUA REKENING (pivot)
+        UserBank::where('user_id', $user->id)->delete();
+
+        // 🔄 RESET USER
         $user->update([
-            'role'         => 'donatur',
-            'is_approved'  => false,
-            'phone'        => null,
-            'ktp_path'     => null,
-            'bank_account' => null,
+            'role'        => 'donatur',
+            'is_approved' => false,
+            'phone'       => null,
+            'ktp_path'    => null,
         ]);
 
-        // Kirim notifikasi
+        // 🔔 NOTIFIKASI
         $user->notifications()->create([
             'title'   => 'Pengajuan Ditolak',
             'message' => $request->reason,

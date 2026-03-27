@@ -41,6 +41,11 @@ class Campaign extends Model
         return $this->hasMany(Payout::class);
     }
 
+    public function withdrawls(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
+    }
+
     public function getAvailableBalanceAttribute()
     {
         $paid = $this->payouts()->sum('amount');
