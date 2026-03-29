@@ -17,6 +17,8 @@ class Campaign extends Model
         'article',
         'target_amount',
         'current_amount',
+        'current_amount_rd',
+        'current_amount_rd_pengelola',
         'image',
         'status'
     ];

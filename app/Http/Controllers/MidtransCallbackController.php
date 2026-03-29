@@ -45,6 +45,7 @@ class MidtransCallbackController extends Controller
                 // update progress campaign
                 $campaign->increment('current_amount', $donation->amount);
                 $campaign->increment('current_amount_rd', $donation->amount);
+                $campaign->increment('current_amount_rd_pengelola', $donation->amount);
 
                 // AUTO CLOSE CAMPAIGN
                 if ($campaign->current_amount >= $campaign->target_amount) {

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->bigInteger('target_amount');
             $table->decimal('current_amount', 15, 2)->default(0);
             $table->decimal('current_amount_rd', 15, 2)->default(0);
+            $table->decimal('current_amount_rd_pengelola', 15, 2)->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected', 'closed', 'ended'])->default('pending');
             $table->foreignId('category_id')
                 ->nullable()

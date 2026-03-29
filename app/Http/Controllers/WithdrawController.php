@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserBank;
 use App\Models\Campaign;
 use App\Models\Notification;
 use App\Models\User;
@@ -15,12 +16,13 @@ class WithdrawController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil campaign milik user yang approved
         $campaigns = Campaign::where('user_id', $user->id)
             ->where('status', 'approved')
             ->get();
 
-        return view('withdraw.create', compact('campaigns'));
+        $userBanks = $user->userBanks()->with('bank')->get();
+
+        return view('withdraw.create', compact('campaigns', 'userBanks'));
     }
 
     public function store(Request $request)
@@ -29,6 +31,7 @@ class WithdrawController extends Controller
             'campaign_id' => 'required|exists:campaigns,id',
             'amount'      => 'required|numeric|min:10000',
             'description' => 'required|string|min:5',
+            'bank_id'     => 'required|exists:user_banks,id',
         ]);
 
         $user = Auth::user();
@@ -41,9 +44,9 @@ class WithdrawController extends Controller
             return back()->withErrors(['Campaign tidak valid.']);
         }
 
-        // VALIDASI SALDO
-        if ($request->amount > $campaign->current_amount) {
-            return back()->withErrors(['Saldo campaign tidak mencukupi.']);
+        // VALIDASI SALDO PENGELOLA (BUKAN current_amount)
+        if ($request->amount > $campaign->current_amount_rd_pengelola) {
+            return back()->withErrors(['Saldo pengelola tidak mencukupi.']);
         }
 
         // SIMPAN REQUEST
@@ -52,6 +55,7 @@ class WithdrawController extends Controller
             'campaign_id' => $campaign->id,
             'amount'      => $request->amount,
             'description' => $request->description,
+            'bank_id'     => $request->bank_id,
             'status'      => 'pending',
         ]);
 
