@@ -177,6 +177,41 @@
                     </div>
                 </a>
 
+                <a href="{{ route('admin.withdrawals') }}"
+                    class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition">
+
+                    <div class="flex items-center justify-between mb-3">
+
+                        <h2 class="text-lg font-semibold text-gray-800 group-hover:text-green-600">
+                            Withdraw Request
+                        </h2>
+
+                        <div class="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+
+                                <path stroke-width="2" d="M17 9V7a5 5 0 00-10 0v2M5 9h14l-1 10H6L5 9z" />
+                            </svg>
+                        </div>
+
+                    </div>
+
+                    <p class="text-sm text-gray-500">
+                        Persetujuan penarikan dana pengelola
+                    </p>
+
+                    {{-- BADGE JUMLAH --}}
+                    @if ($pendingWithdraws > 0)
+                        <div class="mt-4">
+                            <span
+                                class="inline-flex items-center px-3 py-1 text-xs font-semibold bg-red-100 text-red-600 rounded-full">
+                                {{ $pendingWithdraws }} pending
+                            </span>
+                        </div>
+                    @endif
+
+                </a>
+
             </div>
 
         </div>

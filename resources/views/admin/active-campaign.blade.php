@@ -111,135 +111,134 @@
 
                 {{-- BODY --}}
                 @forelse($campaigns as $campaign)
+                    {{-- MOBILE --}}
+                    <div class="md:hidden px-5 py-4 border-t space-y-2">
 
-                        {{-- MOBILE --}}
-                        <div class="md:hidden px-5 py-4 border-t space-y-2">
+                        <div class="flex justify-between items-start">
+                            <p class="font-medium text-gray-800 leading-snug">
+                                {{ $campaign->title }}
+                            </p>
 
-                            <div class="flex justify-between items-start">
-                                <p class="font-medium text-gray-800 leading-snug">
-                                    {{ $campaign->title }}
-                                </p>
-
-                                {{-- STATUS --}}
-                                <span
-                                    class="text-xs px-2 py-1 rounded-full whitespace-nowrap
+                            {{-- STATUS --}}
+                            <span
+                                class="text-xs px-2 py-1 rounded-full whitespace-nowrap
             @if ($campaign->status == 'approved') bg-green-100 text-green-700
             @elseif($campaign->status == 'ended') bg-blue-100 text-blue-700
             @elseif($campaign->status == 'closed') bg-red-100 text-red-700 @endif">
-                                    @if ($campaign->status == 'approved')
-                                        Aktif
-                                    @elseif($campaign->status == 'ended')
-                                        Selesai
-                                    @elseif($campaign->status == 'closed')
-                                        Ditutup
-                                    @endif
-                                </span>
+                                @if ($campaign->status == 'approved')
+                                    Aktif
+                                @elseif($campaign->status == 'ended')
+                                    Selesai
+                                @elseif($campaign->status == 'closed')
+                                    Ditutup
+                                @endif
+                            </span>
+                        </div>
+
+                        <p class="text-xs text-gray-500">
+                            ID: {{ $campaign->id }} •
+                            Target: Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}
+                        </p>
+
+                        <div class="text-sm text-gray-600">
+                            {{ $campaign->user->name }}
+                            <div class="text-xs text-gray-400 break-all">
+                                {{ $campaign->user->email }}
                             </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-2">
+                            <a href="{{ route('admin.campaign.show', $campaign->id) }}"
+                                class="flex-1 text-center px-3 py-2 text-sm rounded-xl border">
+                                Detail
+                            </a>
+
+                            <a href="{{ route('campaign.show', $campaign->slug) }}"
+                                class="flex-1 text-center px-3 py-2 text-sm rounded-xl border border-blue-300 text-blue-600">
+                                Lihat
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- DESKTOP --}}
+                    <div
+                        class="hidden md:grid grid-cols-12
+    px-6 py-5 border-t
+    hover:bg-gray-50 transition items-center gap-3">
+
+                        {{-- CAMPAIGN --}}
+                        <div class="col-span-4 min-w-0">
+                            <p class="font-medium text-gray-800 truncate">
+                                {{ $campaign->title }}
+                            </p>
 
                             <p class="text-xs text-gray-500">
                                 ID: {{ $campaign->id }} •
                                 Target: Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}
                             </p>
-
-                            <div class="text-sm text-gray-600">
-                                {{ $campaign->user->name }}
-                                <div class="text-xs text-gray-400 break-all">
-                                    {{ $campaign->user->email }}
-                                </div>
-                            </div>
-
-                            <div class="flex gap-2 pt-2">
-                                <a href="{{ route('admin.campaign.show', $campaign->id) }}"
-                                    class="flex-1 text-center px-3 py-2 text-sm rounded-xl border">
-                                    Detail
-                                </a>
-
-                                <a href="{{ route('campaign.show', $campaign->slug) }}"
-                                    class="flex-1 text-center px-3 py-2 text-sm rounded-xl border border-blue-300 text-blue-600">
-                                    Lihat
-                                </a>
-                            </div>
                         </div>
 
-                        {{-- DESKTOP --}}
-                        <div
-                            class="hidden md:grid grid-cols-12
-    px-6 py-5 border-t
-    hover:bg-gray-50 transition items-center gap-3">
-
-                            {{-- CAMPAIGN --}}
-                            <div class="col-span-4 min-w-0">
-                                <p class="font-medium text-gray-800 truncate">
-                                    {{ $campaign->title }}
-                                </p>
-
-                                <p class="text-xs text-gray-500">
-                                    ID: {{ $campaign->id }} •
-                                    Target: Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}
-                                </p>
-                            </div>
-
-                            {{-- STATUS --}}
-                            <div class="col-span-2">
-                                <span
-                                    class="inline-block text-xs px-2 py-1 rounded-full whitespace-nowrap
+                        {{-- STATUS --}}
+                        <div class="col-span-2">
+                            <span
+                                class="inline-block text-xs px-2 py-1 rounded-full whitespace-nowrap
             @if ($campaign->status == 'approved') bg-green-100 text-green-700
             @elseif($campaign->status == 'ended') bg-blue-100 text-blue-700
             @elseif($campaign->status == 'closed') bg-red-100 text-red-700 @endif">
-                                    @if ($campaign->status == 'approved')
-                                        Aktif
-                                    @elseif($campaign->status == 'ended')
-                                        Selesai
-                                    @elseif($campaign->status == 'closed')
-                                        Ditutup
-                                    @endif
-                                </span>
-                            </div>
-
-                            {{-- USER --}}
-                            <div class="col-span-3 text-sm text-gray-600 min-w-0">
-                                <p class="truncate">{{ $campaign->user->name }}</p>
-                                <p class="text-xs text-gray-400 truncate">
-                                    {{ $campaign->user->email }}
-                                </p>
-                            </div>
-
-                            {{-- ACTION --}}
-                            <div class="col-span-3 flex justify-end gap-2 flex-wrap">
-                                <a href="{{ route('admin.campaign.show', $campaign->id) }}"
-                                    class="px-4 py-2 rounded-xl text-sm border">
-                                    Detail
-                                </a>
-
-                                <a href="{{ route('campaign.show', $campaign->slug) }}"
-                                    class="px-4 py-2 rounded-xl text-sm border border-blue-300 text-blue-600">
-                                    Lihat
-                                </a>
-                            </div>
-
+                                @if ($campaign->status == 'approved')
+                                    Aktif
+                                @elseif($campaign->status == 'ended')
+                                    Selesai
+                                @elseif($campaign->status == 'closed')
+                                    Ditutup
+                                @endif
+                            </span>
                         </div>
 
-                    @empty
-
-                        <div class="px-6 py-16 text-center text-gray-500">
-
-                            @if (request('q'))
-                                Tidak ditemukan campaign dengan kata kunci
-                                <span class="font-medium text-gray-700">
-                                    "{{ request('q') }}"
-                                </span>
-                            @else
-                                Tidak ada campaign aktif
-                            @endif
-
+                        {{-- USER --}}
+                        <div class="col-span-3 text-sm text-gray-600 min-w-0">
+                            <p class="truncate">{{ $campaign->user->name }}</p>
+                            <p class="text-xs text-gray-400 truncate">
+                                {{ $campaign->user->email }}
+                            </p>
                         </div>
-                    @endforelse
-                    {{-- PAGINATION --}}
-                    @if ($campaigns->hasPages())
-                        <div class="px-6 py-4 border-t bg-gray-50">
-                            {{ $campaigns->links() }}
+
+                        {{-- ACTION --}}
+                        <div class="col-span-3 flex justify-end gap-2 flex-wrap">
+                            <a href="{{ route('admin.campaign.show', $campaign->id) }}"
+                                class="px-4 py-2 rounded-xl text-sm border">
+                                Detail
+                            </a>
+
+                            <a href="{{ route('campaign.show', $campaign->slug) }}"
+                                class="px-4 py-2 rounded-xl text-sm border border-blue-300 text-blue-600">
+                                Lihat
+                            </a>
                         </div>
-                    @endif
+
+                    </div>
+
+                @empty
+
+                    <div class="px-6 py-16 text-center text-gray-500">
+
+                        @if (request('q'))
+                            Tidak ditemukan campaign dengan kata kunci
+                            <span class="font-medium text-gray-700">
+                                "{{ request('q') }}"
+                            </span>
+                        @else
+                            Tidak ada campaign aktif
+                        @endif
+
+                    </div>
+                @endforelse
+                {{-- PAGINATION --}}
+                @if ($campaigns->hasPages())
+                    <div class="px-6 py-4 border-t bg-gray-50">
+                        {{ $campaigns->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

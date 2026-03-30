@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\User;
 use App\Models\UserBank;
+use App\Models\Withdraw;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,11 @@ class AdminController extends Controller
             'totalUsers' => User::count(),
             'totalCampaigns' => Campaign::count(),
             'totalDonations' => Campaign::sum('current_amount'),
+            'totalBankBalance'  => UserBank::sum('balance'),
+            'userBanks'         => UserBank::with('bank')->get(),
+
+            // 🔥 TAMBAHAN
+            'pendingWithdraws'  => Withdraw::where('status', 'pending')->count(),
 
             // 🔥 INI YANG DIPAKE
             'userBanks' => $userBanks,

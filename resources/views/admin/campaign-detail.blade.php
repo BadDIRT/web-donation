@@ -167,9 +167,7 @@
 
                                 </select>
 
-                                {{-- REKENING --}}
-                                <input type="text" name="bank_account" required placeholder="Nomor rekening tujuan"
-                                    class="w-full border rounded-xl p-3 text-sm">
+                                
 
                                 {{-- ACTION --}}
                                 <div class="flex justify-end gap-2">
