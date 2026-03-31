@@ -80,10 +80,11 @@ class PengelolaController extends Controller
 
         foreach ($admins as $admin) {
             Notification::create([
-                'user_id' => $admin->id,
-                'title'   => 'Pengajuan Pengelola Baru',
-                'message' => "{$user->name} mengajukan diri sebagai penggalang dana.",
-                'type'    => 'pengelola',
+                'user_id'  => $admin->id,         // penerima (admin)
+                'actor_id' => $user->id,          // yang melakukan (user submit)
+                'title'    => 'Pengajuan Pengelola Baru',
+                'message'  => "{$user->name} (ID: {$user->id}) mengajukan sebagai pengelola.",
+                'type'     => 'pengelola_request',
             ]);
         }
 

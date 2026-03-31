@@ -17,7 +17,7 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $campaigns = Campaign::query()
-            ->with('category') // ✅ EAGER LOADING
+            ->with(['category', 'user']) // 🔥 FIX
             ->where('status', 'approved')
 
             // SEARCH
@@ -63,6 +63,8 @@ class CampaignController extends Controller
         if ($campaign->status !== 'approved') {
             abort(404);
         }
+
+        $campaign->load(['user', 'category']); // 🔥 FIX
 
         $topDonors = $campaign->donations()
             ->where('status', 'success')
@@ -128,18 +130,61 @@ class CampaignController extends Controller
 
         $admins = User::where('role', 'admin')->get();
 
+        $actor = auth()->user();
+
         foreach ($admins as $admin) {
             Notification::create([
-                'user_id' => $admin->id,
-                'title'   => 'Pengajuan Campaign Baru',
-                'message' => auth()->user()->name .
-                    " membuat campaign '{$campaign->title}' dan menunggu persetujuan.",
-                'type'    => 'campaign',
+                'user_id'  => $admin->id,          // penerima (admin)
+                'actor_id' => $actor->id,          // yang bikin campaign
+                'title'    => 'Pengajuan Campaign Baru',
+                'message'  => "{$actor->name} mengajukan campaign \"{$campaign->title}\" untuk disetujui.",
+                'type'     => 'campaign_request',
             ]);
         }
 
         return redirect()
             ->route('dashboard')
             ->with('success', 'Campaign berhasil dibuat & menunggu approval admin');
+    }
+
+    public function changeStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:approved,closed,ended',
+            'reason' => 'required|string|min:5'
+        ]);
+
+        $campaign = Campaign::with('user')->findOrFail($id);
+
+        $oldStatus = $campaign->status;
+
+        if ($campaign->status === $request->status) {
+            return back()->withErrors(['Status sudah sama.']);
+        }
+
+        // mapping status biar user-friendly
+        $statusLabel = [
+            'approved' => 'Aktif',
+            'closed'   => 'Ditutup',
+            'ended'    => 'Berakhir',
+        ];
+
+        // update status
+        $campaign->update([
+            'status' => $request->status
+        ]);
+
+        // notifikasi ke pengelola
+        Notification::create([
+            'user_id' => $campaign->user_id,
+            'actor_id' => auth()->id(),
+            'title'   => 'Status Campaign Diubah',
+            'message' => 'Campaign "' . $campaign->title . '" sekarang berstatus '
+                . $statusLabel[$request->status] .
+                '. Alasan: ' . $request->reason,
+            'type'    => 'campaign_status_changed'
+        ]);
+
+        return back()->with('success', '✅ Status campaign berhasil diubah');
     }
 }

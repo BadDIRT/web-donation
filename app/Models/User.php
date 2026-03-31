@@ -27,6 +27,7 @@ class User extends Authenticatable
         'is_approved',
         'phone',
         'ktp_path',
+        'total_withdrawal',
     ];
 
     public function donations(): HasMany
@@ -61,11 +62,10 @@ class User extends Authenticatable
         return $this->hasMany(UserBank::class);
     }
 
-    public function withdrawls(): HasMany
+    public function withdraws(): HasMany
     {
-        return $this->hasMany(Campaign::class);
+        return $this->hasMany(Withdraw::class);
     }
-
     /**
      * The attributes that should be hidden for serialization.
      *

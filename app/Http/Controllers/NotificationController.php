@@ -9,7 +9,8 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Notification::where('user_id', auth()->id())
+        $notifications = Notification::with(['actor']) // 🔥 FIX
+            ->where('user_id', auth()->id())
             ->latest()
             ->get();
 

@@ -140,6 +140,7 @@ class WithdrawController extends Controller
             // 5. NOTIFIKASI
             Notification::create([
                 'user_id' => $withdraw->user_id,
+                'actor_id' => auth()->id(),
                 'title'   => 'Withdraw Disetujui',
                 'message' => 'Pengajuan penarikan kamu sudah disetujui admin sebesar Rp '
                     . number_format($withdraw->amount, 0, ',', '.') .
@@ -171,9 +172,6 @@ class WithdrawController extends Controller
         $withdraw = Withdraw::with(['campaign', 'user'])->findOrFail($id);
 
         DB::transaction(function () use ($withdraw, $request) {
-
-            // ❗ BALIKIN SALDO PENGELOLA (karena sebelumnya "dikunci")
-            $withdraw->campaign->increment('current_amount_rd_pengelola', $withdraw->amount);
 
             // UPDATE STATUS + SIMPAN ALASAN
             $withdraw->update([

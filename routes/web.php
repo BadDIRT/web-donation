@@ -148,5 +148,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/withdrawals/{id}/approve', [WithdrawController::class, 'approve'])->name('admin.withdrawals.approve');
         Route::post('/admin/withdrawals/{id}/reject', [WithdrawController::class, 'reject'])
             ->name('admin.withdrawals.reject');
+
+        Route::post('/admin/campaign/{id}/change-status', [CampaignController::class, 'changeStatus'])
+            ->name('admin.campaign.changeStatus');
+
+        Route::get('/admin/activities', [AdminController::class, 'activities'])
+            ->name('admin.activities');
+
+        Route::get('/admin/activities/{notification}', [AdminController::class, 'activityDetail'])
+            ->name('admin.activities.show');
     });
 });

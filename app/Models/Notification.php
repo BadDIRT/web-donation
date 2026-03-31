@@ -9,10 +9,11 @@ class Notification extends Model
 {
     protected $fillable = [
         'user_id',
+        'actor_id',
         'title',
         'message',
         'type',
-        'is_read'
+        'is_read',
     ];
 
     protected $casts = [
@@ -22,5 +23,10 @@ class Notification extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function actor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'actor_id');
     }
 }

@@ -47,6 +47,21 @@ class MidtransCallbackController extends Controller
                 $campaign->increment('current_amount_rd', $donation->amount);
                 $campaign->increment('current_amount_rd_pengelola', $donation->amount);
 
+                // 🔥 AMBIL SEMUA ADMIN
+            $admins = User::where('role', 'admin')->get();
+
+            // 🔥 KIRIM NOTIF KE SEMUA ADMIN
+            foreach ($admins as $admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'actor_id' => null, // system
+                    'title'   => 'Donasi Masuk',
+                    'message' => 'Donasi sebesar Rp ' . number_format($donation->amount, 0, ',', '.') .
+                        ' masuk ke campaign "' . $campaign->title . '".',
+                    'type'    => 'donation_success'
+                ]);
+            }
+
                 // AUTO CLOSE CAMPAIGN
                 if ($campaign->current_amount >= $campaign->target_amount) {
 

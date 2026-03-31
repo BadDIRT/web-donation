@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('actor_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+            $table->json('meta')->nullable();
             $table->string('title');
             $table->text('message');
             $table->string('type')->nullable();
@@ -27,6 +32,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('notifications', function (Blueprint $table) {
+            $table->dropForeign(['actor_id']);
+            $table->dropColumn('actor_id');
+        });
         Schema::dropIfExists('notifications');
     }
 };

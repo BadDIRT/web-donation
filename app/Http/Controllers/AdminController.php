@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\Donation;
+use App\Models\Notification;
 use App\Models\User;
 use App\Models\UserBank;
 use App\Models\Withdraw;
@@ -71,9 +72,11 @@ class AdminController extends Controller
         ]);
 
         $user->notifications()->create([
-            'title' => 'Pengajuan Disetujui',
-            'message' => 'Selamat! Pengajuan Anda sebagai pengelola telah disetujui.',
-            'type' => 'pengelola_approve'
+            'user_id'  => $user->id,
+            'actor_id' => auth()->id(),
+            'title'    => 'Pengajuan Disetujui',
+            'message'  => "{$user->name} telah disetujui sebagai pengelola.",
+            'type'     => 'pengelola_approve'
         ]);
 
         return back()->with('success', 'Pengelola disetujui');
@@ -83,7 +86,8 @@ class AdminController extends Controller
     {
         $search = $request->query('q');
 
-        $campaigns = Campaign::where('status', 'pending')
+        $campaigns = Campaign::with('user') // 🔥 FIX
+            ->where('status', 'pending')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
@@ -113,10 +117,15 @@ class AdminController extends Controller
 
         $campaign->update(['status' => 'rejected']);
 
-        $campaign->user->notifications()->create([
-            'title' => 'Campaign Ditolak',
-            'message' => "Maaf, campaign Anda '{$campaign->title}' ditolak. Alasan: " . $request->reason,
-            'type' => 'campaign_reject'
+        $actor = auth()->user();
+        $target = $campaign->user;
+
+        $target->notifications()->create([
+            'user_id'  => $target->id, // optional (sudah otomatis sebenarnya)
+            'actor_id' => $actor->id,  // 🔥 admin yang reject
+            'title'    => 'Campaign Ditolak',
+            'message'  => "{$actor->name} menolak campaign \"{$campaign->title}\". Alasan: {$request->reason}",
+            'type'     => 'campaign_reject',
         ]);
 
         return back()->with('success', 'Campaign ditolak');
@@ -126,10 +135,15 @@ class AdminController extends Controller
     {
         $campaign->update(['status' => 'approved']);
 
-        $campaign->user->notifications()->create([
-            'title' => 'Campaign Disetujui',
-            'message' => "Campaign Anda '{$campaign->title}' telah disetujui dan sekarang live!",
-            'type' => 'campaign_approve'
+        $actor = auth()->user();
+        $target = $campaign->user;
+
+        $target->notifications()->create([
+            'user_id'  => $target->id, // optional (karena pakai relasi)
+            'actor_id' => $actor->id,  // 🔥 admin yang approve
+            'title'    => 'Campaign Disetujui',
+            'message'  => "{$actor->name} menyetujui campaign \"{$campaign->title}\" dan sekarang sudah aktif.",
+            'type'     => 'campaign_approve',
         ]);
 
         return back()->with('success', 'Campaign disetujui');
@@ -164,11 +178,12 @@ class AdminController extends Controller
             'ktp_path'    => null,
         ]);
 
-        // 🔔 NOTIFIKASI
         $user->notifications()->create([
-            'title'   => 'Pengajuan Ditolak',
-            'message' => $request->reason,
-            'type'    => 'pengelola_reject'
+            'user_id'  => $user->id,          // 🔥 target (yang menerima notif)
+            'actor_id' => auth()->id(),       // 🔥 admin yang melakukan aksi
+            'title'    => 'Pengajuan Ditolak',
+            'message'  => 'Pengajuan Anda ditolak oleh admin. Alasan: ' . $request->reason,
+            'type'     => 'pengelola_reject'
         ]);
 
         return back()->with('success', 'Pengajuan berhasil ditolak.');
@@ -245,5 +260,35 @@ class AdminController extends Controller
             ->withQueryString();
 
         return view('admin.active-campaign', compact('campaigns'));
+    }
+
+    public function activities(Request $request)
+    {
+        $query = Notification::with(['user', 'actor'])->latest();
+
+        // SEARCH
+        if ($request->q) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->q . '%')
+                    ->orWhere('message', 'like', '%' . $request->q . '%');
+            });
+        }
+
+        // FILTER TYPE
+        if ($request->type) {
+            $query->where('type', $request->type);
+        }
+
+        $notifications = $query->paginate(10)->withQueryString();
+
+        return view('activities.index', compact('notifications'));
+    }
+
+    public function activityDetail($id)
+    {
+        $notification = Notification::with(['user', 'actor'])
+            ->findOrFail($id);
+
+        return view('activities.show', compact('notification'));
     }
 }

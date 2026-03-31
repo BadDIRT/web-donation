@@ -18,47 +18,69 @@
             </div>
 
             {{-- PILIH BANK ADMIN --}}
-            <form method="POST" action="{{ route('admin.withdrawals.approve', $withdraw->id) }}">
-                @csrf
+            <div x-data="{
+                mode: null, // 'approve' | 'reject'
+                selectedBank: null
+            }" class="space-y-6">
 
-                <div>
-                    <label class="text-sm font-medium">Pilih Bank Admin</label>
+                {{-- FORM APPROVE --}}
+                <form method="POST" action="{{ route('admin.withdrawals.approve', $withdraw->id) }}">
+                    @csrf
 
-                    <div class="grid gap-3 mt-2">
+                    {{-- PILIH BANK (HANYA MUNCUL SAAT APPROVE) --}}
+                    <div x-show="mode !== 'reject'">
 
-                        @foreach ($adminBanks as $bank)
-                            <label
-                                class="border rounded-xl p-4 cursor-pointer flex justify-between items-center hover:shadow">
+                        <label class="text-sm font-medium">Pilih Bank Admin</label>
 
-                                <input type="radio" name="admin_bank_id" value="{{ $bank->id }}" class="hidden peer"
-                                    required>
+                        <div class="grid gap-3 mt-2">
 
-                                <div>
-                                    <p class="font-semibold">{{ $bank->bank->name }}</p>
-                                    <p class="text-sm text-gray-500">{{ $bank->account_number }}</p>
-                                    <p class="text-green-600 font-medium">
-                                        Rp {{ number_format($bank->balance, 0, ',', '.') }}
-                                    </p>
+                            @foreach ($adminBanks as $bank)
+                                <div @click="
+                            if(selectedBank == '{{ $bank->id }}'){
+                                selectedBank = null
+                                mode = null
+                            } else {
+                                selectedBank = '{{ $bank->id }}'
+                                mode = 'approve'
+                            }
+                        "
+                                    class="border rounded-xl p-4 cursor-pointer flex justify-between items-center hover:shadow transition"
+                                    :class="selectedBank == '{{ $bank->id }}' ?
+                                        'border-green-500 bg-green-50 ring-2 ring-green-200' :
+                                        'border-gray-200'">
+
+                                    <input type="hidden" name="admin_bank_id" :value="selectedBank">
+
+                                    <div>
+                                        <p class="font-semibold">{{ $bank->bank->name }}</p>
+                                        <p class="text-sm text-gray-500">{{ $bank->account_number }}</p>
+                                        <p class="text-green-600 font-medium">
+                                            Rp {{ number_format($bank->balance, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+
+                                    <div x-show="selectedBank == '{{ $bank->id }}'" class="text-green-500 text-xl">
+                                        ✔
+                                    </div>
+
                                 </div>
+                            @endforeach
 
-                                <div class="hidden peer-checked:block text-green-500 text-xl">
-                                    ✔
-                                </div>
-
-                            </label>
-                        @endforeach
-
+                        </div>
                     </div>
-                </div>
 
-                <button class="w-full mt-6 bg-green-500 text-white py-3 rounded-xl font-semibold">
-                    Approve Sekarang
-                </button>
+                    {{-- BUTTON APPROVE --}}
+                    <button x-show="mode !== 'reject'" :disabled="!selectedBank"
+                        class="w-full mt-6 bg-green-500 disabled:bg-gray-300 text-white py-3 rounded-xl font-semibold">
+                        Approve Sekarang
+                    </button>
+
+                </form>
 
                 {{-- REJECT SECTION --}}
-                <div x-data="{ openReject: false }" class="mt-4">
+                <div x-show="mode !== 'approve'" x-data="{ openReject: false }">
 
-                    <button type="button" @click="openReject = !openReject"
+                    <button type="button" @click="mode = 'reject'; openReject = !openReject; selectedBank = null"
                         class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-semibold">
                         Tolak Pengajuan
                     </button>
@@ -81,7 +103,7 @@
                     </div>
                 </div>
 
-            </form>
+            </div>
 
         </div>
 
