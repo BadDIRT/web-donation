@@ -14,6 +14,7 @@ class Withdraw extends Model
         'description',
         'bank_id',
         'status',
+        'transfer_proof',
     ];
     
     public function user(): BelongsTo

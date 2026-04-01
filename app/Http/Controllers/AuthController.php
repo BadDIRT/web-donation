@@ -39,13 +39,13 @@ class AuthController extends Controller
         $user = auth()->user();
 
         return match ($user->role) {
-            'admin'     => redirect()->route('home')
+            'admin' => redirect()->route('admin.dashboard')
                 ->with('success', 'Login berhasil, selamat datang admin!'),
 
-            'pengelola' => redirect()->route('home')
+            'pengelola' => redirect()->route('dashboard.pengelola')
                 ->with('success', 'Login berhasil, selamat datang pengelola!'),
 
-            default     => redirect()->route('home')
+            default => redirect()->route('dashboard.donatur')
                 ->with('success', 'Login berhasil, selamat datang donatur!'),
         };
     }

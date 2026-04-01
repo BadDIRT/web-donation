@@ -32,7 +32,7 @@ class WithdrawController extends Controller
             'campaign_id' => 'required|exists:campaigns,id',
             'amount'      => 'required|numeric|min:10000',
             'description' => 'required|string|min:5',
-            'bank_id'     => 'required|exists:user_banks,id',
+            'user_bank_id' => 'required|exists:user_banks,id',
         ]);
 
         $user = Auth::user();
@@ -50,13 +50,22 @@ class WithdrawController extends Controller
             return back()->withErrors(['Saldo pengelola tidak mencukupi.']);
         }
 
+        $userBank = UserBank::with('bank')
+            ->where('id', $request->user_bank_id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$userBank) {
+            return back()->withErrors(['Rekening tidak valid.']);
+        }
+
         // SIMPAN REQUEST
         $withdraw = Withdraw::create([
             'user_id'     => $user->id,
             'campaign_id' => $campaign->id,
             'amount'      => $request->amount,
             'description' => $request->description,
-            'bank_id'     => $request->bank_id,
+            'bank_id'     => $userBank->bank_id, // ✅ FIX
             'status'      => 'pending',
         ]);
 
@@ -67,16 +76,30 @@ class WithdrawController extends Controller
 
         foreach ($admins as $admin) {
             Notification::create([
-                'user_id' => $admin->id,
-                'title'   => 'Pengajuan Penarikan Dana',
-                'message' => "{$user->name} mengajukan penarikan Rp " . number_format($request->amount, 0, ',', '.') . " dari campaign \"{$campaign->title}\".",
-                'type'    => 'withdraw_request',
+                'user_id'  => $admin->id,
+                'actor_id' => $user->id,
+                'title'    => 'Pengajuan Penarikan Dana',
+                'message'  => "{$user->name} mengajukan penarikan sebesar Rp "
+                    . number_format($withdraw->amount, 0, ',', '.')
+                    . " dari campaign \"{$campaign->title}\" ke rekening {$userBank->bank->name} ({$userBank->account_number}).",
+                'type'     => 'withdraw_request',
             ]);
         }
 
-        return redirect()
-            ->route('dashboard')
-            ->with('success', '✅ Pengajuan penarikan berhasil dikirim, menunggu persetujuan admin.');
+        // =========================
+        // 🔔 NOTIFIKASI KE PENGELOLA
+        // =========================
+        Notification::create([
+            'user_id'  => $user->id,
+            'actor_id' => $user->id,
+            'title'    => 'Pengajuan Penarikan Berhasil',
+            'message'  => "Pengajuan penarikan dana sebesar Rp "
+                . number_format($withdraw->amount, 0, ',', '.')
+                . " dari campaign \"{$campaign->title}\" sedang diproses. Estimasi verifikasi maksimal 3x24 jam.",
+            'type'     => 'withdraw_submitted',
+        ]);
+
+        return redirect()->route('withdraw.success');
     }
 
     public function adminIndex(Request $request)
@@ -104,53 +127,45 @@ class WithdrawController extends Controller
     public function approve(Request $request, $id)
     {
         $request->validate([
-            'admin_bank_id' => 'required|exists:user_banks,id',
+            'transfer_proof' => 'required|image|mimes:jpg,jpeg,png|max:4096',
         ]);
 
         $withdraw = Withdraw::with(['campaign', 'user', 'bank'])->findOrFail($id);
 
-        $adminBank = UserBank::findOrFail($request->admin_bank_id);
+        // upload bukti transfer
+        $path = $request->file('transfer_proof')->store('transfer_proofs', 'public');
 
-        // VALIDASI SALDO ADMIN
-        if ($adminBank->balance < $withdraw->amount) {
-            return back()->withErrors(['Saldo admin tidak mencukupi.']);
+        try {
+            DB::transaction(function () use ($withdraw, $path) {
+
+                if ($withdraw->campaign->current_amount_rd_pengelola < $withdraw->amount) {
+                    throw new \Exception('Saldo campaign tidak mencukupi.');
+                }
+
+                $withdraw->campaign->decrement('current_amount_rd_pengelola', $withdraw->amount);
+
+                $withdraw->update([
+                    'status' => 'approved',
+                    'transfer_proof' => $path,
+                ]);
+
+                Notification::create([
+                    'user_id'  => $withdraw->user_id,
+                    'actor_id' => auth()->id(),
+                    'title'    => 'Penarikan Disetujui',
+                    'message'  => "Penarikan dana sebesar Rp "
+                        . number_format($withdraw->amount, 0, ',', '.')
+                        . " telah ditransfer.",
+                    'type'     => 'withdraw_approved',
+                ]);
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors([$e->getMessage()]);
         }
 
-        DB::transaction(function () use ($withdraw, $adminBank) {
-
-            if ($withdraw->campaign->current_amount_rd_pengelola < $withdraw->amount) {
-                throw new \Exception('Saldo campaign tidak mencukupi.');
-            }
-
-            // 1. KURANGI SALDO ADMIN
-            $adminBank->decrement('balance', $withdraw->amount);
-
-            // 2. TAMBAH SALDO USER (REKENING YANG DIA PILIH)
-            $userBank = UserBank::findOrFail($withdraw->bank_id);
-            $userBank->increment('balance', $withdraw->amount);
-
-            // 3. KURANGI SALDO PENGELOLA (campaign)
-            $withdraw->campaign->decrement('current_amount_rd_pengelola', $withdraw->amount);
-
-            // 4. UPDATE STATUS
-            $withdraw->update([
-                'status' => 'approved',
-            ]);
-
-            // 5. NOTIFIKASI
-            Notification::create([
-                'user_id' => $withdraw->user_id,
-                'actor_id' => auth()->id(),
-                'title'   => 'Withdraw Disetujui',
-                'message' => 'Pengajuan penarikan kamu sudah disetujui admin sebesar Rp '
-                    . number_format($withdraw->amount, 0, ',', '.') .
-                    '. Dana sudah masuk ke rekening kamu.',
-                'type'    => 'withdraw_approved'
-            ]);
-        });
-
-        return redirect()->route('admin.withdrawals')
-            ->with('success', '✅ Withdraw berhasil di-approve');
+        return redirect()
+            ->route('admin.withdrawals')
+            ->with('success', 'Penarikan berhasil di-approve & bukti transfer diupload.');
     }
 
     public function adminShow($id)
@@ -179,16 +194,52 @@ class WithdrawController extends Controller
                 'reason' => $request->reason
             ]);
 
-            // NOTIFIKASI KE USER
             Notification::create([
-                'user_id' => $withdraw->user_id,
-                'title'   => 'Penarikan Ditolak',
-                'message' => 'Pengajuan penarikan kamu ditolak admin. Alasan: ' . $request->reason,
-                'type'    => 'withdraw_rejected'
+                'user_id'  => $withdraw->user_id,   // penerima (pengelola)
+                'actor_id' => auth()->id(),         // 🔥 admin sebagai pelaku
+                'title'    => 'Penarikan Ditolak',
+                'message'  => "Pengajuan penarikan dana sebesar Rp "
+                    . number_format($withdraw->amount, 0, ',', '.')
+                    . " dari campaign \"{$withdraw->campaign->title}\" ditolak oleh admin. Alasan: {$request->reason}",
+                'type'     => 'withdraw_rejected',
             ]);
         });
 
         return redirect()->route('admin.withdrawals')
-            ->with('success', '❌ Withdraw berhasil ditolak');
+            ->with('success', 'Withdraw berhasil ditolak');
+    }
+
+    public function history(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = Withdraw::with('campaign')
+            ->where('user_id', $user->id)
+            ->latest();
+
+        // 🔎 FILTER STATUS (optional)
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // 🔎 SEARCH CAMPAIGN
+        if ($request->search) {
+            $query->whereHas('campaign', function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $withdraws = $query->paginate(10)->withQueryString();
+
+        return view('withdraw.history', compact('withdraws'));
+    }
+
+    public function show($id)
+    {
+        $withdraw = Withdraw::with(['campaign', 'bank'])
+            ->where('user_id', auth()->id())
+            ->findOrFail($id);
+
+        return view('withdraw.show', compact('withdraw'));
     }
 }

@@ -88,9 +88,16 @@ class PengelolaController extends Controller
             ]);
         }
 
-        return redirect()
-            ->route('home')
-            ->with('success', 'Pengajuan berhasil. Menunggu persetujuan admin.');
+        // 🔔 NOTIFIKASI KE USER (DIRI SENDIRI)
+        Notification::create([
+            'user_id'  => $user->id,
+            'actor_id' => $user->id,
+            'title'    => 'Pengajuan Pengelola Berhasil',
+            'message'  => "Pengajuan Anda sebagai pengelola sedang diproses. Estimasi verifikasi maksimal 3x24 jam.",
+            'type'     => 'pengelola_submitted',
+        ]);
+
+        return redirect()->route('pengelola.success');
     }
 
     public function createCampaign()

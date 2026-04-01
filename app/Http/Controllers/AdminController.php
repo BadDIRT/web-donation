@@ -31,7 +31,6 @@ class AdminController extends Controller
             'totalUsers' => User::count(),
             'totalCampaigns' => Campaign::count(),
             'totalDonations' => Campaign::sum('current_amount'),
-            'totalBankBalance'  => UserBank::sum('balance'),
             'userBanks'         => UserBank::with('bank')->get(),
 
             // 🔥 TAMBAHAN

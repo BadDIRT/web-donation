@@ -84,17 +84,21 @@
                 <div>
                     <label class="text-sm font-medium">Pilih Rekening</label>
 
-                    <select name="bank_id" required class="w-full border rounded-xl p-3 mt-1">
+                    <select name="user_bank_id" required class="w-full border rounded-xl p-3 mt-1">
 
                         <option value="">-- Pilih Rekening --</option>
 
                         @foreach ($userBanks as $bank)
-                            <option value="{{ $bank->id }}">
+                            <option value="{{ $bank->id }}"
+                                {{ old('user_bank_id', $bank->is_primary ? $bank->id : '') == $bank->id ? 'selected' : '' }}>
                                 {{ $bank->bank->name }} - {{ $bank->account_number }}
                             </option>
                         @endforeach
 
                     </select>
+                    @error('user_bank_id')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- DESCRIPTION --}}

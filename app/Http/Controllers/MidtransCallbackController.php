@@ -44,7 +44,6 @@ class MidtransCallbackController extends Controller
                 $campaign = $donation->campaign;
                 // update progress campaign
                 $campaign->increment('current_amount', $donation->amount);
-                $campaign->increment('current_amount_rd', $donation->amount);
                 $campaign->increment('current_amount_rd_pengelola', $donation->amount);
 
                 // 🔥 AMBIL SEMUA ADMIN

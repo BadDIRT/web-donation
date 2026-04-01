@@ -125,10 +125,10 @@
                 @if ($campaign->status === 'approved')
                     <div x-data="{ withdraw: false }" class="pt-6 border-t flex justify-end">
 
-                        <button @click="withdraw=true"
-                            class="px-5 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold shadow-sm">
+                        <a href="https://dashboard.midtrans.com/settings/withdrawal" target="_blank"
+                            class="px-5 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold shadow-sm inline-block">
                             Tarik Dana
-                        </button>
+                        </a>
 
                         {{-- MODAL --}}
                         <div x-show="withdraw" x-cloak

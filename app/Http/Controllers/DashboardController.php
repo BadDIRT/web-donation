@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Donation;
 use App\Models\Campaign;
+use App\Models\Donation;
+use App\Models\Withdraw;
 
 class DashboardController extends Controller
 {
@@ -13,25 +14,30 @@ class DashboardController extends Controller
 
         return match ($user->role) {
             'admin'     => redirect()->route('admin.dashboard'),
-            'pengelola' => $this->pengelolaDashboard($user),
-            default     => $this->donaturDashboard($user),
+            'pengelola' => redirect()->route('dashboard.pengelola'),
+            default     => redirect()->route('dashboard.donatur'),
         };
     }
 
-    protected function pengelolaDashboard($user)
+    public function pengelolaDashboard()
     {
         $user = auth()->user();
 
-        $campaigns = $user->campaigns()->latest()->get();
+        $campaigns = $user->campaigns()
+            ->latest()
+            ->with('category')
+            ->get();
 
-        $totalCampaign = $campaigns->count();
+        $withdraws = Withdraw::where('user_id', auth()->id())
+            ->with('campaign')
+            ->latest()
+            ->get();
+
+        $totalCampaign    = $campaigns->count();
         $approvedCampaign = $campaigns->where('status', 'approved')->count();
-        $pendingCampaign = $campaigns->where('status', 'pending')->count();
+        $pendingCampaign  = $campaigns->where('status', 'pending')->count();
 
-        // 🔥 ambil bank user (pivot)
         $userBanks = $user->userBanks()->with('bank')->get();
-
-        // 🔥 total saldo
         $totalBalance = $userBanks->sum('balance');
 
         return view('dashboard.pengelola', compact(
@@ -40,13 +46,17 @@ class DashboardController extends Controller
             'approvedCampaign',
             'pendingCampaign',
             'userBanks',
-            'totalBalance'
+            'totalBalance',
+            'withdraws'
         ));
     }
 
-    protected function donaturDashboard($user)
+    public function donaturDashboard()
     {
+        $user = auth()->user();
+
         $donations = Donation::where('user_id', $user->id)
+            ->with('campaign')
             ->latest()
             ->get();
 

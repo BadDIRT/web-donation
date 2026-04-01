@@ -132,19 +132,27 @@ class CampaignController extends Controller
 
         $actor = auth()->user();
 
+        // 🔔 KE ADMIN
         foreach ($admins as $admin) {
             Notification::create([
-                'user_id'  => $admin->id,          // penerima (admin)
-                'actor_id' => $actor->id,          // yang bikin campaign
+                'user_id'  => $admin->id,
+                'actor_id' => $actor->id,
                 'title'    => 'Pengajuan Campaign Baru',
                 'message'  => "{$actor->name} mengajukan campaign \"{$campaign->title}\" untuk disetujui.",
                 'type'     => 'campaign_request',
             ]);
         }
 
-        return redirect()
-            ->route('dashboard')
-            ->with('success', 'Campaign berhasil dibuat & menunggu approval admin');
+        // 🔔 KE PENGELOLA (DIRI SENDIRI)
+        Notification::create([
+            'user_id'  => $actor->id,
+            'actor_id' => $actor->id,
+            'title'    => 'Pengajuan Campaign Berhasil',
+            'message'  => "Campaign \"{$campaign->title}\" berhasil diajukan dan sedang menunggu persetujuan admin. Proses verifikasi maksimal 3x24 jam.",
+            'type'     => 'campaign_submitted',
+        ]);
+
+        return redirect()->route('campaign.success');
     }
 
     public function changeStatus(Request $request, $id)

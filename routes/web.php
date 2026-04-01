@@ -22,8 +22,21 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/campaign/create', [CampaignController::class, 'createCampaign'])
         ->name('campaign.create');
 
-    Route::post('/campaign/{campaign}', [CampaignController::class, 'storeCampaign'])
+    Route::post('/campaign', [CampaignController::class, 'storeCampaign'])
         ->name('campaign.store');
+
+    Route::get('/campaign/success', function () {
+        return view('campaign.success');
+    })->name('campaign.success');
+
+    Route::get('/withdraw/success', function () {
+        return view('withdraw.success');
+    })->name('withdraw.success');
+
+    Route::get('/withdraw/history', [WithdrawController::class, 'history'])
+        ->name('withdraw.history');
+
+    Route::get('/withdraw/{id}', [WithdrawController::class, 'show'])->name('withdraw.show');
 });
 
 
@@ -78,9 +91,16 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/bank/create', [UserBankController::class, 'create'])->name('bank.create');
     Route::post('/bank/store', [UserBankController::class, 'store'])->name('bank.store');
+    Route::get('/bank/success', function () {
+        return view('bank.success');
+    })->name('bank.success');
 
     Route::get('/withdraw', [WithdrawController::class, 'create'])->name('withdraw.create');
     Route::post('/withdraw', [WithdrawController::class, 'store'])->name('withdraw.store');
+
+    Route::get('/pengelola/success', function () {
+        return view('pengelola.success');
+    })->name('pengelola.success');
 
 
 
@@ -157,5 +177,20 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/admin/activities/{notification}', [AdminController::class, 'activityDetail'])
             ->name('admin.activities.show');
+    });
+
+
+
+
+
+    Route::middleware('role:pengelola')->group(function () {
+        Route::get('/dashboard/pengelola', [DashboardController::class, 'pengelolaDashboard'])
+            ->name('dashboard.pengelola');
+    });
+
+
+    Route::middleware('role:donatur')->group(function () {
+        Route::get('/dashboard/donatur', [DashboardController::class, 'donaturDashboard'])
+            ->name('dashboard.donatur');
     });
 });

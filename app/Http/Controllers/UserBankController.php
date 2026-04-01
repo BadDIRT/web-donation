@@ -17,6 +17,8 @@ class UserBankController extends Controller
 
     public function store(Request $request)
     {
+        $bankName = Bank::find($request->bank_id)->name;
+
         $request->validate([
             'bank_id'        => 'required|exists:banks,id',
             'account_number' => 'required|numeric|digits_between:8,20|unique:user_banks,account_number',
@@ -43,16 +45,16 @@ class UserBankController extends Controller
             'is_primary'     => false,
         ]);
 
-        // 🔔 NOTIFIKASI KE USER
+        // 🔔 NOTIFIKASI
         $user->notifications()->create([
-            'title'   => 'Rekening Berhasil Ditambahkan',
-            'message' => 'Rekening ' . $userBank->bank->name .
-                ' (' . $userBank->account_number . ') berhasil ditambahkan',
-            'type'    => 'bank_created',
+            'user_id'  => $user->id, // optional kalau relasi sudah otomatis
+            'actor_id' => $user->id, // 🔥 penting
+            'title'    => 'Rekening Berhasil Ditambahkan',
+            'message'  => "Rekening {$bankName} ({$userBank->account_number}) berhasil ditambahkan",
+            'type'     => 'bank_created',
         ]);
 
-        return redirect()
-            ->route('dashboard')
-            ->with('success', '✅ Rekening berhasil ditambahkan');
+
+        return redirect()->route('bank.success');
     }
 }

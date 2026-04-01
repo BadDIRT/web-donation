@@ -38,7 +38,6 @@ class UserBankSeeder extends Seeder
                     'user_id' => $user->id,
                     'bank_id' => $bank->id,
                     'account_number' => $this->generateAccountNumber(),
-                    'balance' => rand(50000, 1000000),
                     'is_primary' => $index === 0,
                 ]);
             }

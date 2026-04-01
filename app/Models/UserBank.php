@@ -11,7 +11,6 @@ class UserBank extends Model
         'user_id',
         'bank_id',
         'account_number',
-        'balance',
         'is_primary',
     ];
 
