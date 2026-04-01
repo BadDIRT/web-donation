@@ -47,26 +47,45 @@ class MidtransCallbackController extends Controller
                 $campaign->increment('current_amount_rd_pengelola', $donation->amount);
 
                 // 🔥 AMBIL SEMUA ADMIN
-            $admins = User::where('role', 'admin')->get();
+                $admins = User::where('role', 'admin')->get();
 
-            // 🔥 KIRIM NOTIF KE SEMUA ADMIN
-            foreach ($admins as $admin) {
-                Notification::create([
-                    'user_id' => $admin->id,
-                    'actor_id' => null, // system
-                    'title'   => 'Donasi Masuk',
-                    'message' => 'Donasi sebesar Rp ' . number_format($donation->amount, 0, ',', '.') .
-                        ' masuk ke campaign "' . $campaign->title . '".',
-                    'type'    => 'donation_success'
-                ]);
-            }
+                // 🔥 KIRIM NOTIF KE SEMUA ADMIN
+                foreach ($admins as $admin) {
+                    Notification::create([
+                        'user_id' => $admin->id,
+                        'actor_id' => null, // system
+                        'title'   => 'Donasi Masuk',
+                        'message' => 'Donasi sebesar Rp ' . number_format($donation->amount, 0, ',', '.') .
+                            ' masuk ke campaign "' . $campaign->title . '".',
+                        'type'    => 'donation_success'
+                    ]);
+                }
 
                 // AUTO CLOSE CAMPAIGN
                 if ($campaign->current_amount >= $campaign->target_amount) {
 
                     $campaign->update([
-                        'status' => 'closed'
+                        'status' => 'ended'
                     ]);
+
+                    // 🔥 TAMBAHKAN KODE NOTIFIKASI AUTO CLOSE DI SINI
+                    Notification::create([
+                        'user_id'  => $campaign->user_id,
+                        'actor_id' => 'system', // system
+                        'title'    => 'Campaign Berakhir Otomatis',
+                        'message'  => "Campaign \"{$campaign->title}\" telah berakhir otomatis karena telah berhasil mencapai target donasi.",
+                        'type'     => 'campaign_ended_auto'
+                    ]);
+
+                    foreach ($admins as $admin) {
+                        Notification::create([
+                            'user_id'  => $admin->id,
+                            'actor_id' => 'system', // system
+                            'title'    => 'Campaign Berakhir Mencapai Target',
+                            'message'  => "Campaign \"{$campaign->title}\" oleh {$campaign->user->name} telah berakhir otomatis.",
+                            'type'     => 'campaign_ended_auto'
+                        ]);
+                    }
                 }
             }
         } elseif ($status == 'pending') {

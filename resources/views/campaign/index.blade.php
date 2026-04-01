@@ -4,6 +4,34 @@
 
 @section('content')
 
+    {{-- LETAKKAN KODE INI DI PALING ATAS CONTENT campaign.index --}}
+    @if (request('target_reached'))
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition
+            class="mb-8 bg-green-50 border border-green-200 text-green-800 rounded-2xl p-5 flex items-start gap-4 shadow-sm">
+
+            <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <h3 class="font-bold text-base sm:text-lg mb-1">🎉 Target Campaign Tercapai!</h3>
+                <p class="text-sm sm:text-base text-green-700">
+                    Terima kasih atas kontribusi luar biasa Anda. Berkat donasi tersebut, campaign telah berhasil mencapai
+                    target yang ditetapkan.
+                </p>
+            </div>
+
+            <button @click="show=false" class="flex-shrink-0 text-green-500 hover:text-green-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    @endif
+
     {{-- ================= HERO HEADER ================= --}}
     <section class="relative bg-gradient-to-br from-green-100 via-green-50 to-white pt-36 pb-28 mb-10">
         <div class="max-w-4xl mx-auto px-6 text-center">

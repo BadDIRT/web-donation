@@ -193,6 +193,6 @@ class CampaignController extends Controller
             'type'    => 'campaign_status_changed'
         ]);
 
-        return back()->with('success', '✅ Status campaign berhasil diubah');
+        return back()->with('success', 'Status campaign berhasil diubah');
     }
 }

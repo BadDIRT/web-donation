@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Donation;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Midtrans\Config;
@@ -15,6 +16,19 @@ class DonationController extends Controller
 {
     public function donate(Request $request, Campaign $campaign)
     {
+        // 🔒 CEK LIMIT CAMPAIGN
+        if ($campaign->current_amount >= $campaign->target_amount) {
+            return response()->json([
+                'error' => 'Campaign sudah mencapai target'
+            ], 422);
+        }
+
+        if (($campaign->current_amount + $request->amount) > $campaign->target_amount) {
+            return response()->json([
+                'error' => 'Donasi melebihi target campaign'
+            ], 422);
+        }
+
         $request->validate([
             'amount' => 'required|integer|min:1000',
             'donor_name' => 'nullable|string|max:100',

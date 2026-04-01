@@ -18,7 +18,7 @@ class WithdrawController extends Controller
         $user = Auth::user();
 
         $campaigns = Campaign::where('user_id', $user->id)
-            ->where('status', 'approved')
+            ->whereNotIn('status', ['pending', 'rejected']) // Mengambil approved, closed, ended
             ->get();
 
         $userBanks = $user->userBanks()->with('bank')->get();
