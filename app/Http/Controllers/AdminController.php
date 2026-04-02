@@ -32,14 +32,17 @@ class AdminController extends Controller
             'totalUsers' => User::count(),
             'totalCampaigns' => Campaign::count(),
             'totalDonations' => Campaign::sum('current_amount'),
-            'userBanks'         => UserBank::with('bank')->get(),
-
-            // 🔥 TAMBAHAN
-            'pendingWithdraws'  => Withdraw::where('status', 'pending')->count(),
-
-            // 🔥 INI YANG DIPAKE
             'userBanks' => $userBanks,
             'totalBankBalance' => $totalBankBalance,
+            'pendingWithdraws' => Withdraw::where('status', 'pending')->count(),
+
+            // 🟢 DATA BARU UNTUK DASHBOARD
+            'recentDonations' => Donation::with(['user', 'campaign'])
+                ->where('status', 'success')
+                ->latest()
+                ->take(5)
+                ->get(),
+            'latestUsers' => User::latest()->take(5)->get(),
         ]);
     }
 

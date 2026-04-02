@@ -71,6 +71,16 @@ class MidtransCallbackController extends Controller
                         ]);
                     }
 
+                    // 🔥 KIRIM NOTIF KE PEMILIK CAMPAIGN (PENGELOLA)
+                    Notification::create([
+                        'user_id'  => $campaign->user_id,
+                        'actor_id' => $donation->user_id, // Akan null jika donatur anonim/tamu
+                        'title'    => 'Donasi Baru Masuk',
+                        'message'  => 'Donasi sebesar Rp ' . number_format($donation->amount, 0, ',', '.') .
+                            ' berhasil masuk ke campaign Anda "' . $campaign->title . '".',
+                        'type'     => 'donation_success'
+                    ]);
+
                     // AUTO CLOSE CAMPAIGN
                     if ($campaign->current_amount >= $campaign->target_amount) {
 

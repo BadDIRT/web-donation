@@ -105,6 +105,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/manage-banks', [UserBankController::class, 'manage'])->name('admin.banks.manage');
     Route::put('/manage-banks/{userBank}/set-primary', [UserBankController::class, 'setPrimary'])->name('admin.banks.set-primary');
 
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])
+        ->name('notifications.read-all');
+
+    Route::get('/donasi-saya', [DashboardController::class, 'myDonations'])->name('my.donations');
 
 
 

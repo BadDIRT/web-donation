@@ -4,14 +4,12 @@
 
 @section('content')
 
-    {{-- ================= CUSTOM STYLE UNTUK HALAMAN INI ================= --}}
+    {{-- ================= CUSTOM STYLE ================= --}}
     <style>
-        /* 🔥 Membuat scroll menjadi smooth saat klik anchor (#) */
         html {
             scroll-behavior: smooth;
         }
     </style>
-
 
     {{-- ================= HERO SLIDER + PARALLAX ================= --}}
     <section x-data="{
@@ -34,7 +32,7 @@
     window.addEventListener('scroll', () => scrollY = window.scrollY);
     window.addEventListener('resize', () => isMobile = window.innerWidth < 768);" class="relative w-full overflow-hidden -mt-12">
 
-        <div class="relative h-[420px] md:h-[520px]">
+        <div class="relative h-[420px] md:h-[520px] lg:h-[580px]">
             <template x-for="(slide, index) in slides" :key="index">
                 <img :src="slide" x-show="active === index" x-cloak
                     x-transition:enter="transition-opacity duration-700" x-transition:enter-start="opacity-0"
@@ -43,21 +41,40 @@
                     :style="`transform: translateY(${scrollY * 0.25}px)`">
             </template>
 
+            {{-- Overlay Gradient --}}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
             <div class="absolute inset-0 flex items-center justify-center text-center px-4"
                 :style="`transform: translateY(${scrollY * 0.1}px)`">
                 <div class="max-w-4xl transition-opacity duration-300" :style="`opacity: ${1 - scrollY / 500}`">
-                    <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-lg">
-                        Donasi Hari Ini,<br><span class="text-green-300">Ubah Dunia Esok</span>
+                    <span
+                        class="inline-block px-4 py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-300 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-4 sm:mb-6">
+                        Platform Donasi Terpercaya
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white leading-tight drop-shadow-lg">
+                        Donasi Hari Ini,<br><span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Ubah Dunia
+                            Esok</span>
                     </h1>
-                    <p class="mt-6 text-white/90 text-lg">Platform donasi terpercaya, transparan, dan aman untuk membantu
-                        sesama.</p>
-                    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+                    <p class="mt-4 sm:mt-6 text-sm sm:text-lg text-white/80 max-w-2xl mx-auto">Transparan, aman, dan
+                        langsung tersalurkan
+                        kepada mereka yang membutuhkan.</p>
+                    <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                         <a href="{{ route('campaign.index') }}"
-                            class="bg-green-500 hover:bg-green-600 text-white px-8 py-3.5 rounded-xl shadow-lg font-semibold transition">
+                            class="group bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-5 py-2.5 sm:px-8 sm:py-4 rounded-xl shadow-lg shadow-emerald-500/30 font-bold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2">
                             Donasi Sekarang
+                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
+                                stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
                         </a>
                         <a href="#cara-kerja"
-                            class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-3.5 rounded-xl shadow-lg font-semibold transition border border-white/30">
+                            class="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-5 py-2.5 sm:px-8 sm:py-4 rounded-xl font-bold text-sm sm:text-base transition border border-white/20 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             Pelajari Lebih Lanjut
                         </a>
                     </div>
@@ -65,167 +82,177 @@
             </div>
         </div>
 
+        {{-- Modern Navigation Arrows --}}
         <button @click="active = (active - 1 + slides.length) % slides.length"
-            class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow transition">‹</button>
+            class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white p-2 sm:p-3 rounded-full transition border border-white/10">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
         <button @click="active = (active + 1) % slides.length"
-            class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow transition">›</button>
+            class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white p-2 sm:p-3 rounded-full transition border border-white/10">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
     </section>
 
     {{-- ================= CONTENT CONTAINER ================= --}}
-    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
 
         {{-- ================= STATISTIK PLATFORM ================= --}}
-        <section class="relative -mt-12 sm:-mt-16 mb-20 sm:mb-24 z-10 px-4 sm:px-0">
+        <section class="relative -mt-12 sm:-mt-16 mb-20 sm:mb-28 z-10 px-4 sm:px-0">
             <div
-                class="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8 md:p-10 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 border">
-
+                class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-xl shadow-black/5 p-6 sm:p-10 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 border border-white/50">
                 <div class="text-center">
-                    <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600">10K+</p>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Donatur Aktif</p>
+                    <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600">10K+</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">Donatur Aktif</p>
                 </div>
-
                 <div class="text-center">
-                    <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600">500+</p>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Campaign Berhasil</p>
+                    <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600">500+</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">Campaign Berhasil</p>
                 </div>
-
                 <div class="text-center">
-                    <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600">Rp 5M+</p>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Dana Tersalurkan</p>
+                    <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600">Rp 5M+</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">Dana Tersalurkan</p>
                 </div>
-
                 <div class="text-center">
-                    <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600">100%</p>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Aman & Transparan</p>
+                    <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600">100%</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">Aman & Transparan</p>
                 </div>
-
             </div>
         </section>
 
-        {{-- ================= VALUE SECTION (Kenapa Donasi di Sini) ================= --}}
+        {{-- ================= VALUE SECTION ================= --}}
         <section class="mb-24">
             <div class="text-center mb-14">
-                <span class="text-sm font-semibold text-green-600 bg-green-50 px-4 py-1.5 rounded-full">KEUNGGULAN
+                <span
+                    class="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full">KEUNGGULAN
                     KAMI</span>
-                <h2 class="text-3xl font-bold text-gray-800 mt-4">Kenapa Harus Donasi di Sini?</h2>
-                <p class="text-gray-500 mt-3 max-w-2xl mx-auto">Kami memastikan setiap rupiah yang Anda sumbangkan sampai ke
-                    tangan yang tepat dengan pengawasan ketat.</p>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-5">Kenapa Harus Donasi di Sini?</h2>
+                <p class="text-slate-500 mt-3 max-w-2xl mx-auto leading-relaxed">Kami memastikan setiap rupiah yang Anda
+                    sumbangkan sampai ke tangan yang tepat dengan pengawasan ketat.</p>
             </div>
 
             <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div
-                    class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-lg transition duration-300 text-center group">
+                    class="group bg-white p-7 rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg hover:border-blue-200 transition-all duration-300 text-center">
                     <div
-                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition">
+                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-100 transition duration-300">
                         <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Pembayaran Aman</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Terintegrasi Midtrans dengan enkripsi berlapis untuk
+                    <h3 class="font-bold text-slate-800 mb-2">Pembayaran Aman</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Terintegrasi Midtrans dengan enkripsi berlapis untuk
                         keamanan transaksi.</p>
                 </div>
 
                 <div
-                    class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-lg transition duration-300 text-center group">
+                    class="group bg-white p-7 rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg hover:border-emerald-200 transition-all duration-300 text-center">
                     <div
-                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition">
-                        <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" stroke-width="2"
+                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-100 transition duration-300">
+                        <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Terverifikasi</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Setiap campaign melewati proses verifikasi ketat oleh
+                    <h3 class="font-bold text-slate-800 mb-2">Terverifikasi</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Setiap campaign melewati proses verifikasi ketat oleh
                         admin berpengalaman.</p>
                 </div>
 
                 <div
-                    class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-lg transition duration-300 text-center group">
+                    class="group bg-white p-7 rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg hover:border-violet-200 transition-all duration-300 text-center">
                     <div
-                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition">
-                        <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" stroke-width="2"
+                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-violet-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-violet-100 transition duration-300">
+                        <svg class="w-7 h-7 text-violet-600" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 13l3-3 4 4 5-5" />
                         </svg>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Transparan</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Laporan penggunaan dana dapat dipantau secara real-time
-                        oleh publik.</p>
+                    <h3 class="font-bold text-slate-800 mb-2">Transparan</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Laporan penggunaan dana dapat dipantau secara
+                        real-time oleh publik.</p>
                 </div>
 
                 <div
-                    class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-lg transition duration-300 text-center group">
+                    class="group bg-white p-7 rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg hover:border-amber-200 transition-all duration-300 text-center">
                     <div
-                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-yellow-50 flex items-center justify-center group-hover:scale-110 transition">
-                        <svg class="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" stroke-width="2"
+                        class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-amber-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-100 transition duration-300">
+                        <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Support 24/7</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Tim customer service siap membantu Anda kapan saja dan
-                        di mana saja.</p>
+                    <h3 class="font-bold text-slate-800 mb-2">Support 24/7</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Tim customer service siap membantu Anda kapan saja
+                        dan di mana saja.</p>
                 </div>
             </div>
         </section>
 
         {{-- ================= CARA KERJA ================= --}}
-        <section id="cara-kerja" class="mb-24 bg-gray-50 rounded-[2.5rem] py-16 px-6 md:px-12 border">
-            <div class="text-center mb-14">
-                <span class="text-sm font-semibold text-green-600 bg-green-50 px-4 py-1.5 rounded-full">CARA KERJA</span>
-                <h2 class="text-3xl font-bold text-gray-800 mt-4">Semudah 3 Langkah Ini</h2>
+        <section id="cara-kerja" class="mb-24 bg-slate-50 rounded-[2rem] py-16 px-6 md:px-12 border border-slate-100">
+            <div class="text-center mb-16">
+                <span
+                    class="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full">CARA
+                    KERJA</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-5">Semudah 3 Langkah Ini</h2>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 relative">
-                {{-- Garis Penghubung (Desktop Only) --}}
-                <div class="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-green-200"></div>
+            <div class="grid md:grid-cols-3 gap-12 relative max-w-4xl mx-auto">
+                {{-- Garis Penghubung --}}
+                <div
+                    class="hidden md:block absolute top-12 left-[20%] right-[20%] h-0.5 bg-gradient-to-r from-emerald-200 via-teal-200 to-emerald-200">
+                </div>
 
                 <div class="text-center relative">
                     <div
-                        class="w-16 h-16 mx-auto bg-green-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-lg relative z-10">
+                        class="w-24 h-24 mx-auto bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-3xl flex items-center justify-center text-3xl font-extrabold shadow-lg shadow-emerald-500/20 relative z-10">
                         1</div>
-                    <h3 class="font-bold text-lg text-gray-800 mt-6 mb-2">Pilih Campaign</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Temukan campaign kebaikan yang sesuai dengan hati Anda
-                        dari daftar campaign terverifikasi.</p>
+                    <h3 class="font-bold text-xl text-slate-800 mt-8 mb-3">Pilih Campaign</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">Temukan campaign kebaikan yang
+                        sesuai dengan hati Anda dari daftar campaign terverifikasi.</p>
                 </div>
 
                 <div class="text-center relative">
                     <div
-                        class="w-16 h-16 mx-auto bg-green-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-lg relative z-10">
+                        class="w-24 h-24 mx-auto bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-3xl flex items-center justify-center text-3xl font-extrabold shadow-lg shadow-emerald-500/20 relative z-10">
                         2</div>
-                    <h3 class="font-bold text-lg text-gray-800 mt-6 mb-2">Lakukan Donasi</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Masukkan nominal dan lakukan pembayaran secara aman
-                        melalui berbagai metode pembayaran.</p>
+                    <h3 class="font-bold text-xl text-slate-800 mt-8 mb-3">Lakukan Donasi</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">Masukkan nominal dan lakukan
+                        pembayaran secara aman melalui berbagai metode pembayaran.</p>
                 </div>
 
                 <div class="text-center relative">
                     <div
-                        class="w-16 h-16 mx-auto bg-green-500 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-lg relative z-10">
+                        class="w-24 h-24 mx-auto bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-3xl flex items-center justify-center text-3xl font-extrabold shadow-lg shadow-emerald-500/20 relative z-10">
                         3</div>
-                    <h3 class="font-bold text-lg text-gray-800 mt-6 mb-2">Dana Tersalurkan</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Dana akan langsung diterima oleh pengelola campaign
-                        dan dipantau hingga selesai.</p>
+                    <h3 class="font-bold text-xl text-slate-800 mt-8 mb-3">Dana Tersalurkan</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">Dana akan langsung diterima oleh
+                        pengelola campaign dan dipantau hingga selesai.</p>
                 </div>
             </div>
         </section>
 
         {{-- ================= CAMPAIGN TERBARU ================= --}}
         <section class="mb-24">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-800">Campaign Terbaru</h2>
-                    <p class="text-gray-500 mt-1">Ayo bantu mereka mencapai targetnya</p>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800">Campaign Terbaru</h2>
+                    <p class="text-slate-500 mt-2">Ayo bantu mereka mencapai targetnya</p>
                 </div>
                 <a href="{{ route('campaign.index') }}"
-                    class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-semibold transition">
+                    class="group inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-bold transition text-sm">
                     Lihat Semua Campaign
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
+                        stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                 </a>
             </div>
@@ -237,8 +264,15 @@
                     @endforeach
                 </div>
             @else
-                <div class="bg-white rounded-2xl p-12 text-center border">
-                    <p class="text-gray-500">Belum ada campaign tersedia saat ini.</p>
+                <div class="bg-white rounded-2xl p-16 text-center border border-slate-100 shadow-sm">
+                    <div class="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.5"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <p class="text-slate-500 font-medium">Belum ada campaign tersedia saat ini.</p>
                 </div>
             @endif
         </section>
@@ -246,119 +280,84 @@
         {{-- ================= TESTIMONI DONATUR ================= --}}
         <section class="mb-24">
             <div class="text-center mb-14">
-                <span class="text-sm font-semibold text-green-600 bg-green-50 px-4 py-1.5 rounded-full">TESTIMONI</span>
-                <h2 class="text-3xl font-bold text-gray-800 mt-4">Apa Kata Mereka?</h2>
-                <p class="text-gray-500 mt-3">Cerita nyata dari para donatur dan pengelola campaign.</p>
+                <span
+                    class="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full">TESTIMONI</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-5">Apa Kata Mereka?</h2>
+                <p class="text-slate-500 mt-3">Cerita nyata dari para donatur dan pengelola campaign.</p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
-                    <div class="flex gap-1 mb-4">
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                {{-- Testimony 1 --}}
+                <div
+                    class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg transition duration-300 flex flex-col">
+                    <div class="flex gap-1 mb-5">
+                        @for ($i = 0; $i < 5; $i++)
+                            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        @endfor
                     </div>
-                    <p class="text-gray-600 text-sm italic leading-relaxed mb-6">"Proses donasinya sangat mudah dan cepat.
-                        Saya bisa langsung melihat perkembangan dana yang sudah terkumpul secara real-time. Sangat
+                    <p class="text-slate-600 text-sm italic leading-relaxed mb-8 flex-1">"Proses donasinya sangat mudah dan
+                        cepat. Saya bisa langsung melihat perkembangan dana yang sudah terkumpul secara real-time. Sangat
                         transparan!"</p>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 pt-6 border-t border-slate-100">
                         <div
-                            class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
+                            class="w-11 h-11 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold shadow-sm">
                             A</div>
                         <div>
-                            <p class="font-semibold text-gray-800 text-sm">Andi Pratama</p>
-                            <p class="text-xs text-gray-500">Donatur Aktif</p>
+                            <p class="font-bold text-slate-800 text-sm">Andi Pratama</p>
+                            <p class="text-xs text-slate-400">Donatur Aktif</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
-                    <div class="flex gap-1 mb-4">
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                {{-- Testimony 2 --}}
+                <div
+                    class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg transition duration-300 flex flex-col">
+                    <div class="flex gap-1 mb-5">
+                        @for ($i = 0; $i < 5; $i++)
+                            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        @endfor
                     </div>
-                    <p class="text-gray-600 text-sm italic leading-relaxed mb-6">"Sebagai pengelola, fitur pencairan
-                        dananya sangat membantu. Tidak ribet dan langsung cair ke rekening saya. Admin-nya juga fast
-                        respon!"</p>
-                    <div class="flex items-center gap-3">
+                    <p class="text-slate-600 text-sm italic leading-relaxed mb-8 flex-1">"Sebagai pengelola, fitur
+                        pencairan dananya sangat membantu. Tidak ribet dan langsung cair ke rekening saya. Admin-nya juga
+                        fast respon!"</p>
+                    <div class="flex items-center gap-3 pt-6 border-t border-slate-100">
                         <div
-                            class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                            class="w-11 h-11 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold shadow-sm">
                             S</div>
                         <div>
-                            <p class="font-semibold text-gray-800 text-sm">Siti Rahmawati</p>
-                            <p class="text-xs text-gray-500">Pengelola Campaign</p>
+                            <p class="font-bold text-slate-800 text-sm">Siti Rahmawati</p>
+                            <p class="text-xs text-slate-400">Pengelola Campaign</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
-                    <div class="flex gap-1 mb-4">
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                {{-- Testimony 3 --}}
+                <div
+                    class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg transition duration-300 flex flex-col">
+                    <div class="flex gap-1 mb-5">
+                        @for ($i = 0; $i < 5; $i++)
+                            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        @endfor
                     </div>
-                    <p class="text-gray-600 text-sm italic leading-relaxed mb-6">"Saya merasa tenang berdonasi di sini
-                        karena ada bukti pencairan dana yang transparan. Semoga platform ini terus berkembang membantu
+                    <p class="text-slate-600 text-sm italic leading-relaxed mb-8 flex-1">"Saya merasa tenang berdonasi di
+                        sini karena ada bukti pencairan dana yang transparan. Semoga platform ini terus berkembang membantu
                         banyak orang."</p>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 pt-6 border-t border-slate-100">
                         <div
-                            class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">
+                            class="w-11 h-11 bg-violet-100 rounded-full flex items-center justify-center text-violet-700 font-bold shadow-sm">
                             B</div>
                         <div>
-                            <p class="font-semibold text-gray-800 text-sm">Budi Santoso</p>
-                            <p class="text-xs text-gray-500">Donatur Setia</p>
+                            <p class="font-bold text-slate-800 text-sm">Budi Santoso</p>
+                            <p class="text-xs text-slate-400">Donatur Setia</p>
                         </div>
                     </div>
                 </div>
@@ -368,54 +367,67 @@
         {{-- ================= FAQ ================= --}}
         <section class="mb-24" x-data="{ open: null }">
             <div class="text-center mb-14">
-                <span class="text-sm font-semibold text-green-600 bg-green-50 px-4 py-1.5 rounded-full">FAQ</span>
-                <h2 class="text-3xl font-bold text-gray-800 mt-4">Pertanyaan Umum</h2>
+                <span
+                    class="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full">FAQ</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-5">Pertanyaan Umum</h2>
             </div>
 
             <div class="max-w-3xl mx-auto space-y-4">
-                <div class="bg-white border rounded-2xl overflow-hidden">
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm shadow-black/5 transition-all duration-200"
+                    :class="open === 1 ? 'border-emerald-300 shadow-emerald-100' : ''">
                     <button @click="open = open === 1 ? null : 1"
-                        class="w-full flex justify-between items-center p-5 text-left font-semibold text-gray-800 hover:bg-gray-50 transition">
+                        class="w-full flex justify-between items-center p-6 text-left font-bold text-slate-800 hover:bg-slate-50/50 transition">
                         Apakah donasi saya aman?
-                        <svg class="w-5 h-5 text-gray-400 transition-transform" :class="open === 1 ? 'rotate-180' : ''"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ml-4 transition-colors"
+                            :class="open === 1 ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'">
+                            <svg class="w-4 h-4 transition-transform duration-300" :class="open === 1 ? 'rotate-180' : ''"
+                                fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
                     </button>
                     <div x-show="open === 1" x-collapse>
-                        <p class="px-5 pb-5 text-sm text-gray-600 leading-relaxed">Sangat aman. Kami menggunakan Midtrans
+                        <p class="px-6 pb-6 text-sm text-slate-500 leading-relaxed">Sangat aman. Kami menggunakan Midtrans
                             sebagai payment gateway yang sudah tersertifikasi PCI DSS. Seluruh transaksi dienkripsi dan
                             tidak ada pihak ketiga yang dapat mengakses data kartu pembayaran Anda.</p>
                     </div>
                 </div>
 
-                <div class="bg-white border rounded-2xl overflow-hidden">
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm shadow-black/5 transition-all duration-200"
+                    :class="open === 2 ? 'border-emerald-300 shadow-emerald-100' : ''">
                     <button @click="open = open === 2 ? null : 2"
-                        class="w-full flex justify-between items-center p-5 text-left font-semibold text-gray-800 hover:bg-gray-50 transition">
+                        class="w-full flex justify-between items-center p-6 text-left font-bold text-slate-800 hover:bg-slate-50/50 transition">
                         Bagaimana cara pencairan dana?
-                        <svg class="w-5 h-5 text-gray-400 transition-transform" :class="open === 2 ? 'rotate-180' : ''"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ml-4 transition-colors"
+                            :class="open === 2 ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'">
+                            <svg class="w-4 h-4 transition-transform duration-300" :class="open === 2 ? 'rotate-180' : ''"
+                                fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
                     </button>
                     <div x-show="open === 2" x-collapse>
-                        <p class="px-5 pb-5 text-sm text-gray-600 leading-relaxed">Pengelola campaign dapat mengajukan
+                        <p class="px-6 pb-6 text-sm text-slate-500 leading-relaxed">Pengelola campaign dapat mengajukan
                             pencairan dana melalui dashboard setiap saat. Tim admin akan melakukan review dan mentransfer
                             dana ke rekening pengelola yang sudah terverifikasi dalam waktu maksimal 3x24 jam.</p>
                     </div>
                 </div>
 
-                <div class="bg-white border rounded-2xl overflow-hidden">
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm shadow-black/5 transition-all duration-200"
+                    :class="open === 3 ? 'border-emerald-300 shadow-emerald-100' : ''">
                     <button @click="open = open === 3 ? null : 3"
-                        class="w-full flex justify-between items-center p-5 text-left font-semibold text-gray-800 hover:bg-gray-50 transition">
+                        class="w-full flex justify-between items-center p-6 text-left font-bold text-slate-800 hover:bg-slate-50/50 transition">
                         Apakah bisa donasi secara anonim?
-                        <svg class="w-5 h-5 text-gray-400 transition-transform" :class="open === 3 ? 'rotate-180' : ''"
-                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ml-4 transition-colors"
+                            :class="open === 3 ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'">
+                            <svg class="w-4 h-4 transition-transform duration-300" :class="open === 3 ? 'rotate-180' : ''"
+                                fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
                     </button>
                     <div x-show="open === 3" x-collapse>
-                        <p class="px-5 pb-5 text-sm text-gray-600 leading-relaxed">Tentu bisa. Saat melakukan donasi, Anda
+                        <p class="px-6 pb-6 text-sm text-slate-500 leading-relaxed">Tentu bisa. Saat melakukan donasi, Anda
                             cukup centang opsi "Donasi sebagai anonim" dan identitas Anda tidak akan ditampilkan di halaman
                             publik campaign.</p>
                     </div>
@@ -425,32 +437,47 @@
 
         {{-- ================= FINAL CTA ================= --}}
         <section
-            class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-[2.5rem] px-8 sm:px-14 py-16 text-center text-white shadow-xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2">
+            class="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-[2.5rem] px-8 sm:px-14 py-20 text-center text-white shadow-2xl shadow-emerald-500/20 relative overflow-hidden border border-emerald-400/20">
+            <div class="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3"></div>
+            <div class="absolute bottom-0 left-0 w-56 h-56 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/3">
+            </div>
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl">
             </div>
 
             <div class="relative z-10">
-                <h2 class="text-3xl md:text-4xl font-extrabold">Ingin Menggalang Dana?</h2>
-                <p class="mt-4 text-lg max-w-2xl mx-auto opacity-90">Bergabunglah sebagai pengelola dan mulai buat campaign
-                    kebaikanmu sendiri. Proses verifikasi cepat dan mudah!</p>
+                <h2 class="text-3xl md:text-5xl font-extrabold leading-tight">Ingin Menggalang Dana?</h2>
+                <p class="mt-6 text-lg max-w-2xl mx-auto text-emerald-100 leading-relaxed">Bergabunglah sebagai pengelola
+                    dan mulai buat campaign kebaikanmu sendiri. Proses verifikasi cepat dan mudah!</p>
 
                 @auth
                     @if (auth()->user()->role === 'donatur')
                         <a href="{{ route('pengelola.terms') }}"
-                            class="inline-block mt-8 bg-white text-green-600 px-8 py-3.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">
-                            Ajukan Jadi Pengelola →
+                            class="group inline-flex items-center gap-3 mt-10 bg-white text-emerald-700 px-10 py-4 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-200">
+                            Ajukan Jadi Pengelola
+                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                                stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
                         </a>
                     @else
                         <a href="{{ route('dashboard.pengelola') }}"
-                            class="inline-block mt-8 bg-white text-green-600 px-8 py-3.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">
-                            Ke Dashboard Pengelola →
+                            class="group inline-flex items-center gap-3 mt-10 bg-white text-emerald-700 px-10 py-4 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-200">
+                            Ke Dashboard Pengelola
+                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                                stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
                         </a>
                     @endif
                 @else
                     <a href="{{ route('register') }}"
-                        class="inline-block mt-8 bg-white text-green-600 px-8 py-3.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">
-                        Daftar & Mulai Sekarang →
+                        class="group inline-flex items-center gap-3 mt-10 bg-white text-emerald-700 px-10 py-4 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-200">
+                        Daftar & Mulai Sekarang
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
                     </a>
                 @endauth
             </div>
@@ -460,6 +487,5 @@
 @endsection
 
 @push('scripts')
-    {{-- Plugin untuk animasi collapse di FAQ --}}
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/collapse.min.js" defer></script>
 @endpush

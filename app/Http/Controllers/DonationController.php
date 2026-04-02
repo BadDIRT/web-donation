@@ -43,6 +43,9 @@ class DonationController extends Controller
 
         $orderId = 'DON-' . uniqid();
 
+        // 🔥 AMBIL DATA USER SECARA AMAN (MENGGUNAKAN NULL SAFE OPERATOR ?->)
+        $user = auth()->user();
+
         $snapToken = \Midtrans\Snap::getSnapToken([
             'transaction_details' => [
                 'order_id' => $orderId,
@@ -56,22 +59,24 @@ class DonationController extends Controller
             ]],
             'customer_details' => [
                 'first_name' => $request->donor_name ?? 'Donatur',
-                'email'            => $request->user()->email ?? null,
-                'phone'            => $request->user()->phone ?? null,
+                'email'      => $user?->email ?? 'guest@gmail.com', // ✅ AMAN UNTUK GUEST
+                'phone'      => $user?->phone ?? '081234567890',   // ✅ AMAN UNTUK GUEST
             ],
         ]);
 
+        // ✅ SIMPAN KE DATABASE DULU SEBELUM MIDTRANS
         Donation::create([
-            'user_id' => auth()->id(),
+            'user_id'    => $user?->id, // ✅ AMAN UNTUK GUEST (AKAN NULL)
             'campaign_id' => $campaign->id,
-            'order_id' => $orderId,
-            'amount' => $request->amount,
+            'order_id'   => $orderId,
+            'amount'     => $request->amount,
             'donor_name' => $request->boolean('anonymous') ? null : $request->donor_name,
-            'anonymous' => $request->boolean('anonymous'),
-            'message' => $request->message,
-            'status' => 'pending',
+            'anonymous'  => $request->boolean('anonymous'),
+            'message'    => $request->message,
+            'status'     => 'pending',
         ]);
 
+        // KIRIM SNAP TOKEN KE FRONTEND
         return response()->json([
             'snapToken' => $snapToken
         ]);

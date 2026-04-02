@@ -38,26 +38,50 @@
 
     {{-- ================= ALERT TARGET REACHED ================= --}}
     @if (request('target_reached'))
-        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition
-            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-            <div class="bg-green-50 border border-green-200 text-green-800 rounded-xl p-4 flex items-start gap-3 shadow-sm">
-                <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-cloak
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
+            class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+
+            {{-- BACKDROP --}}
+            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="show = false"></div>
+
+            {{-- MODAL CONTENT --}}
+            <div
+                class="relative bg-white rounded-3xl shadow-2xl shadow-black/10 p-8 sm:p-10 w-full max-w-sm text-center z-10 overflow-hidden">
+
+                {{-- Dekorasi Background --}}
+                <div
+                    class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500">
                 </div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-sm sm:text-base">Selamat! Target Campaign Tercapai</h3>
-                    <p class="text-xs sm:text-sm text-green-700 mt-0.5">Terima kasih atas kontribusi luar biasa Anda.
-                        Campaign telah berhasil mencapai target.</p>
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-emerald-50 rounded-full"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-50 rounded-full"></div>
+
+                <div class="relative z-10">
+                    {{-- ICON --}}
+                    <div
+                        class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 rotate-3 hover:rotate-0 transition-transform duration-300">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+
+                    {{-- TEKS --}}
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-2">Target Tercapai! 🎉</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        Terima kasih atas kontribusi luar biasa Anda. Campaign telah berhasil mencapai target dan resmi
+                        ditutup.
+                    </p>
+
+                    {{-- TOMBOL AKSI --}}
+                    <button @click="show = false"
+                        class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-3 rounded-xl font-bold shadow-md shadow-emerald-500/20 transition-all duration-200 active:scale-[0.98]">
+                        Kembali ke Campaign
+                    </button>
                 </div>
-                <button @click="show=false" class="flex-shrink-0 text-green-500 hover:text-green-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
             </div>
         </div>
     @endif

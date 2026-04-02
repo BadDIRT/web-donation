@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Donation extends Model
 {
     protected $fillable = [
+        'user_id',
         'campaign_id',
         'order_id',
         'amount',
