@@ -90,8 +90,11 @@
 
                         @foreach ($userBanks as $bank)
                             <option value="{{ $bank->id }}"
-                                {{ old('user_bank_id', $bank->is_primary ? $bank->id : '') == $bank->id ? 'selected' : '' }}>
+                                {{ (old('user_bank_id') !== null ? old('user_bank_id') : ($bank->is_primary ? $bank->id : null)) == $bank->id ? 'selected' : '' }}>
                                 {{ $bank->bank->name }} - {{ $bank->account_number }}
+                                @if ($bank->is_primary)
+                                    (Utama)
+                                @endif
                             </option>
                         @endforeach
 

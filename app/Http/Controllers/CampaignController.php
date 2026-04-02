@@ -17,8 +17,15 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $campaigns = Campaign::query()
-            ->with(['category', 'user']) // 🔥 FIX
-            ->where('status', 'approved')
+            ->with(['category', 'user'])
+
+            // 🔥 FILTER STATUS (DINAMIS)
+            ->when($request->status, function ($q) use ($request) {
+                $q->where('status', $request->status);
+            }, function ($q) {
+                // Default jika tidak ada filter status
+                $q->where('status', 'approved');
+            })
 
             // SEARCH
             ->when($request->search, function ($q) use ($request) {
@@ -60,11 +67,12 @@ class CampaignController extends Controller
      */
     public function show(Campaign $campaign)
     {
-        if ($campaign->status !== 'approved') {
+        // 🔥 IZINKAN AKSES JIKA STATUSNYA APPROVED ATAU ENDED
+        if (!in_array($campaign->status, ['approved', 'ended'])) {
             abort(404);
         }
 
-        $campaign->load(['user', 'category']); // 🔥 FIX
+        $campaign->load(['user', 'category']);
 
         $topDonors = $campaign->donations()
             ->where('status', 'success')

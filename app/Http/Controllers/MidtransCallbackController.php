@@ -7,6 +7,8 @@ use App\Models\Donation;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MidtransCallbackController extends Controller
 {
@@ -34,71 +36,89 @@ class MidtransCallbackController extends Controller
 
         $status = $request->transaction_status;
 
-        if ($status == 'settlement' || $status == 'capture') {
+        // 🔥 BUNGKUS SEMUA DALAM TRANSACTION
+        try {
+            DB::beginTransaction();
 
-            if ($donation->status !== 'success') {
+            if ($status == 'settlement' || $status == 'capture') {
 
-                $donation->status = 'success';
-                $donation->save();
+                if ($donation->status !== 'success') {
 
-                $campaign = $donation->campaign;
-                // update progress campaign
-                $campaign->increment('current_amount', $donation->amount);
-                $campaign->increment('current_amount_rd_pengelola', $donation->amount);
+                    $donation->status = 'success';
+                    $donation->save();
 
-                // 🔥 AMBIL SEMUA ADMIN
-                $admins = User::where('role', 'admin')->get();
+                    $campaign = $donation->campaign;
 
-                // 🔥 KIRIM NOTIF KE SEMUA ADMIN
-                foreach ($admins as $admin) {
-                    Notification::create([
-                        'user_id' => $admin->id,
-                        'actor_id' => null, // system
-                        'title'   => 'Donasi Masuk',
-                        'message' => 'Donasi sebesar Rp ' . number_format($donation->amount, 0, ',', '.') .
-                            ' masuk ke campaign "' . $campaign->title . '".',
-                        'type'    => 'donation_success'
-                    ]);
-                }
+                    // update progress campaign
+                    $campaign->increment('current_amount', $donation->amount);
+                    $campaign->increment('current_amount_rd_pengelola', $donation->amount);
 
-                // AUTO CLOSE CAMPAIGN
-                if ($campaign->current_amount >= $campaign->target_amount) {
+                    // 🔥 REFRESH AGAR AUTO CLOSE AKURAT
+                    $campaign->refresh();
 
-                    $campaign->update([
-                        'status' => 'ended'
-                    ]);
+                    // 🔥 AMBIL SEMUA ADMIN
+                    $admins = User::where('role', 'admin')->get();
 
-                    // 🔥 TAMBAHKAN KODE NOTIFIKASI AUTO CLOSE DI SINI
-                    Notification::create([
-                        'user_id'  => $campaign->user_id,
-                        'actor_id' => 'system', // system
-                        'title'    => 'Campaign Berakhir Otomatis',
-                        'message'  => "Campaign \"{$campaign->title}\" telah berakhir otomatis karena telah berhasil mencapai target donasi.",
-                        'type'     => 'campaign_ended_auto'
-                    ]);
-
+                    // 🔥 KIRIM NOTIF KE SEMUA ADMIN
                     foreach ($admins as $admin) {
                         Notification::create([
                             'user_id'  => $admin->id,
-                            'actor_id' => 'system', // system
-                            'title'    => 'Campaign Berakhir Mencapai Target',
-                            'message'  => "Campaign \"{$campaign->title}\" oleh {$campaign->user->name} telah berakhir otomatis.",
-                            'type'     => 'campaign_ended_auto'
+                            'actor_id' => null,
+                            'title'    => 'Donasi Masuk',
+                            'message'  => 'Donasi sebesar Rp ' . number_format($donation->amount, 0, ',', '.') .
+                                ' masuk ke campaign "' . $campaign->title . '".',
+                            'type'     => 'donation_success'
                         ]);
                     }
+
+                    // AUTO CLOSE CAMPAIGN
+                    if ($campaign->current_amount >= $campaign->target_amount) {
+
+                        $campaign->update([
+                            'status' => 'ended'
+                        ]);
+
+                        // NOTIF KE PENGELOLA
+                        Notification::create([
+                            'user_id'  => $campaign->user_id,
+                            'actor_id' => null,
+                            'title'    => 'Campaign Berakhir Otomatis',
+                            'message'  => "Campaign \"{$campaign->title}\" telah berakhir otomatis karena telah berhasil mencapai target donasi.",
+                            'type'     => 'campaign_ended_auto'
+                        ]);
+
+                        // NOTIF KE SEMUA ADMIN
+                        foreach ($admins as $admin) {
+                            Notification::create([
+                                'user_id'  => $admin->id,
+                                'actor_id' => null,
+                                'title'    => 'Campaign Berakhir Mencapai Target',
+                                'message'  => "Campaign \"{$campaign->title}\" oleh {$campaign->user->name} telah berakhir otomatis.",
+                                'type'     => 'campaign_ended_auto'
+                            ]);
+                        }
+                    }
                 }
+            } elseif ($status == 'pending') {
+                $donation->status = 'pending';
+                $donation->save();
+            } elseif (in_array($status, ['expire', 'cancel', 'deny'])) {
+                $donation->status = 'failed';
+                $donation->save();
             }
-        } elseif ($status == 'pending') {
 
-            $donation->status = 'pending';
-            $donation->save();
-        } elseif (in_array($status, ['expire', 'cancel', 'deny'])) {
+            // JIKA SEMUA BERHASIL, COMMIT KE DATABASE
+            DB::commit();
+        } catch (\Exception $e) {
+            // JIKA ADA ERROR (NOTIF GAGAL, DB ERROR, DLL), BATALKAN SEMUA
+            DB::rollBack();
 
-            $donation->status = 'failed';
-            $donation->save();
+            // CATAT ERROR DI LOG LARAVEL UNTUK DEBUGGING
+            Log::error('Midtrans Callback Error: ' . $e->getMessage());
+
+            // KIRIM 500 AGAR MIDTRANS MELAKUKAN RETRY
+            return response()->json(['message' => 'Server error, please retry'], 500);
         }
-
-        $donation->save();
 
         return response()->json(['message' => 'Callback processed']);
     }

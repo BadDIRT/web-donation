@@ -11,6 +11,7 @@ use App\Models\Withdraw;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -289,5 +290,158 @@ class AdminController extends Controller
             ->findOrFail($id);
 
         return view('activities.show', compact('notification'));
+    }
+
+    // =========================================================================
+    // KELOLA USER (CRUD)
+    // =========================================================================
+
+    public function usersIndex(Request $request)
+    {
+        $query = User::query();
+
+        // SEARCH
+        if ($request->q) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->q . '%')
+                    ->orWhere('email', 'like', '%' . $request->q . '%');
+            });
+        }
+
+        // FILTER ROLE
+        if ($request->role) {
+            $query->where('role', $request->role);
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+
+        return view('admin.users.index', compact('users'));
+    }
+
+    public function usersCreate()
+    {
+        return view('admin.users.create');
+    }
+
+    public function usersStore(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'role'     => 'required|in:donatur,pengelola,admin',
+        ], [
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => $request->role,
+        ]);
+
+        // 🔔 NOTIFIKASI KE ADMIN SENDIRI
+        Notification::create([
+            'user_id'  => auth()->id(),
+            'actor_id' => auth()->id(),
+            'title'    => 'User Baru Ditambahkan',
+            'message'  => "Anda berhasil menambahkan user baru: {$user->name} ({$user->email}) dengan role {$user->role}.",
+            'type'     => 'user_created',
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
+    }
+
+    public function usersEdit(User $user)
+    {
+        // Cegah admin mengedit akunnya sendiri di halaman ini (opsional, untuk keamanan)
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak bisa mengedit akun sendiri dari halaman ini.');
+        }
+
+        return view('admin.users.edit', compact('user'));
+    }
+
+    public function usersUpdate(Request $request, User $user)
+    {
+        $rules = [
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'role'  => 'required|in:donatur,pengelola,admin',
+        ];
+
+        // Password opsional saat edit
+        if ($request->filled('password')) {
+            $rules['password'] = 'string|min:6|confirmed';
+        }
+
+        $request->validate($rules);
+
+        $data = $request->only('name', 'email', 'role');
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        // Simpan role lama untuk cek apakah ada perubahan
+        $oldRole = $user->role;
+
+        $user->update($data);
+
+        // 🔔 NOTIFIKASI KE ADMIN SENDIRI
+        Notification::create([
+            'user_id'  => auth()->id(),
+            'actor_id' => auth()->id(),
+            'title'    => 'Data User Diperbarui',
+            'message'  => "Anda berhasil memperbarui data user: {$user->name} ({$user->email}).",
+            'type'     => 'user_updated',
+        ]);
+
+        // 🔔 NOTIFIKASI KE USER YANG DIEDIT (JIKA ROLE-NYA BERUBAH)
+        if ($oldRole !== $user->role) {
+            Notification::create([
+                'user_id'  => $user->id,
+                'actor_id' => auth()->id(),
+                'title'    => 'Role Akun Anda Diubah',
+                'message'  => "Admin telah mengubah role akun Anda dari '{$oldRole}' menjadi '{$user->role}'.",
+                'type'     => 'role_changed',
+            ]);
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'Data user berhasil diperbarui.');
+    }
+
+    public function usersDestroy(User $user)
+    {
+        // Cegah admin menghapus akunnya sendiri
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+        }
+
+        // Simpan nama user untuk notifikasi sebelum dihapus
+        $userName = $user->name;
+
+        // Hapus file KTP jika ada
+        if ($user->ktp_path && Storage::disk('local')->exists($user->ktp_path)) {
+            Storage::disk('local')->delete($user->ktp_path);
+        }
+
+        // Hapus relasi terkait (pivot bank, notifikasi, dll)
+        $user->userBanks()->delete();
+        $user->notifications()->delete();
+
+        $user->delete();
+
+        // 🔔 NOTIFIKASI KE ADMIN SENDIRI
+        Notification::create([
+            'user_id'  => auth()->id(),
+            'actor_id' => auth()->id(),
+            'title'    => 'User Dihapus',
+            'message'  => "Anda berhasil menghapus user: {$userName}.",
+            'type'     => 'user_deleted',
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
     }
 }

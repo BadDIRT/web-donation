@@ -9,7 +9,11 @@
             {{-- HEADER --}}
             <div>
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
-                    Dashboard @if(auth()->user()->is_approved) Pengelola @else Donatur @endif
+                    Dashboard @if (auth()->user()->is_approved)
+                        Pengelola
+                    @else
+                        Donatur
+                    @endif
                 </h1>
                 <p class="text-gray-500 mt-2 max-w-2xl">
                     Pantau status campaign Anda dan kelola penggalangan dana dengan mudah.
@@ -90,6 +94,7 @@
                     </div>
                 </div>
             @endif
+
             @if (auth()->user()->is_approved)
                 {{-- QUICK ACTION --}}
                 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -104,45 +109,65 @@
                         </p>
                     </a>
 
-                    @if (auth()->user()->is_approved)
-                        <a href="{{ route('bank.create') }}"
-                            class="bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-2xl p-6 shadow hover:shadow-lg transition">
+                    {{-- 🔥 CARD KELOLA REKENING BARU --}}
+                    <a href="{{ route('admin.banks.manage') }}"
+                        class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition border-2 border-dashed border-gray-300 hover:border-green-500">
 
-                            <h2 class="text-lg font-semibold">
-                                Tambah Rekening
+                        <div class="flex items-center justify-between mb-1">
+                            <h2 class="text-lg font-semibold text-gray-800 group-hover:text-green-600">
+                                Kelola Rekening
                             </h2>
-                            <p class="text-sm opacity-80 mt-1">
-                                Tambahkan rekening bank baru
-                            </p>
-
-                        </a>
-                    @endif
-
-                    @if (auth()->user()->is_approved)
-                        <a href="{{ route('withdraw.create') }}"
-                            class="bg-white border border-green-100 rounded-2xl p-6 shadow-sm hover:shadow-lg transition">
-
-                            <div class="flex items-center justify-between">
-
-                                <div>
-                                    <h2 class="text-lg font-semibold text-gray-800">
-                                        Ajukan Penarikan
-                                    </h2>
-                                    <p class="text-sm text-gray-500 mt-1">
-                                        Tarik dana dari campaign Anda
-                                    </p>
-                                </div>
-
-                                <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-width="2" d="M17 9l-5 5-5-5" />
-                                    </svg>
-                                </div>
-
+                            <div
+                                class="w-10 h-10 bg-gray-100 group-hover:bg-green-100 rounded-xl flex items-center justify-center transition">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5 text-gray-600 group-hover:text-green-600 transition" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-width="2"
+                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
                             </div>
-                        </a>
-                    @endif
+                        </div>
+                        <p class="text-sm text-gray-500">
+                            Ubah rekening utama / default
+                        </p>
+                    </a>
+
+                    <a href="{{ route('bank.create') }}"
+                        class="bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-2xl p-6 shadow hover:shadow-lg transition">
+
+                        <h2 class="text-lg font-semibold">
+                            Tambah Rekening
+                        </h2>
+                        <p class="text-sm opacity-80 mt-1">
+                            Tambahkan rekening bank baru
+                        </p>
+
+                    </a>
+
+                    <a href="{{ route('withdraw.create') }}"
+                        class="bg-white border border-green-100 rounded-2xl p-6 shadow-sm hover:shadow-lg transition">
+
+                        <div class="flex items-center justify-between">
+
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800">
+                                    Ajukan Penarikan
+                                </h2>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Tarik dana dari campaign Anda
+                                </p>
+                            </div>
+
+                            <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-width="2" d="M17 9l-5 5-5-5" />
+                                </svg>
+                            </div>
+
+                        </div>
+                    </a>
 
                 </div>
 

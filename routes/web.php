@@ -102,6 +102,9 @@ Route::middleware('auth')->group(function () {
         return view('pengelola.success');
     })->name('pengelola.success');
 
+    Route::get('/manage-banks', [UserBankController::class, 'manage'])->name('admin.banks.manage');
+    Route::put('/manage-banks/{userBank}/set-primary', [UserBankController::class, 'setPrimary'])->name('admin.banks.set-primary');
+
 
 
 
@@ -177,6 +180,14 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/admin/activities/{notification}', [AdminController::class, 'activityDetail'])
             ->name('admin.activities.show');
+
+        // ROUTE KELOLA USER (CRUD)
+        Route::get('/admin/users', [AdminController::class, 'usersIndex'])->name('admin.users.index');
+        Route::get('/admin/users/create', [AdminController::class, 'usersCreate'])->name('admin.users.create');
+        Route::post('/admin/users', [AdminController::class, 'usersStore'])->name('admin.users.store');
+        Route::get('/admin/users/{user}/edit', [AdminController::class, 'usersEdit'])->name('admin.users.edit');
+        Route::put('/admin/users/{user}', [AdminController::class, 'usersUpdate'])->name('admin.users.update');
+        Route::delete('/admin/users/{user}', [AdminController::class, 'usersDestroy'])->name('admin.users.destroy');
     });
 
 

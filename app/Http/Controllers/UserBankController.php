@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bank;
 use App\Models\UserBank;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserBankController extends Controller
 {
@@ -56,5 +57,44 @@ class UserBankController extends Controller
 
 
         return redirect()->route('bank.success');
+    }
+
+    public function manage()
+    {
+        // Hanya mengambil rekening milik admin yang sedang login
+        $userBanks = UserBank::with('bank')
+            ->where('user_id', auth()->id())
+            ->orderByDesc('is_primary') // Urutkan, yang utama paling atas
+            ->get();
+
+        return view('manage-banks.index', compact('userBanks'));
+    }
+
+    /**
+     * UBAH REKENING UTAMA (DEFAULT)
+     */
+    public function setPrimary(UserBank $userBank)
+    {
+        // 🛡️ KEAMANAN: Pastikan rekening ini benar-benar milik admin yang login
+        if ($userBank->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke rekening ini.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // 1. Matikan status utama di SEMUA rekening admin
+            UserBank::where('user_id', auth()->id())
+                ->update(['is_primary' => false]);
+
+            // 2. Aktifkan status utama di rekening yang dipilih
+            $userBank->update(['is_primary' => true]);
+
+            DB::commit();
+
+            return back()->with('success', 'Rekening utama berhasil diubah ke ' . $userBank->bank->name . ' - ' . $userBank->account_number);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal mengubah rekening utama.');
+        }
     }
 }

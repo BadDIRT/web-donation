@@ -33,7 +33,7 @@
             {{-- PHONE --}}
             <div>
                 <label class="block text-sm font-medium mb-1">
-                    Nomor Handphone
+                    Nomor Yang Bisa Dihubungi
                 </label>
 
                 <input type="text" name="phone" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx"
