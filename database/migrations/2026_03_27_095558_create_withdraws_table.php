@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('bank_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('campaign_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_bank_id')->constrained('user_banks')->cascadeOnDelete();
             $table->bigInteger('amount');
             $table->string('transfer_proof')->nullable();
             $table->text('description');

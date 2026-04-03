@@ -62,6 +62,7 @@ class WithdrawController extends Controller
         // SIMPAN REQUEST
         $withdraw = Withdraw::create([
             'user_id'     => $user->id,
+            'user_bank_id' => $userBank->id,
             'campaign_id' => $campaign->id,
             'amount'      => $request->amount,
             'description' => $request->description,

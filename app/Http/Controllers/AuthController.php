@@ -42,8 +42,10 @@ class AuthController extends Controller
             'admin' => redirect()->route('admin.dashboard')
                 ->with('success', 'Login berhasil, selamat datang admin!'),
 
-            'pengelola' => redirect()->route('dashboard.pengelola')
-                ->with('success', 'Login berhasil, selamat datang pengelola!'),
+            'pengelola' => ($user->is_approved)
+                ? redirect()->route('dashboard.pengelola')->with('success', 'Login berhasil, selamat datang pengelola!')
+                : redirect()->route('dashboard.pengelola')
+                ->with('success', 'Login berhasil, selamat datang pengelola! Namun, akun Anda masih dalam proses verifikasi. Harap tunggu konfirmasi dari admin.'),
 
             default => redirect()->route('dashboard.donatur')
                 ->with('success', 'Login berhasil, selamat datang donatur!'),

@@ -97,4 +97,22 @@ class UserBankController extends Controller
             return back()->with('error', 'Gagal mengubah rekening utama.');
         }
     }
+
+    public function destroy(UserBank $userBank)
+    {
+        // Cegah hapus rekening milik user lain
+        if ($userBank->user_id !== auth()->id()) {
+            return back()->with('error', 'Tidak dapat menghapus rekening ini.');
+        }
+
+        // Cegah hapus rekening utama
+        if ($userBank->is_primary) {
+            return back()->with('error', 'Rekening utama tidak dapat dihapus. Jadikan rekening lain sebagai utama terlebih dahulu.');
+        }
+
+        $bankName = $userBank->bank->name;
+        $userBank->delete();
+
+        return back()->with('success', "Rekening {$bankName} berhasil dihapus.");
+    }
 }

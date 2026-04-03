@@ -15,6 +15,7 @@ class Withdraw extends Model
         'bank_id',
         'status',
         'transfer_proof',
+        'user_bank_id',
     ];
     
     public function user(): BelongsTo
@@ -30,5 +31,10 @@ class Withdraw extends Model
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    public function userBank(): BelongsTo
+    {
+        return $this->belongsTo(UserBank::class, 'user_bank_id');
     }
 }

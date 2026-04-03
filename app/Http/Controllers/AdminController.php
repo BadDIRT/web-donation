@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
+use App\Models\Category;
 use App\Models\Donation;
 use App\Models\Notification;
 use App\Models\User;
@@ -417,23 +418,24 @@ class AdminController extends Controller
 
     public function usersDestroy(User $user)
     {
-        // Cegah admin menghapus akunnya sendiri
+        // Cegah hapus diri sendiri
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+            return back()->with('error', 'Tidak dapat menghapus akun sendiri.');
         }
 
-        // Simpan nama user untuk notifikasi sebelum dihapus
         $userName = $user->name;
 
-        // Hapus file KTP jika ada
-        if ($user->ktp_path && Storage::disk('local')->exists($user->ktp_path)) {
-            Storage::disk('local')->delete($user->ktp_path);
-        }
+        // Hapus semua relasi terkait SESUAI URUTAN (child → parent)
+        $user->notifications()->delete();      // Notifikasi user
+        $user->userBanks()->delete();          // Rekening bank
+        $user->donations()->delete();          // Donasi yang dibuat
+        $user->campaigns()->delete();          // Campaign yang dibuat ← INI YANG KURANG
 
-        // Hapus relasi terkait (pivot bank, notifikasi, dll)
-        $user->userBanks()->delete();
-        $user->notifications()->delete();
+        // Jika ada relasi lain, tambahkan di sini:
+        // $user->withdrawals()->delete();
+        // $user->comments()->delete();
 
+        // Baru hapus user
         $user->delete();
 
         // 🔔 NOTIFIKASI KE ADMIN SENDIRI
@@ -445,6 +447,113 @@ class AdminController extends Controller
             'type'     => 'user_deleted',
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
+        return redirect()->route('admin.users.index')->with('success', "User '{$userName}' berhasil dihapus.");
+    }
+
+    public function createCampaignForAdmin()
+    {
+        $categories = Category::orderBy('name')->get();
+
+        return view('admin.create-campaign', compact('categories'));
+    }
+
+    public function userDetail(User $user)
+    {
+        // Ambil semua relasi yang dibutuhkan di halaman detail
+        $user->load(['userBanks.bank', 'donations.campaign', 'campaigns']);
+
+        return view('admin.users.show', compact('user'));
+    }
+
+    public function updateRole(Request $request, User $user)
+    {
+        $request->validate([
+            'role' => 'required|in:donatur,pengelola,admin',
+        ]);
+
+        // Cegah admin mengubah role dirinya sendiri
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Tidak dapat mengubah role akun sendiri.');
+        }
+
+        $oldRole = $user->role;
+        $user->role = $request->role;
+
+        // Jika diubah ke pengelola, set is_approved = false
+        if ($request->role === 'pengelola' && $oldRole !== 'pengelola') {
+            $user->is_approved = false;
+        }
+
+        // Jika diubah dari pengelola ke role lain
+        if ($oldRole === 'pengelola' && $request->role !== 'pengelola') {
+            $user->is_approved = false;
+        }
+
+        $user->save();
+
+        return back()->with('success', "Role berhasil diubah dari {$oldRole} menjadi {$request->role}.");
+    }
+
+    public function donationsIndex(Request $request)
+    {
+        $query = Donation::with(['user', 'campaign']);
+
+        // SEARCH
+        if ($request->q) {
+            $query->where(function ($q) use ($request) {
+                $q->where('donor_name', 'like', '%' . $request->q . '%')
+                    ->orWhereHas('user', function ($user) use ($request) {
+                        $user->where('name', 'like', '%' . $request->q . '%')
+                            ->orWhere('email', 'like', '%' . $request->q . '%');
+                    })
+                    ->orWhereHas('campaign', function ($campaign) use ($request) {
+                        $campaign->where('title', 'like', '%' . $request->q . '%');
+                    });
+            });
+        }
+
+        // FILTER STATUS
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // FILTER ANONIM
+        if ($request->has('anonymous') && $request->anonymous !== '') {
+            $query->where('anonymous', $request->anonymous === '1');
+        }
+
+        // SORT
+        $sort = $request->get('sort', 'latest');
+        if ($sort === 'oldest') {
+            $query->oldest();
+        } elseif ($sort === 'highest') {
+            $query->orderByDesc('amount');
+        } elseif ($sort === 'lowest') {
+            $query->orderBy('amount');
+        } else {
+            $query->latest();
+        }
+
+        $donations = $query->paginate(15)->withQueryString();
+
+        // Stats untuk sidebar
+        $totalNominal = Donation::sum('amount');
+        $totalTransaksi = Donation::count();
+        $pendingCount = Donation::where('status', 'pending')->count();
+        $failedCount = Donation::where('status', 'failed')->count();
+
+        return view('admin.donations.index', compact(
+            'donations',
+            'totalNominal',
+            'totalTransaksi',
+            'pendingCount',
+            'failedCount'
+        ));
+    }
+
+    public function donationDetail(Donation $donation)
+    {
+        $donation->load(['user', 'campaign']);
+        return view('admin.donations.show', compact('donation'));
     }
 }

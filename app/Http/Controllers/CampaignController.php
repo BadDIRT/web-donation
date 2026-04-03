@@ -203,4 +203,61 @@ class CampaignController extends Controller
 
         return back()->with('success', 'Status campaign berhasil diubah');
     }
+
+    public function createCampaignForAdmin()
+    {
+        $categories = Category::orderBy('name')->get();
+        return view('admin.campaigns.create', compact('categories'));
+    }
+
+    public function storeCampaignForAdmin(Request $request)
+    {
+        $validated = $request->validate([
+            'title'         => 'required|string|max:255',
+            'description'   => 'required|string|max:500',
+            'article'       => 'required|string',
+            'target_amount' => 'required|numeric|min:100000',
+            'image'         => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'category_id'   => 'nullable|exists:categories,id',
+        ], [
+            'title.required'         => 'Judul campaign wajib diisi.',
+            'title.max'              => 'Judul maksimal 255 karakter.',
+            'description.required'   => 'Deskripsi singkat wajib diisi.',
+            'description.max'        => 'Deskripsi maksimal 500 karakter.',
+            'article.required'       => 'Konten artikel wajib diisi.',
+            'target_amount.required' => 'Target donasi wajib diisi.',
+            'target_amount.min'      => 'Target donasi minimal Rp 100.000.',
+            'image.required'         => 'Gambar cover wajib diupload.',
+            'image.image'            => 'File harus berupa gambar.',
+            'image.mimes'            => 'Format gambar harus jpeg, png, jpg, atau webp.',
+            'image.max'              => 'Ukuran gambar maksimal 5MB.',
+            'category_id.exists'     => 'Kategori tidak valid.',
+        ]);
+
+        $imagePath = $request->file('image')->store('campaigns', 'public');
+
+        Campaign::create([
+            'user_id'       => auth()->id(),
+            'category_id'   => $request->category_id,
+            'title'         => $validated['title'],
+            'description'   => $validated['description'],
+            'article'       => $validated['article'],
+            'target_amount' => $validated['target_amount'],
+            'current_amount' => 0,
+            'image'         => $imagePath,
+            'slug'          => str()->slug($validated['title']) . '-' . uniqid(),
+            'status'        => 'approved',
+        ]);
+
+        Notification::create([
+            'user_id'  => auth()->id(),
+            'actor_id' => auth()->id(),
+            'title'    => 'Campaign Dibuat',
+            'message'  => "Campaign \"{$validated['title']}\" berhasil dibuat dan langsung aktif!",
+            'type'     => 'campaign_created'
+        ]);
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Campaign berhasil dibuat dan langsung aktif!');
+    }
 }

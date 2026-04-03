@@ -29,8 +29,9 @@
                 </div>
             </div>
 
-            {{-- STATS --}}
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-10">
+            {{-- STATS: PLATFORM OVERVIEW --}}
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-4">
+
                 {{-- TOTAL USER --}}
                 <div
                     class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md transition-all duration-200 group">
@@ -46,26 +47,6 @@
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- TOTAL CAMPAIGN --}}
-                <div
-                    class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md transition-all duration-200 group">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Total Campaign</p>
-                            <p class="text-3xl font-extrabold text-slate-800 group-hover:text-violet-600 transition-colors">
-                                {{ $totalCampaigns }}</p>
-                        </div>
-                        <div
-                            class="w-11 h-11 bg-violet-50 rounded-xl flex items-center justify-center group-hover:bg-violet-100 transition-colors">
-                            <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
                         </div>
                     </div>
@@ -92,26 +73,257 @@
                     </div>
                 </div>
 
-                {{-- SALDO BANK --}}
+                {{-- TOTAL DONATUR --}}
+                @php
+                    $totalDonaturCount = \App\Models\Donation::whereNotNull('user_id')
+                        ->distinct('user_id')
+                        ->count('user_id');
+                @endphp
                 <div
                     class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md transition-all duration-200 group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Saldo Bank</p>
-                            <p
-                                class="text-2xl sm:text-3xl font-extrabold text-slate-800 group-hover:text-amber-600 transition-colors">
-                                Rp {{ number_format($totalBankBalance, 0, ',', '.') }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Total Donatur</p>
+                            <p class="text-3xl font-extrabold text-slate-800 group-hover:text-indigo-600 transition-colors">
+                                {{ $totalDonaturCount }}</p>
+                            <p class="text-[11px] text-slate-400 mt-1">donatur terdaftar</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-indigo-50 rounded-xl flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- PENGAJUAN PENGELOLA --}}
+                @php
+                    $pendingPengelola = \App\Models\User::where('role', 'pengelola')
+                        ->where('is_approved', false)
+                        ->count();
+                @endphp
+                <a href="{{ route('admin.pengelola') }}"
+                    class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md hover:border-amber-200 transition-all duration-200 group block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Pengajuan
+                                Pengelola</p>
+                            <p class="text-3xl font-extrabold text-slate-800 group-hover:text-amber-600 transition-colors">
+                                {{ $pendingPengelola }}</p>
+                            <span class="inline-flex items-center gap-1 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                <span class="text-[10px] font-bold text-amber-600">Perlu Verifikasi</span>
+                            </span>
                         </div>
                         <div
                             class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center group-hover:bg-amber-100 transition-colors">
                             <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                             </svg>
                         </div>
                     </div>
-                </div>
+                </a>
+
+                {{-- TARIK DANA (MIDTRANS) --}}
+                <a href="https://dashboard.midtrans.com/settings/withdrawal" target="_blank" rel="noopener noreferrer"
+                    class="group bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl p-5 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-200 block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-indigo-200 mb-2">Tarik Dana</p>
+                            <h2 class="text-base font-bold text-white">Midtrans</h2>
+                            <p class="text-[11px] text-indigo-200 mt-0.5">Dashboard penarikan</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 mt-3">
+                        <svg class="w-3 h-3 text-indigo-200" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span
+                            class="text-[10px] font-semibold text-indigo-200 group-hover:text-white transition-colors">Buka
+                            di tab baru</span>
+                    </div>
+                </a>
+            </div>
+
+            {{-- STATS: CAMPAIGN BREAKDOWN --}}
+            @php
+                $pendingCampaigns = \App\Models\Campaign::where('status', 'pending')->count();
+                $approvedCampaigns = \App\Models\Campaign::where('status', 'approved')->count();
+                $endedCampaigns = \App\Models\Campaign::where('status', 'ended')->count();
+                $closedCampaigns = \App\Models\Campaign::where('status', 'closed')->count();
+            @endphp
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-4">
+
+                {{-- TOTAL CAMPAIGN --}}
+                <a href="{{ route('admin.campaign.active') }}"
+                    class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md hover:border-violet-200 transition-all duration-200 group block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Total Campaign</p>
+                            <p class="text-3xl font-extrabold text-slate-800 group-hover:text-violet-600 transition-colors">
+                                {{ $totalCampaigns }}</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-violet-50 rounded-xl flex items-center justify-center group-hover:bg-violet-100 transition-colors">
+                            <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                {{-- CAMPAIGN PENDING --}}
+                <a href="{{ route('admin.campaign') }}"
+                    class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md hover:border-amber-200 transition-all duration-200 group block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Campaign Pending
+                            </p>
+                            <p class="text-3xl font-extrabold text-slate-800 group-hover:text-amber-600 transition-colors">
+                                {{ $pendingCampaigns }}</p>
+                            <p class="text-[11px] text-slate-400 mt-1">menunggu review</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+                            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                {{-- CAMPAIGN AKTIF --}}
+                <a href="{{ route('admin.campaign.active', ['status' => 'approved']) }}"
+                    class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md hover:border-emerald-200 transition-all duration-200 group block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Campaign Aktif
+                            </p>
+                            <p
+                                class="text-3xl font-extrabold text-slate-800 group-hover:text-emerald-600 transition-colors">
+                                {{ $approvedCampaigns }}</p>
+                            <p class="text-[11px] text-slate-400 mt-1">sedang berjalan</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                {{-- CAMPAIGN BERAKHIR --}}
+                <a href="{{ route('admin.campaign.active', ['status' => 'ended']) }}"
+                    class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md hover:border-blue-200 transition-all duration-200 group block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Campaign Berakhir
+                            </p>
+                            <p class="text-3xl font-extrabold text-slate-800 group-hover:text-blue-600 transition-colors">
+                                {{ $endedCampaigns }}</p>
+                            <p class="text-[11px] text-slate-400 mt-1">target tercapai</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                {{-- CAMPAIGN DITUTUP --}}
+                <a href="{{ route('admin.campaign.active', ['status' => 'closed']) }}"
+                    class="bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md hover:border-slate-300 transition-all duration-200 group block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Campaign Ditutup
+                            </p>
+                            <p class="text-3xl font-extrabold text-slate-800 group-hover:text-slate-500 transition-colors">
+                                {{ $closedCampaigns }}</p>
+                            <p class="text-[11px] text-slate-400 mt-1">tidak aktif</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            {{-- STATS: ACTIONS --}}
+            @php
+                $approvedPengelola = \App\Models\User::where('role', 'pengelola')->where('is_approved', true)->count();
+            @endphp
+            <div class="grid gap-4 sm:grid-cols-2 mb-10">
+
+                {{-- BUAT CAMPAIGN --}}
+                <a href="{{ route('admin.campaign.create') }}"
+                    class="group bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-5 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-200 block">
+                    <div
+                        class="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mb-3 group-hover:bg-white/30 transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </div>
+                    <h2 class="text-sm font-bold text-white">Buat Campaign</h2>
+                    <p class="text-xs text-emerald-100 mt-1 leading-relaxed">
+                        Buat campaign baru yang langsung aktif tanpa verifikasi.
+                    </p>
+                </a>
+
+                {{-- PENGELOLA AKTIF --}}
+                <a href="{{ route('admin.users.index') }}"
+                    class="group bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-md hover:border-violet-200 transition-all duration-200 block">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Pengelola Aktif
+                            </p>
+                            <p
+                                class="text-3xl font-extrabold text-slate-800 group-hover:text-violet-600 transition-colors">
+                                {{ $approvedPengelola }}
+                            </p>
+                            <p class="text-[11px] text-slate-400 mt-1">sudah terverifikasi</p>
+                        </div>
+                        <div
+                            class="w-11 h-11 bg-violet-50 rounded-xl flex items-center justify-center group-hover:bg-violet-100 transition-colors">
+                            <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             {{-- TABLES SECTION (DONASI & USER) --}}
@@ -123,15 +335,15 @@
                     <div class="p-5 border-b border-slate-100 flex items-center justify-between">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor"
+                                    stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
                             </div>
                             <h2 class="font-bold text-slate-800">Donasi Terbaru</h2>
                         </div>
-                        <a href="#"
+                        <a href="{{ route('admin.donations.index') }}"
                             class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">Lihat
                             Semua</a>
                     </div>
@@ -140,13 +352,17 @@
                         <table class="w-full text-left">
                             <thead>
                                 <tr class="bg-slate-50/50">
-                                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                    <th
+                                        class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                         Donatur</th>
-                                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                    <th
+                                        class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                         Campaign</th>
-                                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                    <th
+                                        class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                         Nominal</th>
-                                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                    <th
+                                        class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                         Waktu</th>
                                 </tr>
                             </thead>
@@ -320,7 +536,8 @@
                     <h2 class="font-bold text-slate-800">Menu Cepat</h2>
                 </div>
 
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+
                     {{-- PENGELOLA PENDING --}}
                     <a href="{{ route('admin.pengelola') }}"
                         class="group bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-lg hover:border-violet-200 transition-all duration-200">
@@ -400,6 +617,24 @@
                         <p class="text-xs text-slate-400 mt-1 leading-relaxed">Persetujuan penarikan dana oleh pengelola.
                         </p>
                     </a>
+
+                    {{-- RIWAYAT AKTIVITAS --}}
+                    <a href="{{ route('admin.activities') }}"
+                        class="group bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-lg hover:border-indigo-200 transition-all duration-200">
+                        <div
+                            class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
+                            Riwayat Aktivitas
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">Log aktivitas seluruh user di platform.</p>
+                    </a>
+
                 </div>
             </div>
 

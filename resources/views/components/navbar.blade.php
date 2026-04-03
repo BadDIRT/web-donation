@@ -84,7 +84,7 @@
                 @mouseleave="timeout = setTimeout(() => openCampaign = false, 150)">
 
                 <button
-                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all duration-150"
+                    class="flex items-center gap-1.5 px-3 py-2 hover:text-green-600 transition-all duration-150"
                     :class="openCampaign && 'text-emerald-600 bg-emerald-50/50'">
                     Campaign
                     <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="openCampaign && 'rotate-180'"

@@ -24,6 +24,16 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
+        // Menghitung jumlah user unik yang pernah berdonasi, mengecualikan user_id null (donatur tamu)
+        $uniqueDonorsCount = \App\Models\Donation::whereNotNull('user_id')
+            ->distinct('user_id')
+            ->count('user_id');
+
+        $donations = Donation::where('user_id', $user->id)
+            ->with('campaign')
+            ->latest()
+            ->get();
+
         $campaigns = $user->campaigns()
             ->latest()
             ->with('category')
@@ -32,6 +42,16 @@ class DashboardController extends Controller
         $withdraws = Withdraw::where('user_id', auth()->id())
             ->with('campaign')
             ->latest()
+            ->get();
+
+        // Semua donasi untuk stats
+        $allDonations = Donation::where('user_id', $user->id)->get();
+
+        // Riwayat donasi dibatasi 5 terbaru
+        $recentDonations = Donation::where('user_id', $user->id)
+            ->with('campaign')
+            ->latest()
+            ->take(5)
             ->get();
 
         $totalCampaign    = $campaigns->count();
@@ -57,7 +77,11 @@ class DashboardController extends Controller
             'userBanks',
             'totalWithdrawable', // 🔥 DIUBAH
             'withdraws',
-            'myDonations'
+            'myDonations',
+            'donations',
+            'uniqueDonorsCount',
+            'allDonations', // 🔥 DIUBAH
+            'recentDonations' // 🔥 DIUBAH
         ));
     }
 
@@ -65,12 +89,20 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $donations = Donation::where('user_id', $user->id)
+        // Semua donasi untuk stats
+        $allDonations = Donation::where('user_id', $user->id)->get();
+
+        // Riwayat donasi dibatasi 5 terbaru
+        $recentDonations = Donation::where('user_id', $user->id)
             ->with('campaign')
             ->latest()
+            ->take(5)
             ->get();
 
-        return view('dashboard.donatur', compact('donations'));
+        return view('dashboard.donatur', [
+            'donations' => $allDonations,        // Untuk stats & sidebar
+            'recentDonations' => $recentDonations, // Untuk tabel riwayat
+        ]);
     }
 
     public function myDonations(Request $request)
@@ -99,5 +131,5 @@ class DashboardController extends Controller
         $totalDonated = Donation::where('user_id', $user->id)->where('status', 'success')->sum('amount');
 
         return view('dashboard.my-donations', compact('donations', 'totalDonated'));
-    }   
+    }
 }

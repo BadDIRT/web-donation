@@ -94,6 +94,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/bank/success', function () {
         return view('bank.success');
     })->name('bank.success');
+    Route::delete('/banks/{userBank}', [UserBankController::class, 'destroy'])
+        ->name('bank.destroy');
 
     Route::get('/withdraw', [WithdrawController::class, 'create'])->name('withdraw.create');
     Route::post('/withdraw', [WithdrawController::class, 'store'])->name('withdraw.store');
@@ -185,6 +187,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/activities/{notification}', [AdminController::class, 'activityDetail'])
             ->name('admin.activities.show');
 
+        // Tampilkan Form
+        Route::get('/admin/buat-campaign', [CampaignController::class, 'createCampaignForAdmin'])->name('admin.campaign.create');
+
+        // Proses Submit
+        Route::post('/admin/buat-campaign', [CampaignController::class, 'storeCampaignForAdmin'])->name('admin.campaign.store');
+
         // ROUTE KELOLA USER (CRUD)
         Route::get('/admin/users', [AdminController::class, 'usersIndex'])->name('admin.users.index');
         Route::get('/admin/users/create', [AdminController::class, 'usersCreate'])->name('admin.users.create');
@@ -192,6 +200,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/users/{user}/edit', [AdminController::class, 'usersEdit'])->name('admin.users.edit');
         Route::put('/admin/users/{user}', [AdminController::class, 'usersUpdate'])->name('admin.users.update');
         Route::delete('/admin/users/{user}', [AdminController::class, 'usersDestroy'])->name('admin.users.destroy');
+        Route::get('/admin/users/{user}', [AdminController::class, 'userDetail'])
+            ->name('admin.users.show');
+        Route::put('/admin/users/{user}/role', [AdminController::class, 'updateRole'])
+            ->name('admin.users.updateRole');
+
+        // Di dalam group admin routes
+        Route::get('/admin/donations', [AdminController::class, 'donationsIndex'])
+            ->name('admin.donations.index');
+
+        Route::get('/admin/donations/{donation}', [AdminController::class, 'donationDetail'])
+            ->name('admin.donations.show');
     });
 
 

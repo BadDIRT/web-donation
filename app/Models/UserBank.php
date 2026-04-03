@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UserBank extends Model
 {
@@ -22,5 +23,10 @@ class UserBank extends Model
     public function bank(): BelongsTo
     {
         return $this->belongsTo(Bank::class);
+    }
+
+    public function withdraws(): HasMany
+    {
+        return $this->hasMany(Withdraw::class, 'user_bank_id');
     }
 }

@@ -24,7 +24,7 @@
                         berikan.</p>
                 </div>
 
-                <a href="{{ route('dashboard.pengelola') }}"
+                <a href="{{ route('dashboard') }}"
                     class="ml-[52px] sm:ml-0 inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

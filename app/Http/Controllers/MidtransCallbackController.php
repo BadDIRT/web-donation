@@ -81,6 +81,18 @@ class MidtransCallbackController extends Controller
                         'type'     => 'donation_success'
                     ]);
 
+                    // 🔥 KIRIM NOTIF KE SI DONATUR (JIKA DIA LOGIN)
+                    if ($donation->user_id) {
+                        Notification::create([
+                            'user_id'  => $donation->user_id,
+                            'actor_id' => null,
+                            'title'    => 'Pembayaran Berhasil',
+                            'message'  => 'Terima kasih! Pembayaran Anda sebesar Rp ' . number_format($donation->amount, 0, ',', '.') .
+                                ' untuk campaign "' . $campaign->title . '" telah berhasil diproses.',
+                            'type'     => 'donation_success'
+                        ]);
+                    }
+
                     // AUTO CLOSE CAMPAIGN
                     if ($campaign->current_amount >= $campaign->target_amount) {
 
