@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Donation;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -259,5 +260,96 @@ class CampaignController extends Controller
 
         return redirect()->route('admin.dashboard')
             ->with('success', 'Campaign berhasil dibuat dan langsung aktif!');
+    }
+
+    public function showCampaignPengelola(Campaign $campaign)
+    {
+        if ($campaign->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('pengelola.campaigns.show', compact('campaign'));
+    }
+
+    public function update(Request $request, Campaign $campaign)
+    {
+        if ($campaign->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = [];
+
+        switch ($request->update_type) {
+            case 'title':
+                $request->validate([
+                    'title' => 'required|string|max:255',
+                ]);
+                $validated['title'] = $request->title;
+                break;
+
+            case 'description':
+                $request->validate([
+                    'description' => 'nullable|string|max:500',
+                ]);
+                $validated['description'] = $request->description;
+                break;
+
+            case 'article':
+                $request->validate([
+                    'article' => 'nullable|string',
+                ]);
+                $validated['article'] = $request->article;
+                break;
+
+            default:
+                return back()->with('error', 'Tipe pembaruan tidak valid.');
+        }
+
+        $campaign->update($validated);
+
+        return back()->with('success', 'Campaign berhasil diperbarui.');
+    }
+
+    public function incomeHistory(Request $request)
+    {
+        $search = $request->input('search');
+        $status = $request->input('status');
+        $campaignId = $request->input('campaign');
+
+        $query = Donation::whereHas('campaign', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->with('campaign');
+
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        if (!empty($campaignId)) {
+            $query->where('campaign_id', $campaignId);
+        }
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('donor_name', 'like', '%' . $search . '%')
+                    ->orWhereHas('campaign', function ($q2) use ($search) {
+                        $q2->where('title', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        $donations = $query->latest()->paginate(10)->withQueryString();
+
+        $campaigns = Campaign::where('user_id', auth()->id())
+            ->where('status', 'approved')
+            ->orderBy('title')
+            ->pluck('title', 'id');
+
+        $totalIncome = Donation::whereHas('campaign', function ($q) {
+            $q->where('user_id', auth()->id());
+        })
+            ->where('status', 'success')
+            ->sum('amount');
+
+        return view('pengelola.income.index', compact('donations', 'campaigns', 'totalIncome'));
     }
 }

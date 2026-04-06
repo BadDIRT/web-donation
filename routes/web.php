@@ -4,6 +4,7 @@ use App\Http\Controllers\{HomeController, CampaignController, DonationController
 use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Pengelola\CampaignUpdateController;
 use App\Http\Controllers\UserBankController;
 use App\Http\Controllers\WithdrawController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,16 @@ Route::middleware(['auth', 'approved'])->group(function () {
         ->name('withdraw.history');
 
     Route::get('/withdraw/{id}', [WithdrawController::class, 'show'])->name('withdraw.show');
+
+    Route::get('pengelola/campaign/{campaign}', [CampaignController::class, 'showCampaignPengelola'])->name('pengelola.campaign.show');
+    Route::put('pengelola/campaign/{campaign}', [CampaignController::class, 'update'])->name('pengelola.campaign.update');
+
+    // Di dalam route group pengelola
+    Route::get('pengelola/campaign/{campaign}/updates', [CampaignUpdateController::class, 'create'])->name('pengelola.updates.create');
+    Route::post('pengelola/campaign/{campaign}/updates', [CampaignUpdateController::class, 'store'])->name('pengelola.updates.store');
+    Route::delete('pengelola/campaign/{campaign}/updates/{update}', [CampaignUpdateController::class, 'destroy'])->name('pengelola.updates.destroy');
+    Route::get('pengelola/campaigns', [PengelolaController::class, 'indexCampaignPengelola'])->name('pengelola.campaigns.index');
+    Route::get('pengelola/income', [CampaignController::class, 'incomeHistory'])->name('pengelola.income.index');
 });
 
 

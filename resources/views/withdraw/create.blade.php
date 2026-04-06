@@ -81,60 +81,59 @@
 
                             @forelse ($campaigns as $campaign)
                                 <div class="space-y-2">
-                                    @foreach ($campaigns as $campaign)
-                                        <button type="button"
-                                            @click="selected = '{{ $campaign->id }}'; document.getElementById('campaign_id').value = '{{ $campaign->id }}';"
-                                            class="w-full text-left border rounded-xl p-4 transition-all duration-200 hover:shadow-sm
+                                    <button type="button"
+                                        @click="selected = '{{ $campaign->id }}'; document.getElementById('campaign_id').value = '{{ $campaign->id }}';"
+                                        class="w-full text-left border rounded-xl p-4 transition-all duration-200 hover:shadow-sm
                                         @if (old('campaign_id') == $campaign->id) border-indigo-300 bg-indigo-50 ring-2 ring-indigo-200
                                         @else
                                             border-slate-200 hover:border-slate-300 @endif"
-                                            :class="selected == '{{ $campaign->id }}' ?
-                                                'border-indigo-300 bg-indigo-50 ring-2 ring-indigo-200 shadow-sm shadow-indigo-500/10' :
-                                                'border-slate-200 hover:border-slate-300'">
+                                        :class="selected == '{{ $campaign->id }}' ?
+                                            'border-indigo-300 bg-indigo-50 ring-2 ring-indigo-200 shadow-sm shadow-indigo-500/10' :
+                                            'border-slate-200 hover:border-slate-300'">
 
-                                            <div class="flex items-center justify-between gap-3">
-                                                <div class="flex items-center gap-3 min-w-0">
-                                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors
                                                     :class="selected=='{{ $campaign->id }}'
-                                                        ? 'bg-indigo-100' : 'bg-slate-100'">
-                                                        <svg class="w-5 h-5 transition-colors" :class="selected == '{{ $campaign->id }}' ? 'text-indigo-600' :
-                                                            'text-slate-400'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d=" M19
-                                                        11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0
-                                                        012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2
-                                                        0 012 2v2M7 7h10" />
-                                                    </svg>
-                                                </div>
-                                                <div class="min-w-0">
-                                                    <p class="text-sm font-semibold text-slate-800 truncate">
-                                                        {{ $campaign->title }}</p>
-                                                    <p class="text-xs text-slate-400 mt-0.5">ID: {{ $campaign->id }}</p>
-                                                </div>
+                                                    ? 'bg-indigo-100'
+                                                    : 'bg-slate-100'">
+                                                                    <svg class="w-5 h-5 transition-colors" :class="selected == '{{ $campaign->id }}' ?
+                                                                        'text-indigo-600' :
+                                                                        'text-slate-400'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" d=" M19 11H5m14
+                                                    0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0
+                                                    00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                                </svg>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-semibold text-slate-800 truncate">
+                                                    {{ $campaign->title }}</p>
+                                                <p class="text-xs text-slate-400 mt-0.5">ID: {{ $campaign->id }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center gap-3 flex-shrink-0">
+                                            <div class="text-right">
+                                                <p class="text-xs text-slate-400">Saldo tersedia</p>
+                                                <p class="text-sm font-bold text-emerald-600">Rp
+                                                    {{ number_format($campaign->current_amount_rd_pengelola, 0, ',', '.') }}
+                                                </p>
                                             </div>
 
-                                            <div class="flex items-center gap-3 flex-shrink-0">
-                                                <div class="text-right">
-                                                    <p class="text-xs text-slate-400">Saldo tersedia</p>
-                                                    <p class="text-sm font-bold text-emerald-600">Rp
-                                                        {{ number_format($campaign->current_amount_rd_pengelola, 0, ',', '.') }}
-                                                    </p>
-                                                </div>
-
-                                                {{-- CHECK ICON --}}
-                                                <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
-                                                    :class="selected == '{{ $campaign->id }}' ?
-                                                        'bg-indigo-500 scale-100 opacity-100' :
-                                                        'bg-slate-100 scale-0 opacity-0'">
-                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor"
-                                                        stroke-width="3" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </div>
+                                            {{-- CHECK ICON --}}
+                                            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
+                                                :class="selected == '{{ $campaign->id }}' ?
+                                                    'bg-indigo-500 scale-100 opacity-100' :
+                                                    'bg-slate-100 scale-0 opacity-0'">
+                                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor"
+                                                    stroke-width="3" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M5 13l4 4L19 7" />
+                                                </svg>
                                             </div>
+                                        </div>
                                 </div>
                                 </button>
-                            @endforeach
                         </div>
                     @empty
                         <div class="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-200">

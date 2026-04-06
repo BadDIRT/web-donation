@@ -54,6 +54,22 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Tambahkan ini di method dashboard pengelola
+        $recentIncome = Donation::whereHas('campaign', function ($q) {
+            $q->where('user_id', auth()->id());
+        })
+            ->with('campaign')
+            ->where('status', 'success')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $totalIncome = Donation::whereHas('campaign', function ($q) {
+            $q->where('user_id', auth()->id());
+        })
+            ->where('status', 'success')
+            ->sum('amount');
+
         $totalCampaign    = $campaigns->count();
         $approvedCampaign = $campaigns->where('status', 'approved')->count();
         $pendingCampaign  = $campaigns->where('status', 'pending')->count();
@@ -81,7 +97,9 @@ class DashboardController extends Controller
             'donations',
             'uniqueDonorsCount',
             'allDonations', // 🔥 DIUBAH
-            'recentDonations' // 🔥 DIUBAH
+            'recentDonations', // 🔥 DIUBAH
+            'recentIncome', // 🔥 DIUBAH
+            'totalIncome'
         ));
     }
 

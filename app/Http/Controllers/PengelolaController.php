@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
+use App\Models\Campaign;
 use App\Models\Notification;
 use App\Models\User;
 use App\Models\UserBank;
@@ -103,5 +104,29 @@ class PengelolaController extends Controller
     public function createCampaign()
     {
         return view('campaign.create');
+    }
+
+    public function indexCampaignPengelola(Request $request)
+    {
+        $search = $request->input('search');
+        $status = $request->input('status');
+
+        $query = Campaign::where('user_id', auth()->id());
+
+        // Filter pencarian judul
+        if (!empty($search)) {
+            $query->where('title', 'like', '%' . $search . '%');
+        }
+
+        // Filter status
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        $campaigns = $query->latest()
+            ->paginate(10)
+            ->withQueryString(); // ← INI PENTING! Biar pagination bawa filter
+
+        return view('pengelola.campaigns.index', compact('campaigns'));
     }
 }

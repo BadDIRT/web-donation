@@ -48,6 +48,11 @@ class Campaign extends Model
         return $this->hasMany(Withdraw::class);
     }
 
+    public function updates(): HasMany
+    {
+        return $this->hasMany(CampaignUpdate::class)->orderBy('created_at', 'desc');
+    }
+
     public function getAvailableBalanceAttribute()
     {
         $paid = $this->payouts()->sum('amount');
