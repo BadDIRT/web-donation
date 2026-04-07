@@ -7,7 +7,7 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
             {{-- BACK LINK --}}
-            <a href="{{ route('pengelola.campaign.show', $campaign->id) }}"
+            <a href="{{ route('pengelola.campaign.show', $campaign->slug) }}"
                 class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-emerald-600 transition-colors mb-6 group">
                 <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor"
                     stroke-width="2" viewBox="0 0 24 24">

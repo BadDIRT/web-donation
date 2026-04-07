@@ -16,6 +16,18 @@ Route::post('/campaign/{campaign}/donate', [DonationController::class, 'donate']
     ->name('donate');
 Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
 
+Route::get('/campaign/{campaign:slug}/updates', [CampaignController::class, 'updatesIndex'])->name('campaign.updates.index');
+// YANG BENAR
+Route::get('/campaign/{campaign:slug}/updates/{update}', [CampaignController::class, 'updateShow'])->name('campaign.updates.show');
+
+Route::get('/kabar-terbaru', [CampaignController::class, 'latestUpdates'])->name('updates.latest');
+
+Route::post('/campaign/{campaign:slug}/updates/{update}/comment', [CampaignController::class, 'commentStore'])->name('campaign.updates.comment.store');
+Route::delete('/campaign/{campaign:slug}/updates/{update}/comment/{comment}', [CampaignController::class, 'commentDestroy'])->name('campaign.updates.comment.destroy');
+// Route Update (Edit) Komentar
+Route::patch('/campaign/{campaign:slug}/updates/{update}/comments/{comment}', [CampaignController::class, 'commentUpdate'])
+    ->name('campaign.updates.comment.update');
+
 
 
 Route::middleware(['auth', 'approved'])->group(function () {
@@ -39,7 +51,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
 
     Route::get('/withdraw/{id}', [WithdrawController::class, 'show'])->name('withdraw.show');
 
-    Route::get('pengelola/campaign/{campaign}', [CampaignController::class, 'showCampaignPengelola'])->name('pengelola.campaign.show');
+    Route::get('pengelola/campaign/{campaign:slug}', [CampaignController::class, 'showCampaignPengelola'])->name('pengelola.campaign.show');
     Route::put('pengelola/campaign/{campaign}', [CampaignController::class, 'update'])->name('pengelola.campaign.update');
 
     // Di dalam route group pengelola
@@ -145,7 +157,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/campaign', [AdminController::class, 'campaignList'])
             ->name('admin.campaign');
 
-        Route::get('/admin/campaign/{campaign}', [AdminController::class, 'showCampaign'])
+        Route::get('/admin/campaign/{campaign:slug}', [AdminController::class, 'showCampaign'])
             ->name('admin.campaign.show');
 
         Route::post(

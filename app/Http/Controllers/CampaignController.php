@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
+use App\Models\CampaignUpdate;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Donation;
 use App\Models\Notification;
 use App\Models\User;
@@ -73,7 +75,7 @@ class CampaignController extends Controller
             abort(404);
         }
 
-        $campaign->load(['user', 'category']);
+        $campaign->load(['user', 'category', 'updates']);
 
         $topDonors = $campaign->donations()
             ->where('status', 'success')
@@ -279,6 +281,13 @@ class CampaignController extends Controller
 
         $validated = [];
 
+        // Mapping label update_type
+        $typeLabels = [
+            'title'       => 'Judul',
+            'description' => 'Deskripsi Singkat',
+            'article'     => 'Konten Artikel',
+        ];
+
         switch ($request->update_type) {
             case 'title':
                 $request->validate([
@@ -305,7 +314,56 @@ class CampaignController extends Controller
                 return back()->with('error', 'Tipe pembaruan tidak valid.');
         }
 
+        $oldValue = $campaign->getOriginal($request->update_type);
+        $newValue = $validated[$request->update_type] ?? null;
+        $updateLabel = $typeLabels[$request->update_type] ?? $request->update_type;
+
         $campaign->update($validated);
+
+        // ============================================
+        // KIRIM NOTIFIKASI
+        // ============================================
+        $actor = auth()->user();
+
+        // Ambil semua donatur (termasuk yang donate anonim tapi punya akun)
+        $donorIds = $campaign->donations()
+            ->where('status', 'success')
+            ->whereNotNull('user_id')
+            ->where('user_id', '!=', $actor->id)
+            ->pluck('user_id')
+            ->unique();
+
+        // 1. Notifikasi ke semua Admin
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id'  => $admin->id,
+                'actor_id' => $actor->id,
+                'title'    => 'Campaign Diperbarui',
+                'message'  => "{$actor->name} mengubah {$updateLabel} campaign \"{$campaign->title}\".",
+                'type'     => 'campaign_updated',
+            ]);
+        }
+
+        // 2. Notifikasi ke Pemilik Campaign (diri sendiri)
+        Notification::create([
+            'user_id'  => $campaign->user_id,
+            'actor_id' => $actor->id,
+            'title'    => 'Campaign Berhasil Diperbarui',
+            'message'  => "{$updateLabel} campaign \"{$campaign->title}\" berhasil diperbarui.",
+            'type'     => 'campaign_updated',
+        ]);
+
+        // 3. Notifikasi ke semua Donatur (termasuk yang donate anonim tapi login)
+        foreach ($donorIds as $donorId) {
+            Notification::create([
+                'user_id'  => $donorId,
+                'actor_id' => $actor->id,
+                'title'    => 'Update Campaign yang Kamu Dukung',
+                'message'  => "Campaign \"{$campaign->title}\" telah memperbarui {$updateLabel}nya. Yuk cek info terbarunya!",
+                'type'     => 'campaign_updated',
+            ]);
+        }
 
         return back()->with('success', 'Campaign berhasil diperbarui.');
     }
@@ -351,5 +409,105 @@ class CampaignController extends Controller
             ->sum('amount');
 
         return view('pengelola.income.index', compact('donations', 'campaigns', 'totalIncome'));
+    }
+
+    public function updatesIndex(Campaign $campaign)
+    {
+        // Pastikan campaign bisa dilihat publik
+        if (!in_array($campaign->status, ['approved', 'ended'])) {
+            abort(404);
+        }
+
+        $campaign->load(['user', 'category', 'updates']);
+
+        $updates = $campaign->updates()->latest()->paginate(6)->withQueryString();
+
+        return view('campaign.updates.index', compact('campaign', 'updates'));
+    }
+
+    public function updateShow(Campaign $campaign, CampaignUpdate $update)
+    {
+        if ($update->campaign_id !== $campaign->id) {
+            abort(404);
+        }
+
+        if (!in_array($campaign->status, ['approved', 'ended'])) {
+            abort(404);
+        }
+
+        $campaign->load(['user', 'category']);
+
+        $prevUpdate = CampaignUpdate::where('campaign_id', $campaign->id)
+            ->where('id', '<', $update->id)
+            ->latest()
+            ->first();
+
+        $nextUpdate = CampaignUpdate::where('campaign_id', $campaign->id)
+            ->where('id', '>', $update->id)
+            ->oldest()
+            ->first();
+
+        return view('campaign.updates.show', compact('campaign', 'update', 'prevUpdate', 'nextUpdate'));
+    }
+
+    // 1. Update method commentStore agar mengambil user yang sedang login (jika ada)
+    public function commentStore(Request $request, Campaign $campaign, CampaignUpdate $update)
+    {
+        if ($update->campaign_id !== $campaign->id) {
+            abort(404);
+        }
+
+        $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        // Logic: Jika user login, ambil ID-nya. Jika tidak (guest), biarkan null.
+        $update->comments()->create([
+            'content' => $request->content,
+            'user_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('campaign.updates.show', ['campaign' => $campaign->slug, 'update' => $update->id])->with('success', 'Komentar berhasil ditambahkan.');
+    }
+
+    // 2. Tambahkan method baru untuk Update (Edit) Komentar
+    public function commentUpdate(Request $request, Campaign $campaign, CampaignUpdate $update, Comment $comment)
+    {
+        // Validasi keamanan: Pastikan komentar milik update yang benar
+        if ($comment->campaign_update_id !== $update->id) {
+            abort(404);
+        }
+
+        // Validasi: Hanya pemilik komentar yang bisa edit
+        if ($comment->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin mengedit komentar ini.');
+        }
+
+        $request->validate([
+            'content' => 'required|string|max:1000',
+        ]);
+
+        $comment->update([
+            'content' => $request->content,
+        ]);
+
+        return redirect()->route('campaign.updates.show', ['campaign' => $campaign->slug, 'update' => $update->id])->with('success', 'Komentar berhasil diperbarui.');
+    }
+
+    // 3. Update method commentDestroy untuk mengecek kepemilikan
+    public function commentDestroy(Campaign $campaign, CampaignUpdate $update, Comment $comment)
+    {
+        if ($comment->campaign_update_id !== $update->id) {
+            abort(404);
+        }
+
+        // Validasi: Hanya pemilik komentar yang bisa hapus
+        if ($comment->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin menghapus komentar ini.');
+        }
+
+        $comment->delete();
+
+        return redirect()->route('campaign.updates.show', ['campaign' => $campaign->slug, 'update' => $update->id])->with('success', 'Komentar berhasil dihapus.');
     }
 }

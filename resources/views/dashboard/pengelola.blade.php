@@ -241,10 +241,10 @@
                                             </div>
                                             <span
                                                 class="flex-shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                                                @if ($campaign->status == 'approved') bg-emerald-100 text-emerald-600
-                                                @elseif($campaign->status == 'pending') bg-amber-100 text-amber-600
-                                                @elseif($campaign->status == 'ended') bg-blue-100 text-blue-600
-                                                @else bg-red-100 text-red-600 @endif">
+                        @if ($campaign->status == 'approved') bg-emerald-100 text-emerald-600
+                        @elseif($campaign->status == 'pending') bg-amber-100 text-amber-600
+                        @elseif($campaign->status == 'ended') bg-blue-100 text-blue-600
+                        @else bg-red-100 text-red-600 @endif">
                                                 {{ ucfirst($campaign->status) }}
                                             </span>
                                         </div>
@@ -255,7 +255,7 @@
                                             </div>
                                             <span
                                                 class="text-[10px] font-semibold text-slate-500">{{ floor($progress) }}%</span>
-                                            <a href="{{ route('pengelola.campaign.show', $campaign->id) }}"
+                                            <a href="{{ route('pengelola.campaign.show', $campaign->slug) }}"
                                                 class="flex-shrink-0 text-[10px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg hover:bg-blue-100 transition-colors">
                                                 Detail
                                             </a>
@@ -297,10 +297,10 @@
                                                 <td class="px-5 py-4 text-center">
                                                     <span
                                                         class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                                                        @if ($campaign->status == 'approved') bg-emerald-100 text-emerald-600
-                                                        @elseif($campaign->status == 'pending') bg-amber-100 text-amber-600
-                                                        @elseif($campaign->status == 'ended') bg-blue-100 text-blue-600
-                                                        @else bg-red-100 text-red-600 @endif">
+                                @if ($campaign->status == 'approved') bg-emerald-100 text-emerald-600
+                                @elseif($campaign->status == 'pending') bg-amber-100 text-amber-600
+                                @elseif($campaign->status == 'ended') bg-blue-100 text-blue-600
+                                @else bg-red-100 text-red-600 @endif">
                                                         {{ ucfirst($campaign->status) }}
                                                     </span>
                                                 </td>
@@ -324,7 +324,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="px-5 py-4 text-center">
-                                                    <a href="{{ route('pengelola.campaign.show', $campaign->id) }}"
+                                                    <a href="{{ route('pengelola.campaign.show', $campaign->slug) }}"
                                                         class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                             stroke-width="2" viewBox="0 0 24 24">

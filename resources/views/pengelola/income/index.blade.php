@@ -203,9 +203,6 @@
                                 Nominal</th>
                             <th
                                 class="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 text-center">
-                                Metode</th>
-                            <th
-                                class="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 text-center">
                                 Status</th>
                             <th
                                 class="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 text-right">
@@ -237,10 +234,6 @@
                                 </td>
                                 <td class="px-5 py-4 text-center font-bold text-emerald-600">+Rp
                                     {{ number_format($donation->amount, 0, ',', '.') }}</td>
-                                <td class="px-5 py-4 text-center">
-                                    <span
-                                        class="text-[11px] font-medium text-slate-500">{{ $donation->payment_method ?? '-' }}</span>
-                                </td>
                                 <td class="px-5 py-4 text-center">
                                     <span
                                         class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider

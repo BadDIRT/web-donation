@@ -137,7 +137,7 @@
                         $withdrawn = $campaign->current_amount - $campaign->current_amount_rd_pengelola;
                     @endphp
 
-                    <a href="{{ route('pengelola.campaign.show', $campaign->id) }}"
+                    <a href="{{ route('pengelola.campaign.show', $campaign->slug) }}"
                         class="block bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 overflow-hidden hover:shadow-md transition-all group">
                         {{-- COVER MINI --}}
                         <div class="h-36 bg-slate-100 relative overflow-hidden">
@@ -323,7 +323,7 @@
                                     </div>
                                 </td>
                                 <td class="px-5 py-4 text-center">
-                                    <a href="{{ route('pengelola.campaign.show', $campaign->id) }}"
+                                    <a href="{{ route('pengelola.campaign.show', $campaign->slug) }}"
                                         class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
                                             viewBox="0 0 24 24">

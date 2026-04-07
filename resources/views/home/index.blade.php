@@ -277,6 +277,114 @@
             @endif
         </section>
 
+        {{-- ================= KABAR TERBARU ================= --}}
+        <section class="mb-24">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+                <div>
+                    <span
+                        class="text-xs font-bold uppercase tracking-widest text-teal-600 bg-teal-50 px-4 py-1.5 rounded-full inline-block mb-4">
+                        <svg class="w-3.5 h-3.5 inline -mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2zM9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        KABAR TERBARU
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800">Update dari Pengelola</h2>
+                    <p class="text-slate-500 mt-2">Perkembangan terbaru dari campaign yang sedang berlangsung</p>
+                </div>
+                <a href="{{ route('updates.latest') }}"
+                    class="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-bold text-sm transition-colors group">
+                    Lihat Semua Update
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
+                        stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </a>
+            </div>
+
+            @if ($updates->count())
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                    @foreach ($updates as $update)
+                        <a href="{{ route('campaign.updates.show', [$update->campaign->slug, $update->id]) }}"
+                            class="group bg-white rounded-2xl border border-slate-100 shadow-sm shadow-black/5 hover:shadow-lg hover:border-teal-200 transition-all duration-300 overflow-hidden flex flex-col">
+                            {{-- IMAGE --}}
+                            @if ($update->image)
+                                <div class="aspect-[16/10] sm:aspect-video bg-slate-100 overflow-hidden">
+                                    <img src="{{ Storage::url($update->image) }}" alt="{{ $update->title }}"
+                                        class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500">
+                                </div>
+                            @else
+                                <div
+                                    class="aspect-[16/10] sm:aspect-video bg-gradient-to-br from-teal-100 to-emerald-100 flex items-center justify-center">
+                                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-teal-400" fill="none"
+                                        stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2zM9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                            @endif
+
+                            <div class="p-4 sm:p-5 flex flex-1 flex-col">
+                                {{-- CAMPAIGN TAG --}}
+                                <div class="flex items-center gap-2 mb-3">
+                                    @if ($update->campaign->category)
+                                        <span
+                                            class="text-[10px] font-semibold uppercase tracking-wider text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">
+                                            {{ $update->campaign->category->name }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- TITLE --}}
+                                <h3
+                                    class="font-bold text-slate-800 text-sm leading-snug line-clamp-2 group-hover:text-teal-700 transition-colors flex-1">
+                                    {{ $update->title }}
+                                </h3>
+
+                                {{-- PREVIEW CONTENT --}}
+                                @if ($update->content)
+                                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed line-clamp-2 mt-2 flex-1">
+                                        {{ Str::limit($update->content, 120) }}...
+                                    </p>
+                                @endif
+
+                                {{-- FOOTER: Pengelola + Time --}}
+                                <div class="mt-auto pt-3 border-t border-slate-100 flex items-center gap-2">
+                                    @if ($update->campaign->user)
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                            <span class="text-[9px] font-bold text-emerald-700">
+                                                {{ strtoupper(substr($update->campaign->user->name, 0, 1)) }}
+                                            </span>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400 truncate">
+                                            {{ $update->campaign->user->name }}
+                                        </span>
+                                    @endif
+                                    <span class="text-[10px] text-slate-300">•</span>
+                                    <span
+                                        class="text-[10px] text-slate-400">{{ $update->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <div class="bg-white rounded-2xl p-12 sm:p-16 text-center border border-slate-100 shadow-sm">
+                    <div class="w-14 h-14 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.5"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2zM9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <p class="text-slate-500 font-medium">Belum ada kabar terbaru</p>
+                    <p class="text-slate-400 text-xs mt-1">Update dari pengelola akan muncul di sini</p>
+                </div>
+            @endif
+        </section>
+
         {{-- ================= TESTIMONI DONATUR ================= --}}
         <section class="mb-24">
             <div class="text-center mb-14">

@@ -123,13 +123,107 @@
                         </div>
                     @endif
 
+                    {{-- KABAR TERBARU --}}
+                    @if ($campaign->updates->count() > 0)
+                        <div
+                            class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 overflow-hidden">
+                            <div
+                                class="px-5 sm:px-8 lg:px-10 py-5 sm:py-6 border-b border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor"
+                                            stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2zM9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Kabar Terbaru</h2>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    @if ($campaign->updates->count() > 3)
+                                        <a href="{{ route('campaign.updates.index', $campaign->slug) }}"
+                                            class="text-[11px] sm:text-xs font-semibold text-teal-600 hover:text-teal-700 hover:bg-teal-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                                            Lihat Semua
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                            </svg>
+                                        </a>
+                                    @endif
+                                    <span
+                                        class="text-[11px] sm:text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                                        {{ $campaign->updates->count() }} update
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="divide-y divide-slate-100">
+                                @foreach ($campaign->updates->take(3) as $index => $update)
+                                    <div class="p-5 sm:p-6 lg:p-8 {{ $index == 0 ? '' : 'border-t border-slate-100' }}">
+                                        <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+                                            {{-- IMAGE --}}
+                                            @if ($update->image)
+                                                <div class="flex-shrink-0 w-full sm:w-48 md:w-56 lg:w-64">
+                                                    <div class="aspect-video rounded-xl overflow-hidden bg-slate-100">
+                                                        <img src="{{ Storage::url($update->image) }}"
+                                                            alt="{{ $update->title }}"
+                                                            class="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-500">
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            {{-- CONTENT --}}
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-start justify-between gap-2 mb-2">
+                                                    <h3 class="text-sm sm:text-base font-bold text-slate-800 leading-snug">
+                                                        {{ $update->title }}
+                                                    </h3>
+                                                    <span
+                                                        class="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap font-medium flex-shrink-0 mt-0.5">
+                                                        {{ $update->created_at->translatedFormat('d M Y') }}
+                                                    </span>
+                                                </div>
+
+                                                @if ($update->content)
+                                                    <p
+                                                        class="text-sm text-slate-600 leading-relaxed line-clamp-3 sm:line-clamp-4">
+                                                        {{ $update->content }}
+                                                    </p>
+                                                @endif
+
+                                                {{-- PENGELOLA INFO --}}
+                                                @if ($campaign->user)
+                                                    <div
+                                                        class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+                                                        <div
+                                                            class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                            <span class="text-[10px] font-bold text-emerald-700">
+                                                                {{ strtoupper(substr($campaign->user->name, 0, 1)) }}
+                                                            </span>
+                                                        </div>
+                                                        <span
+                                                            class="text-[11px] text-slate-400 font-medium">{{ $campaign->user->name }}</span>
+                                                        <span class="text-[11px] text-slate-300">•</span>
+                                                        <span
+                                                            class="text-[11px] text-slate-400">{{ $update->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- DOA & DUKUNGAN --}}
                     <div
                         class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-8 lg:p-10">
                         <div class="flex items-center gap-2.5 mb-5 sm:mb-6">
                             <div class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor"
+                                    stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                 </svg>
@@ -139,10 +233,10 @@
 
                         <div class="space-y-3">
                             @forelse ($campaign->donations()
-                                                    ->where('status','success')
-                                                    ->latest()
-                                                    ->take(5)
-                                                    ->get() as $donation)
+                                                            ->where('status','success')
+                                                            ->latest()
+                                                            ->take(5)
+                                                            ->get() as $donation)
                                 <div
                                     class="group bg-slate-50 hover:bg-emerald-50/50 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors duration-200">
                                     <div class="flex items-start justify-between gap-3">
@@ -150,8 +244,8 @@
                                             <div
                                                 class="w-9 h-9 rounded-full {{ $donation->anonymous ? 'bg-slate-200' : 'bg-emerald-100' }} flex items-center justify-center flex-shrink-0">
                                                 @if ($donation->anonymous)
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
-                                                        stroke-width="2" viewBox="0 0 24 24">
+                                                    <svg class="w-4 h-4 text-slate-400" fill="none"
+                                                        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                         <path stroke-linecap="round" stroke-linejoin="round"

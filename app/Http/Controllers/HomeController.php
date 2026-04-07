@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
+use App\Models\CampaignUpdate;
 
 class HomeController extends Controller
 {
@@ -14,6 +15,15 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        return view('home.index', compact('campaigns'));
+        // AMBIL KABAR TERBARU
+        $updates = CampaignUpdate::with(['campaign.user', 'campaign.category'])
+            ->whereHas('campaign', function ($q) {
+                $q->where('status', 'approved');
+            })
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('home.index', compact('campaigns', 'updates'));
     }
 }
