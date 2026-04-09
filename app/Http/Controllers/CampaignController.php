@@ -457,17 +457,59 @@ class CampaignController extends Controller
             abort(404);
         }
 
-        $request->validate([
+        // 1. VALIDASI
+        $rules = [
             'content' => 'required|string|max:1000',
-        ]);
+        ];
 
-        // Logic: Jika user login, ambil ID-nya. Jika tidak (guest), biarkan null.
-        $update->comments()->create([
+        // Validasi 'name' HANYA jika user belum login (Guest)
+        if (!auth()->check()) {
+            $rules['name'] = 'required|string|max:255';
+        }
+
+        $request->validate($rules);
+
+        // 2. PERSIAPAN DATA
+        $commentData = [
             'content' => $request->content,
-            'user_id' => auth()->id(),
-        ]);
+            'user_id' => auth()->id(), // Akan NULL jika guest, berisi ID jika login
+        ];
 
-        return redirect()->route('campaign.updates.show', ['campaign' => $campaign->slug, 'update' => $update->id])->with('success', 'Komentar berhasil ditambahkan.');
+        // 3. LOGIKA PENENTUAN NAMA
+        if (auth()->check()) {
+            // KONDISI LOGIN: Ambil nama dari data user
+            $commentData['name'] = auth()->user()->name;
+        } else {
+            // KONDISI GUEST: Ambil nama dari input form
+            $commentData['name'] = $request->name;
+        }
+
+        // Simpan komentar
+        $update->comments()->create($commentData);
+
+        // ============================================
+        // KIRIM NOTIFIKASI KE PENGELOLA CAMPAIGN
+        // ============================================
+
+        // Cek apakah yang berkomentar BUKAN pemilik campaign
+        if ($campaign->user_id !== auth()->id()) {
+            $actor = auth()->user();
+
+            // Tentukan nama untuk notifikasi
+            // Jika login ambil dari user, jika guest ambil dari request
+            $actorName = $actor ? $actor->name : $request->name;
+
+            Notification::create([
+                'user_id'  => $campaign->user_id,
+                'actor_id' => $actor ? $actor->id : null,
+                'title'    => 'Komentar Baru pada Update',
+                'message'  => "{$actorName} berkomentar pada update \"{$update->title}\" di campaign \"{$campaign->title}\".",
+                'type'     => 'comment_update',
+            ]);
+        }
+
+        return redirect()->route('campaign.updates.show', ['campaign' => $campaign->slug, 'update' => $update->id])
+            ->with('success', 'Komentar berhasil ditambahkan.');
     }
 
     // 2. Tambahkan method baru untuk Update (Edit) Komentar

@@ -6,6 +6,7 @@
 
     {{-- ================= HERO ================= --}}
     <section class="relative h-[60vh] sm:h-[75vh] lg:h-[85vh] -mt-[72px]">
+        {{-- Gunakan Storage::url jika path file sudah benar, atau asset jika sesuai setup kamu --}}
         <img src="{{ asset('storage/' . $campaign->image) }}" class="absolute inset-0 w-full h-full object-cover"
             alt="{{ $campaign->title }}">
 
@@ -28,15 +29,18 @@
                         {{ $campaign->category->name }}
                     </span>
 
-                    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight drop-shadow-lg">
+                    {{-- FIX: Pastikan title hero juga wrap jika sangat panjang --}}
+                    <h1
+                        class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight drop-shadow-lg break-words">
                         {{ $campaign->title }}
                     </h1>
 
-                    <div class="mt-3 sm:mt-4 flex items-center gap-3 text-sm text-white/70">
+                    <div
+                        class="mt-3 sm:mt-4 flex items-center gap-3 text-sm text-white/70 overflow-x-auto whitespace-nowrap">
                         @if ($campaign->user)
                             <div class="flex items-center gap-2">
                                 <div
-                                    class="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xs font-bold">
+                                    class="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xs font-bold flex-shrink-0">
                                     {{ strtoupper(substr($campaign->user->name, 0, 1)) }}
                                 </div>
                                 <span>{{ $campaign->user->name }}</span>
@@ -56,20 +60,25 @@
 
             {{-- Stats Bar --}}
             <div class="grid grid-cols-3 gap-3 sm:gap-4 -mt-14 sm:-mt-16 relative z-10 mb-8 sm:mb-12">
-                <div class="bg-white rounded-2xl shadow-lg shadow-black/5 p-4 sm:p-5 text-center border border-slate-100">
-                    <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Terkumpul
-                    </p>
-                    <p class="text-sm sm:text-lg lg:text-xl font-extrabold text-emerald-600">Rp
+                <div
+                    class="bg-white rounded-2xl shadow-lg shadow-black/5 p-3 sm:p-5 text-center border border-slate-100 min-w-0">
+                    <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 truncate">
+                        Terkumpul</p>
+                    <p class="text-sm sm:text-lg lg:text-xl font-extrabold text-emerald-600 break-words">Rp
                         {{ number_format($campaign->current_amount) }}</p>
                 </div>
-                <div class="bg-white rounded-2xl shadow-lg shadow-black/5 p-4 sm:p-5 text-center border border-slate-100">
-                    <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Target</p>
-                    <p class="text-sm sm:text-lg lg:text-xl font-extrabold text-slate-700">Rp
+                <div
+                    class="bg-white rounded-2xl shadow-lg shadow-black/5 p-3 sm:p-5 text-center border border-slate-100 min-w-0">
+                    <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 truncate">
+                        Target</p>
+                    <p class="text-sm sm:text-lg lg:text-xl font-extrabold text-slate-700 break-words">Rp
                         {{ number_format($campaign->target_amount) }}</p>
                 </div>
-                <div class="bg-white rounded-2xl shadow-lg shadow-black/5 p-4 sm:p-5 text-center border border-slate-100">
-                    <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Donatur</p>
-                    <p class="text-sm sm:text-lg lg:text-xl font-extrabold text-slate-700">
+                <div
+                    class="bg-white rounded-2xl shadow-lg shadow-black/5 p-3 sm:p-5 text-center border border-slate-100 min-w-0">
+                    <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 truncate">
+                        Donatur</p>
+                    <p class="text-sm sm:text-lg lg:text-xl font-extrabold text-slate-700 break-words">
                         {{ $campaign->donations()->where('status', 'success')->count() }}</p>
                 </div>
             </div>
@@ -77,22 +86,24 @@
             <div class="grid lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
 
                 {{-- ================= LEFT CONTENT ================= --}}
-                <div class="lg:col-span-2 space-y-6 sm:space-y-8">
+                <div class="lg:col-span-2 space-y-6 sm:space-y-8 w-full min-w-0">
 
                     {{-- DESCRIPTION CARD --}}
                     <div
-                        class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-8 lg:p-10">
+                        class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-8 lg:p-10 w-full">
                         <div class="flex items-center gap-2.5 mb-4 sm:mb-5">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Tentang Campaign</h2>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-800 whitespace-normal break-words">Tentang
+                                Campaign</h2>
                         </div>
-                        <p class="text-slate-600 leading-relaxed text-sm sm:text-base lg:text-[17px]">
+                        <p
+                            class="text-slate-600 leading-relaxed text-sm sm:text-base lg:text-[17px] whitespace-normal break-words">
                             {{ $campaign->description }}
                         </p>
                     </div>
@@ -100,49 +111,59 @@
                     {{-- ARTICLE CARD --}}
                     @if ($campaign->article)
                         <div
-                            class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-8 lg:p-10">
+                            class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-8 lg:p-10 w-full">
                             <div class="flex items-center gap-2.5 mb-5 sm:mb-6">
-                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
-                                <h2 class="text-lg sm:text-xl font-bold text-slate-800">Cerita Lengkap</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-slate-800 whitespace-normal break-words">Cerita
+                                    Lengkap</h2>
                             </div>
-                            <article
-                                class="prose prose-sm sm:prose-base lg:prose-lg max-w-none
-                                prose-headings:text-slate-800 prose-headings:font-bold
-                                prose-p:text-slate-600 prose-p:leading-relaxed
+
+                            {{-- FIX: overflow-hidden & break-words adalah kunci --}}
+                            <div class="break-words overflow-hidden w-full">
+                                <article
+                                    class="prose prose-sm sm:prose-base lg:prose-lg max-w-none
+                                prose-headings:text-slate-800 prose-headings:font-bold whitespace-normal break-words
+                                prose-p:text-slate-600 prose-p:leading-relaxed break-words
                                 prose-img:rounded-xl prose-img:shadow-md
-                                prose-a:text-emerald-600 prose-a:no-underline hover:prose-a:underline
-                                prose-li:text-slate-600">
-                                {!! $campaign->article !!}
-                            </article>
+                                prose-a:text-emerald-600 prose-a:no-underline hover:prose-a:underline prose-a:break-words
+                                prose-li:text-slate-600 break-words
+                                prose-pre:break-all prose-code:break-words">
+                                    {!! $campaign->article !!}
+                                </article>
+                            </div>
                         </div>
                     @endif
 
                     {{-- KABAR TERBARU --}}
                     @if ($campaign->updates->count() > 0)
                         <div
-                            class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 overflow-hidden">
+                            class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 overflow-hidden w-full">
+                            {{-- FIX: Tambahkan flex-wrap agar tombol tidak mendesak judul di layar sangat kecil --}}
                             <div
-                                class="px-5 sm:px-8 lg:px-10 py-5 sm:py-6 border-b border-slate-100 flex items-center justify-between">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
+                                class="px-5 sm:px-8 lg:px-10 py-5 sm:py-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0">
                                         <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor"
                                             stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2zM9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
                                     </div>
-                                    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Kabar Terbaru</h2>
+                                    <h2
+                                        class="text-lg sm:text-xl font-bold text-slate-800 whitespace-normal break-words truncate">
+                                        Kabar Terbaru</h2>
                                 </div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-shrink-0">
                                     @if ($campaign->updates->count() > 3)
                                         <a href="{{ route('campaign.updates.index', $campaign->slug) }}"
-                                            class="text-[11px] sm:text-xs font-semibold text-teal-600 hover:text-teal-700 hover:bg-teal-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                                            class="text-[11px] sm:text-xs font-semibold text-teal-600 hover:text-teal-700 hover:bg-teal-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap">
                                             Lihat Semua
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5"
                                                 viewBox="0 0 24 24">
@@ -152,7 +173,7 @@
                                         </a>
                                     @endif
                                     <span
-                                        class="text-[11px] sm:text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                                        class="text-[11px] sm:text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full whitespace-nowrap">
                                         {{ $campaign->updates->count() }} update
                                     </span>
                                 </div>
@@ -161,10 +182,14 @@
                             <div class="divide-y divide-slate-100">
                                 @foreach ($campaign->updates->take(3) as $index => $update)
                                     <div class="p-5 sm:p-6 lg:p-8 {{ $index == 0 ? '' : 'border-t border-slate-100' }}">
-                                        <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+                                        {{-- FIX: Layout flex row hanya aktif di sm ke atas, kolom di bawah sm --}}
+                                        <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 w-full">
+
                                             {{-- IMAGE --}}
                                             @if ($update->image)
-                                                <div class="flex-shrink-0 w-full sm:w-48 md:w-56 lg:w-64">
+                                                {{-- FIX: Kecilkan ukuran gambar di breakpoint sm & md agar teks tidak tertindih --}}
+                                                {{-- w-full di mobile, sm:w-36 (lebih kecil dari sebelumnya), md:w-48, lg:w-56 --}}
+                                                <div class="flex-shrink-0 w-full sm:w-36 md:w-48 lg:w-56">
                                                     <div class="aspect-video rounded-xl overflow-hidden bg-slate-100">
                                                         <img src="{{ Storage::url($update->image) }}"
                                                             alt="{{ $update->title }}"
@@ -174,11 +199,15 @@
                                             @endif
 
                                             {{-- CONTENT --}}
-                                            <div class="flex-1 min-w-0">
+                                            <div class="flex-1 min-w-0 w-full">
                                                 <div class="flex items-start justify-between gap-2 mb-2">
-                                                    <h3 class="text-sm sm:text-base font-bold text-slate-800 leading-snug">
+
+                                                    {{-- FIX: Judul harus punya min-w-0 agar mau wrap di dalam flex --}}
+                                                    <h3
+                                                        class="text-sm sm:text-base font-bold text-slate-800 leading-snug whitespace-normal break-words min-w-0 w-full">
                                                         {{ $update->title }}
                                                     </h3>
+
                                                     <span
                                                         class="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap font-medium flex-shrink-0 mt-0.5">
                                                         {{ $update->created_at->translatedFormat('d M Y') }}
@@ -186,16 +215,30 @@
                                                 </div>
 
                                                 @if ($update->content)
+                                                    {{-- FIX: Konten juga butuh min-w-0 --}}
                                                     <p
-                                                        class="text-sm text-slate-600 leading-relaxed line-clamp-3 sm:line-clamp-4">
+                                                        class="text-sm text-slate-600 leading-relaxed line-clamp-3 sm:line-clamp-4 whitespace-normal break-words min-w-0">
                                                         {{ $update->content }}
                                                     </p>
                                                 @endif
 
+                                                {{-- TOMBOL DETAIL --}}
+                                                <div class="mt-3">
+                                                    <a href="{{ route('campaign.updates.show', [$campaign->slug, $update->id]) }}"
+                                                        class="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 hover:text-teal-700 hover:underline transition-all whitespace-nowrap">
+                                                        Lihat Detail
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                            stroke-width="2.5" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                        </svg>
+                                                    </a>
+                                                </div>
+
                                                 {{-- PENGELOLA INFO --}}
                                                 @if ($campaign->user)
                                                     <div
-                                                        class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+                                                        class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100 flex-wrap">
                                                         <div
                                                             class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
                                                             <span class="text-[10px] font-bold text-emerald-700">
@@ -203,10 +246,13 @@
                                                             </span>
                                                         </div>
                                                         <span
-                                                            class="text-[11px] text-slate-400 font-medium">{{ $campaign->user->name }}</span>
+                                                            class="text-[11px] text-slate-400 font-medium whitespace-normal break-all min-w-0">
+                                                            {{ $campaign->user->name }}
+                                                        </span>
                                                         <span class="text-[11px] text-slate-300">•</span>
-                                                        <span
-                                                            class="text-[11px] text-slate-400">{{ $update->created_at->diffForHumans() }}</span>
+                                                        <span class="text-[11px] text-slate-400 whitespace-nowrap">
+                                                            {{ $update->created_at->diffForHumans() }}
+                                                        </span>
                                                     </div>
                                                 @endif
                                             </div>
@@ -219,9 +265,9 @@
 
                     {{-- DOA & DUKUNGAN --}}
                     <div
-                        class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-8 lg:p-10">
+                        class="bg-white rounded-2xl lg:rounded-3xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-8 lg:p-10 w-full">
                         <div class="flex items-center gap-2.5 mb-5 sm:mb-6">
-                            <div class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
+                            <div class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -233,10 +279,10 @@
 
                         <div class="space-y-3">
                             @forelse ($campaign->donations()
-                                                            ->where('status','success')
-                                                            ->latest()
-                                                            ->take(5)
-                                                            ->get() as $donation)
+                                                                                            ->where('status','success')
+                                                                                            ->latest()
+                                                                                            ->take(5)
+                                                                                            ->get() as $donation)
                                 <div
                                     class="group bg-slate-50 hover:bg-emerald-50/50 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors duration-200">
                                     <div class="flex items-start justify-between gap-3">
@@ -270,8 +316,8 @@
                                         </p>
                                     </div>
                                     @if ($donation->message)
-                                        <div class="mt-3 pl-12">
-                                            <p class="text-slate-500 text-sm italic leading-relaxed">
+                                        <div class="mt-3 pl-12 w-full">
+                                            <p class="text-slate-500 text-sm italic leading-relaxed break-words">
                                                 "{{ $donation->message }}"
                                             </p>
                                         </div>
@@ -297,19 +343,19 @@
                 </div>
 
                 {{-- ================= RIGHT SIDEBAR ================= --}}
-                <aside class="lg:col-span-1">
+                <aside class="lg:col-span-1 w-full min-w-0">
                     <div class="lg:sticky lg:top-28 space-y-5 sm:space-y-6">
 
                         {{-- PROGRESS --}}
                         <div
-                            class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-6 overflow-hidden relative">
+                            class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-6 overflow-hidden relative w-full">
                             <div
                                 class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500">
                             </div>
 
                             <div class="flex justify-between items-end text-xs sm:text-sm mb-3">
                                 <span class="text-slate-400 font-medium">Terkumpul</span>
-                                <span class="font-extrabold text-slate-800 text-sm sm:text-base">
+                                <span class="font-extrabold text-slate-800 text-sm sm:text-base break-words">
                                     Rp {{ number_format($campaign->current_amount) }}
                                 </span>
                             </div>
@@ -357,9 +403,11 @@
                         </div>
 
                         {{-- TOP DONORS --}}
-                        <div class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-6">
+                        <div
+                            class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 p-5 sm:p-6 w-full">
                             <div class="flex items-center gap-2.5 mb-5">
-                                <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path
                                             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -375,10 +423,10 @@
                                         <div class="flex items-center gap-3 min-w-0">
                                             <div
                                                 class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-sm
-                                                @if ($index == 0) bg-gradient-to-br from-amber-300 to-amber-500 text-white
-                                                @elseif($index == 1) bg-gradient-to-br from-slate-300 to-slate-400 text-white
-                                                @elseif($index == 2) bg-gradient-to-br from-orange-300 to-orange-500 text-white
-                                                @else bg-slate-100 text-slate-500 @endif">
+                                            @if ($index == 0) bg-gradient-to-br from-amber-300 to-amber-500 text-white
+                                            @elseif($index == 1) bg-gradient-to-br from-slate-300 to-slate-400 text-white
+                                            @elseif($index == 2) bg-gradient-to-br from-orange-300 to-orange-500 text-white
+                                            @else bg-slate-100 text-slate-500 @endif">
                                                 {{ $index + 1 }}
                                             </div>
                                             <p class="font-semibold text-slate-700 truncate text-sm">
@@ -395,7 +443,7 @@
 
                         {{-- DONATION FORM --}}
                         <div id="donation-form"
-                            class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 overflow-hidden">
+                            class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 overflow-hidden w-full">
                             <div class="bg-gradient-to-r from-emerald-500 to-teal-500 px-5 sm:px-6 py-4">
                                 <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

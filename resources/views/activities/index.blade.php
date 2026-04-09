@@ -110,6 +110,15 @@
                                     <option value="campaign_status_changed"
                                         {{ request('type') == 'campaign_status_changed' ? 'selected' : '' }}>Status Diubah
                                     </option>
+                                    <option value="campaign_update"
+                                        {{ request('type') == 'campaign_update' ? 'selected' : '' }}>Kabar terbaru campaign
+                                    </option>
+                                    <option value="campaign_update_deleted"
+                                        {{ request('type') == 'campaign_update_deleted' ? 'selected' : '' }}>Kabar terbaru campaign dihapus
+                                    </option>
+                                    <option value="campaign_updated"
+                                        {{ request('type') == 'campaign_updated' ? 'selected' : '' }}>Campaign Diperbarui
+                                    </option>
                                 </optgroup>
 
                                 <optgroup label="💸 Withdraw">
@@ -136,6 +145,8 @@
                                         User Diperbarui</option>
                                     <option value="user_deleted" {{ request('type') == 'user_deleted' ? 'selected' : '' }}>
                                         User Dihapus</option>
+                                    <option value="comment_update" {{ request('type') == 'comment_update' ? 'selected' : '' }}>
+                                        Komen baru</option>
                                 </optgroup>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

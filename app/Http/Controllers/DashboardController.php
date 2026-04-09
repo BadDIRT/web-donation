@@ -29,9 +29,9 @@ class DashboardController extends Controller
             ->distinct('user_id')
             ->count('user_id');
 
+        // Hanya ambil donasi yang SUKSES untuk keperluan Stats & Badge
         $donations = Donation::where('user_id', $user->id)
-            ->with('campaign')
-            ->latest()
+            ->where('status', 'success') // <--- TAMBAHKAN INI
             ->get();
 
         $campaigns = $user->campaigns()
@@ -107,8 +107,10 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Semua donasi untuk stats
-        $allDonations = Donation::where('user_id', $user->id)->get();
+        // Hanya ambil donasi yang SUKSES untuk keperluan Stats & Badge
+        $allDonations = Donation::where('user_id', $user->id)
+            ->where('status', 'success') // <--- TAMBAHKAN INI
+            ->get();
 
         // Riwayat donasi dibatasi 5 terbaru
         $recentDonations = Donation::where('user_id', $user->id)

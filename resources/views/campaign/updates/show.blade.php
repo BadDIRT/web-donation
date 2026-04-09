@@ -247,6 +247,17 @@
                             @csrf
                             <div
                                 class="bg-white rounded-2xl p-1 sm:p-2 border border-slate-200 shadow-sm focus-within:ring-2 focus-within:ring-teal-500/10 focus-within:border-teal-300 transition-all">
+
+                                {{-- INPUT NAMA (Hanya muncul jika BELUM LOGIN) --}}
+                                @if (!auth()->check())
+                                    <div class="px-4 pb-2">
+                                        <input type="text" name="name"
+                                            class="w-full px-0 py-2 rounded-lg border-none text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 bg-transparent"
+                                            placeholder="Nama Lengkap Anda" required autocomplete="off">
+                                    </div>
+                                @endif
+                                {{-- SELESAI INPUT NAMA --}}
+
                                 <div class="flex flex-col sm:flex-row gap-2">
                                     <div class="flex-1">
                                         <textarea name="content" rows="3" required placeholder="Tulis komentar Anda..."
@@ -257,8 +268,7 @@
                                             class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white shadow-sm shadow-teal-500/20 hover:shadow-teal-500/30 transition-all active:scale-[0.98] h-fit">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                                <path stroke-linecap="round="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                             </svg>
                                             <span>Kirim</span>
                                         </button>

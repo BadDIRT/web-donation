@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('campaign_update_id')->constrained()->cascadeOnDelete();
             $table->string('name')->nullable();
             $table->text('content');
@@ -27,5 +27,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('comments');
+        Schema::table('comments', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropColumn('user_id');
+        });
     }
 };

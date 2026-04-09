@@ -306,7 +306,7 @@
                             <div x-show="showAccount" x-transition:enter="transition ease-out duration-200"
                                 x-transition:enter-start="opacity-0 -translate-y-2"
                                 x-transition:enter-end="opacity-100 translate-y-0">
-                                <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-2">
+                                <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-2 mt-10">
                                     Nomor Rekening <span class="text-red-400">*</span>
                                 </label>
                                 <div class="relative">

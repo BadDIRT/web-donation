@@ -181,7 +181,7 @@
 
                                 {{-- ACTIONS (DESKTOP) --}}
                                 <div class="flex lg:flex-col items-center gap-2 flex-shrink-0 lg:pt-1">
-                                    <a href="{{ route('admin.campaign.show', $campaign->id) }}"
+                                    <a href="{{ route('admin.campaign.show', $campaign->slug) }}"
                                         class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all w-full justify-center">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                                             viewBox="0 0 24 24">
