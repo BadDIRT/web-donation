@@ -540,7 +540,18 @@
 
                     {{-- PENGELOLA PENDING --}}
                     <a href="{{ route('admin.pengelola') }}"
-                        class="group bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-lg hover:border-violet-200 transition-all duration-200">
+                        class="group bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-lg hover:border-violet-200 transition-all duration-200 relative overflow-hidden">
+
+                        {{-- BADGE PENDING PENGELOLA --}}
+                        @if ($pendingPengelola > 0)
+                            <div class="absolute top-3 right-3">
+                                <span
+                                    class="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm shadow-red-500/30">
+                                    {{ $pendingPengelola }}
+                                </span>
+                            </div>
+                        @endif
+
                         <div
                             class="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-violet-100 transition-colors">
                             <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" stroke-width="2"
@@ -558,7 +569,18 @@
 
                     {{-- CAMPAIGN PENDING --}}
                     <a href="{{ route('admin.campaign') }}"
-                        class="group bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-lg hover:border-blue-200 transition-all duration-200">
+                        class="group bg-white rounded-2xl p-5 shadow-sm shadow-black/5 border border-slate-100 hover:shadow-lg hover:border-blue-200 transition-all duration-200 relative overflow-hidden">
+
+                        {{-- BADGE PENDING CAMPAIGN --}}
+                        @if ($pendingCampaigns > 0)
+                            <div class="absolute top-3 right-3">
+                                <span
+                                    class="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm shadow-red-500/30">
+                                    {{ $pendingCampaigns }}
+                                </span>
+                            </div>
+                        @endif
+
                         <div
                             class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
                             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"

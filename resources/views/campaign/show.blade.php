@@ -279,10 +279,10 @@
 
                         <div class="space-y-3">
                             @forelse ($campaign->donations()
-                                                                                            ->where('status','success')
-                                                                                            ->latest()
-                                                                                            ->take(5)
-                                                                                            ->get() as $donation)
+                                                                                                        ->where('status','success')
+                                                                                                        ->latest()
+                                                                                                        ->take(5)
+                                                                                                        ->get() as $donation)
                                 <div
                                     class="group bg-slate-50 hover:bg-emerald-50/50 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors duration-200">
                                     <div class="flex items-start justify-between gap-3">
@@ -509,8 +509,14 @@
                                     </div>
                                 </div>
 
-                                <input type="text" name="donor_name" placeholder="Nama Donatur (opsional)"
-                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:bg-white placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-shadow">
+                                {{-- HANYA TAMPILKAN JIKA USER BELUM LOGIN (GUEST) --}}
+                                @guest
+                                    <input type="text" name="donor_name" placeholder="Nama Lengkap (Wajib)" required
+                                        class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:bg-white placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-shadow">
+
+                                    <input type="email" name="email" placeholder="Alamat Email (Wajib)" required
+                                        class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:bg-white placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-shadow">
+                                @endguest
 
                                 <label
                                     class="flex items-center gap-2.5 text-sm text-slate-600 cursor-pointer py-1 px-1 hover:bg-slate-50 rounded-lg transition-colors">
@@ -827,15 +833,23 @@
                         btn.disabled = true;
                         btn.innerText = 'Memproses...';
 
+                        // --- AMBIL NILAI DENGAN CARA AMAN (SAFE ACCESS) ---
+                        // Cek apakah elemen form ada sebelum mengambil .value
+                        // Jika user login, input donor_name dan email tidak ada di HTML, jadi kita kirim string kosong/null
+                        const donorNameVal = form.donor_name ? form.donor_name.value : '';
+                        const emailVal = form.email ? form.email.value : '';
+
                         fetch("{{ route('donate', $campaign->id) }}", {
                                 method: 'POST',
                                 headers: {
                                     'X-CSRF-TOKEN': "{{ csrf_token() }}",
                                     'Content-Type': 'application/json'
                                 },
+                                // --- PASTIKAN EMAIL TERKIRIM DI SINI ---
                                 body: JSON.stringify({
                                     amount: amount,
-                                    donor_name: form.donor_name.value,
+                                    donor_name: donorNameVal,
+                                    email: emailVal, // <--- TAMBAHKAN INI
                                     anonymous: form.anonymous.checked,
                                     message: form.message.value
                                 })
@@ -844,8 +858,21 @@
                                 const data = await res.json();
 
                                 if (!res.ok) {
-                                    showErrorPopup(data.error || 'Terjadi kesalahan');
-                                    throw new Error(data.error);
+                                    // Tampilkan pesan error spesifik dari validasi Laravel (misal: email wajib)
+                                    let errorMsg = 'Terjadi kesalahan';
+                                    if (data.errors) {
+                                        // Ambil pesan error pertama dari validasi laravel
+                                        const firstError = Object.values(data.errors)[0];
+                                        if (Array.isArray(firstError)) {
+                                            errorMsg = firstError[0];
+                                        } else {
+                                            errorMsg = firstError;
+                                        }
+                                    } else if (data.error) {
+                                        errorMsg = data.error;
+                                    }
+                                    showErrorPopup(errorMsg);
+                                    throw new Error(errorMsg);
                                 }
 
                                 return data;
@@ -856,12 +883,6 @@
                                 }
 
                                 window.snap.pay(data.snapToken, {
-                                    onPending: () => window.location.href =
-                                        "{{ route('campaign.show', $campaign->slug) }}?payment=pending",
-                                    onError: () => window.location.href =
-                                        "{{ route('campaign.show', $campaign->slug) }}?payment=failed",
-                                    onClose: () => window.location.href =
-                                        "{{ route('campaign.show', $campaign->slug) }}?payment=cancel",
                                     onSuccess: function(result) {
                                         const currentAmount = {{ $campaign->current_amount }};
                                         const targetAmount = {{ $campaign->target_amount }};
@@ -878,12 +899,18 @@
                                                 "{{ route('campaign.show', $campaign->slug) }}?payment=success";
                                         }
                                     },
-                                    onPending: () => window.location.href =
-                                        "{{ route('campaign.show', $campaign->slug) }}?payment=pending",
-                                    onError: () => window.location.href =
-                                        "{{ route('campaign.show', $campaign->slug) }}?payment=failed",
-                                    onClose: () => window.location.href =
-                                        "{{ route('campaign.show', $campaign->slug) }}?payment=cancel"
+                                    onPending: function(result) {
+                                        window.location.href =
+                                            "{{ route('campaign.show', $campaign->slug) }}?payment=pending";
+                                    },
+                                    onError: function(result) {
+                                        window.location.href =
+                                            "{{ route('campaign.show', $campaign->slug) }}?payment=failed";
+                                    },
+                                    onClose: function() {
+                                        window.location.href =
+                                            "{{ route('campaign.show', $campaign->slug) }}?payment=cancel";
+                                    }
                                 });
                             })
                             .catch(err => {

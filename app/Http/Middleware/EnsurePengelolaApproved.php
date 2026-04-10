@@ -18,10 +18,6 @@ class EnsurePengelolaApproved
     {
         $user = Auth::user();
 
-        if ($user->role !== 'pengelola') {
-            abort(403);
-        }
-
         if (!$user->is_approved) {
             return redirect()
                 ->route('dashboard')

@@ -164,73 +164,6 @@
                                 @else
                                     <span></span>
                                 @endif
-
-                                <div class="flex items-center gap-2 flex-shrink-0">
-                                    @if (!$notif->is_read)
-                                        <form action="{{ route('notifications.read', $notif->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit"
-                                                class="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-800 hover:underline transition-colors">
-                                                Dibaca
-                                            </button>
-                                        </form>
-                                    @endif
-
-                                    {{-- DELETE BUTTON + MODAL --}}
-                                    <div x-data="{ showDeleteModal: false }">
-                                        <button @click="showDeleteModal = true" type="button"
-                                            class="text-slate-300 hover:text-red-500 transition-colors p-1 -m-1">
-                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-
-                                        {{-- MODAL --}}
-                                        <div x-show="showDeleteModal" x-cloak
-                                            x-transition:enter="transition ease-out duration-200"
-                                            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                            x-transition:leave="transition ease-in duration-150"
-                                            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                            class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-                                            @keydown.escape.window="showDeleteModal = false">
-                                            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                                                @click="showDeleteModal = false"></div>
-                                            <div
-                                                class="relative bg-white rounded-2xl shadow-2xl shadow-black/10 p-5 sm:p-6 lg:p-8 w-full max-w-[calc(100%-2rem)] sm:max-w-sm text-center z-10">
-                                                <div
-                                                    class="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-5 rounded-2xl bg-red-100 flex items-center justify-center">
-                                                    <svg class="w-7 h-7 sm:w-8 sm:h-8 text-red-500" fill="none"
-                                                        stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                                                    </svg>
-                                                </div>
-                                                <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-1.5 sm:mb-2">
-                                                    Hapus Notifikasi?</h3>
-                                                <p class="text-xs sm:text-sm text-slate-500 leading-relaxed mb-4 sm:mb-6">
-                                                    Notifikasi ini akan dihapus secara permanen.</p>
-                                                <form action="{{ route('notifications.destroy', $notif->id) }}"
-                                                    method="POST" id="delete-form-{{ $notif->id }}">
-                                                    @csrf @method('DELETE')
-                                                </form>
-                                                <div class="flex gap-2 sm:gap-3">
-                                                    <button @click="showDeleteModal = false" type="button"
-                                                        class="flex-1 py-2 sm:py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                                                        Batal
-                                                    </button>
-                                                    <button
-                                                        @click="document.getElementById('delete-form-{{ $notif->id }}').submit()"
-                                                        type="button"
-                                                        class="flex-1 py-2 sm:py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-xs sm:text-sm font-semibold text-white shadow-sm shadow-red-500/20 transition-colors">
-                                                        Hapus
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -252,7 +185,7 @@
                 @endforelse
 
             </div>
-            
+
         </div>
     </div>
 @endsection

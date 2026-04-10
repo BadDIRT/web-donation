@@ -104,6 +104,20 @@
                     </div>
                 @endif
 
+                {{-- TOMBOL KABAR TERBARU (HANYA UNTUK ADMIN PEMILIK) --}}
+                @if (auth()->check() && auth()->user()->role === 'admin' && auth()->id() === $campaign->user_id)
+                    <div class="flex justify-end mb-6">
+                        <a href="{{ route('pengelola.updates.create', $campaign->id) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-teal-600 hover:bg-teal-700 text-white shadow-sm hover:shadow-md transition-all transform active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Buat Kabar Terbaru
+                        </a>
+                    </div>
+                @endif
+
                 {{-- FINANCIAL CARDS --}}
                 @php
                     $progress =
@@ -171,7 +185,8 @@
                                             d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                     </svg>
                                 </div>
-                                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Saldo Pengelola Tersedia
+                                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Saldo Pengelola
+                                    Tersedia
                                 </p>
                             </div>
                             <p class="text-lg font-extrabold text-emerald-700">
@@ -194,7 +209,8 @@
                                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Sudah Ditarik</p>
                             </div>
                             <p class="text-lg font-extrabold text-slate-800">
-                                Rp {{ number_format($campaign->current_amount_rd_pengelola - $campaign->current_amount, 0, ',', '.') }}
+                                Rp
+                                {{ number_format($campaign->current_amount_rd_pengelola - $campaign->current_amount, 0, ',', '.') }}
                             </p>
                         </div>
                     </div>

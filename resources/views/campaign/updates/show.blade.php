@@ -118,7 +118,8 @@
                     </div>
 
                     {{-- ==================== KOMENTAR SECTION ==================== --}}
-                    <div class="border-t border-slate-200 mt-10 pt-8">
+                    {{-- Tambahkan x-data untuk logika Toggle dan Submit --}}
+                    <div class="border-t border-slate-200 mt-10 pt-8" x-data="{ showAll: false, isSubmitting: false, deleteModalOpen: false, deleteUrl: '' }" x-cloak>
 
                         {{-- Header --}}
                         <div class="flex items-center gap-2.5 mb-6">
@@ -137,8 +138,13 @@
                         {{-- COMMENT LIST --}}
                         <div class="space-y-4 mb-8">
                             @forelse($update->comments as $comment)
-                                <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 p-4 sm:p-5 transition-transform hover:scale-[1.005] duration-200 relative"
-                                    id="comment-card-{{ $comment->id }}">
+                                {{-- Hanya tampilkan jika showAll = true ATAU index < 3 --}}
+                                <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 p-4 sm:p-5 transition-all duration-300"
+                                    id="comment-card-{{ $comment->id }}" x-show="showAll || {{ $loop->index }} < 3"
+                                    x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0 transform translate-y-2"
+                                    x-transition:enter-end="opacity-100 transform translate-y-0">
+
                                     <div class="flex items-start gap-3 sm:gap-4">
 
                                         {{-- Avatar --}}
@@ -161,7 +167,6 @@
                                                 </div>
 
                                                 {{-- ACTION BUTTONS (EDIT/DELETE) --}}
-                                                {{-- Hanya muncul jika pemilik komentar sedang login --}}
                                                 @if (auth()->check() && auth()->id() == $comment->user_id)
                                                     <div class="flex items-center gap-2">
                                                         {{-- EDIT BUTTON --}}
@@ -175,23 +180,18 @@
                                                             </svg>
                                                         </button>
 
-                                                        {{-- DELETE BUTTON --}}
-                                                        <form
-                                                            action="{{ route('campaign.updates.comment.destroy', [$campaign->slug, $update->id, $comment->id]) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('Yakin ingin menghapus komentar ini?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                class="text-slate-400 hover:text-red-600 transition-colors p-1 rounded hover:bg-red-50"
-                                                                title="Hapus">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                                    stroke-width="2" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </button>
-                                                        </form>
+                                                        {{-- DELETE BUTTON TRIGGER --}}
+                                                        {{-- Klik tombol ini akan membuka Modal --}}
+                                                        <button type="button"
+                                                            @click="deleteUrl = '{{ route('campaign.updates.comment.destroy', [$campaign->slug, $update->id, $comment->id]) }}'; deleteModalOpen = true"
+                                                            class="text-slate-400 hover:text-red-600 transition-colors p-1 rounded hover:bg-red-50"
+                                                            title="Hapus">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                stroke-width="2" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                        </button>
                                                     </div>
                                                 @endif
                                             </div>
@@ -239,11 +239,23 @@
                                     <p class="text-slate-300 text-xs mt-1">Jadilah yang pertama memberikan tanggapan!</p>
                                 </div>
                             @endforelse
+
+                            {{-- TOMBOL TOGGLE (Hanya muncul jika komentar > 3) --}}
+                            @if ($update->comments->count() > 3)
+                                <div class="text-center mt-4" x-show="!showAll || {{ $update->comments->count() <= 3 }}">
+                                    <button @click="showAll = !showAll"
+                                        class="text-xs font-semibold text-teal-600 hover:text-teal-700 bg-teal-50 hover:bg-teal-100 px-4 py-2 rounded-lg transition-colors">
+                                        <span
+                                            x-text="showAll ? 'Tampilkan Sedikit' : 'Lihat Semua Komentar (' + ({{ $update->comments->count() }} - 3) + ' lainnya)'"></span>
+                                    </button>
+                                </div>
+                            @endif
                         </div>
 
                         {{-- COMMENT FORM --}}
                         <form method="POST"
-                            action="{{ route('campaign.updates.comment.store', [$campaign->slug, $update->id]) }}">
+                            action="{{ route('campaign.updates.comment.store', [$campaign->slug, $update->id]) }}"
+                            @submit.prevent="isSubmitting = true; $el.submit()">
                             @csrf
                             <div
                                 class="bg-white rounded-2xl p-1 sm:p-2 border border-slate-200 shadow-sm focus-within:ring-2 focus-within:ring-teal-500/10 focus-within:border-teal-300 transition-all">
@@ -256,7 +268,6 @@
                                             placeholder="Nama Lengkap Anda" required autocomplete="off">
                                     </div>
                                 @endif
-                                {{-- SELESAI INPUT NAMA --}}
 
                                 <div class="flex flex-col sm:flex-row gap-2">
                                     <div class="flex-1">
@@ -264,20 +275,92 @@
                                             class="w-full h-full min-h-[80px] px-4 py-3 rounded-xl border-none text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 resize-none bg-transparent"></textarea>
                                     </div>
                                     <div class="flex items-end sm:items-end p-1 sm:p-2">
-                                        <button type="submit"
-                                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white shadow-sm shadow-teal-500/20 hover:shadow-teal-500/30 transition-all active:scale-[0.98] h-fit">
+                                        <button type="submit" :disabled="isSubmitting"
+                                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white shadow-sm shadow-teal-500/20 hover:shadow-teal-500/30 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed h-fit">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                             </svg>
-                                            <span>Kirim</span>
+                                            <span x-text="isSubmitting ? 'Mengirim...' : 'Kirim'"></span>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </form>
 
+                        {{-- ==================== MODAL DELETE KOMENTAR ==================== --}}
+                        <div x-show="deleteModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                            x-cloak role="dialog" aria-modal="true">
+
+                            {{-- BACKDROP --}}
+                            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+                                @click="deleteModalOpen = false"></div>
+
+                            {{-- MODAL CONTENT --}}
+                            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform transition-all"
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 scale-90"
+                                x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-90">
+
+                                {{-- ICON WARNING --}}
+                                <div
+                                    class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+
+                                <h3 class="text-lg font-bold text-slate-800 text-center mb-2">Hapus Komentar?</h3>
+                                <p class="text-sm text-slate-500 text-center mb-6">
+                                    Apakah Anda yakin ingin menghapus komentar ini? Tindakan ini tidak dapat dibatalkan.
+                                </p>
+
+                                {{-- FORM DELETE (DINAMIS) --}}
+                                {{-- Action form akan diisi secara otomatis saat tombol delete diklik --}}
+                                <form :action="deleteUrl" method="POST" class="flex gap-3">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="button" @click="deleteModalOpen = false"
+                                        class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+                                        Batal
+                                    </button>
+
+                                    <button type="submit"
+                                        class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/30 transition-all">
+                                        Ya, Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
+                    {{-- ==================== END KOMENTAR SECTION ==================== --}}
+
+                    {{-- NAVIGATION PREV/NEXT --}}
+                    @if ($prevUpdate || $nextUpdate)
+                        <div
+                            class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-8 pt-6 border-t border-slate-100">
+                            @if ($prevUpdate)
+                                <a href="{{ route('campaign.updates.show', [$campaign->slug, $prevUpdate->id]) }}"
+                                    class="... order-2 sm:order-1">...</a>
+                            @else
+                                <div class="order-2 sm:order-1"></div>
+                            @endif
+                            @if ($nextUpdate)
+                                <a href="{{ route('campaign.updates.show', [$campaign->slug, $nextUpdate->id]) }}"
+                                    class="... order-1 sm:order-2">...</a>
+                            @else
+                                <div class="order-1 sm:order-2"></div>
+                            @endif
+                        </div>
+                    @endif
 
                     {{-- NAVIGATION PREV/NEXT --}}
                     @if ($prevUpdate || $nextUpdate)

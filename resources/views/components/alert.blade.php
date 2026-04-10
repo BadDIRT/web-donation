@@ -1,19 +1,14 @@
-<div
-    x-data="{ show: true }"
-    x-init="setTimeout(() => show = false, 2500)"
-    x-show="show"
-    x-cloak
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 translate-y-4 scale-95"
-    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-    x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="opacity-100"
-    x-transition:leave-end="opacity-0"
-    class="fixed top-24 right-6 z-[9999] w-full max-w-sm space-y-3"
->
+<div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2500)" x-show="show" x-cloak
+    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+    x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" {{-- RESPONSIVE POSITIONING --}} {{-- Mobile: Tengah (Centered) dengan margin kanan-kiri --}}
+    {{-- Desktop: Kanan Atas (Fixed Right) --}}
+    class="fixed z-[9999] w-full max-w-sm space-y-3 
+           inset-x-4 mx-auto top-24 
+           lg:inset-auto lg:right-6 lg:top-24 lg:w-auto">
 
     {{-- SUCCESS --}}
-    @if(session('success'))
+    @if (session('success'))
         <div class="relative overflow-hidden rounded-2xl bg-white shadow-xl border border-green-100">
             <div class="flex items-start gap-4 p-5">
 
@@ -21,9 +16,9 @@
                 <div class="flex-shrink-0">
                     <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2"
-                             viewBox="0 0 24 24">
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                 </div>
@@ -35,10 +30,8 @@
 
                 {{-- CLOSE --}}
                 <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M6 18L18 6M6 6l12 12" />
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -49,7 +42,7 @@
     @endif
 
     {{-- ERROR --}}
-    @if($errors->any())
+    @if ($errors->any())
         <div class="relative overflow-hidden rounded-2xl bg-white shadow-xl border border-red-100">
             <div class="flex items-start gap-4 p-5">
 
@@ -57,26 +50,24 @@
                 <div class="flex-shrink-0">
                     <div class="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center">
                         <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="2"
-                             viewBox="0 0 24 24">
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                 </div>
 
                 {{-- MESSAGE --}}
                 <div class="flex-1 text-sm text-gray-700 space-y-1 leading-relaxed">
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <p>• {{ $error }}</p>
                     @endforeach
                 </div>
 
                 {{-- CLOSE --}}
                 <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M6 18L18 6M6 6l12 12" />
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>

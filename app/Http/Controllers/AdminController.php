@@ -35,7 +35,11 @@ class AdminController extends Controller
             'totalDonations' => Campaign::sum('current_amount'),
             'userBanks' => $userBanks,
             'totalBankBalance' => $totalBankBalance,
-            'pendingWithdraws' => Withdraw::where('status', 'pending')->count(),
+
+            // --- PENDING DATA (BADGE) ---
+            'pendingWithdraws'  => Withdraw::where('status', 'pending')->count(),
+            'pendingPengelola'  => User::where('role', 'pengelola')->where('is_approved', false)->count(),
+            'pendingCampaigns'   => Campaign::where('status', 'pending')->count(),
 
             // 🟢 DATA BARU UNTUK DASHBOARD
             'recentDonations' => Donation::with(['user', 'campaign'])
@@ -338,11 +342,15 @@ class AdminController extends Controller
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
+        // Tentukan status approve: True jika role admin, False jika selain itu
+        $isApproved = ($request->role === 'admin') ? true : false;
+
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
+            'name'        => $request->name,
+            'email'       => $request->email,
+            'password'    => Hash::make($request->password),
+            'role'        => $request->role,
+            'is_approved' => $isApproved, // <--- TAMBAHKAN INI
         ]);
 
         // 🔔 NOTIFIKASI KE ADMIN SENDIRI
@@ -383,6 +391,15 @@ class AdminController extends Controller
         $request->validate($rules);
 
         $data = $request->only('name', 'email', 'role');
+
+        // --- LOGIKA BARU: ATUR is_approved BERDASARKAN ROLE BARU ---
+        // Jika role diubah menjadi admin, maka status approved = true.
+        // Jika role diubah menjadi selain admin (donatur/pengelola), maka status approved = false.
+        if ($request->role === 'admin') {
+            $data['is_approved'] = true;
+        } else {
+            $data['is_approved'] = false;
+        }
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -477,21 +494,22 @@ class AdminController extends Controller
         }
 
         $oldRole = $user->role;
-        $user->role = $request->role;
+        $newRole = $request->role;
 
-        // Jika diubah ke pengelola, set is_approved = false
-        if ($request->role === 'pengelola' && $oldRole !== 'pengelola') {
-            $user->is_approved = false;
-        }
+        $user->role = $newRole;
 
-        // Jika diubah dari pengelola ke role lain
-        if ($oldRole === 'pengelola' && $request->role !== 'pengelola') {
+        // --- LOGIKA BARU ---
+        // Jika role diubah menjadi Admin, status approved otomatis true.
+        // Jika role diubah menjadi selain Admin (Donatur/Pengelola), status approved otomatis false.
+        if ($newRole === 'admin') {
+            $user->is_approved = true;
+        } else {
             $user->is_approved = false;
         }
 
         $user->save();
 
-        return back()->with('success', "Role berhasil diubah dari {$oldRole} menjadi {$request->role}.");
+        return back()->with('success', "Role berhasil diubah dari {$oldRole} menjadi {$newRole}.");
     }
 
     public function donationsIndex(Request $request)
