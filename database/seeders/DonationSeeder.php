@@ -6,308 +6,93 @@ use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DonationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $donatur = User::where('role', 'donatur')->first();
-        $campaign = Campaign::where('status', 'approved')->first();
+        $donaturs = User::where('role', 'donatur')->get();
+        $campaigns = Campaign::where('status', 'approved')->get();
 
-        if (! $donatur || ! $campaign) {
+        if ($donaturs->isEmpty() || $campaigns->isEmpty()) {
+            $this->command->warn('⚠️ Tidak ada donatur atau campaign, skip DonationSeeder');
             return;
         }
 
-        Donation::insert([
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER123456789',
-                'donor_name' => 'John Doe',
-                'anonymous' => false,
-                'message' => 'Semoga bermanfaat!',
-                'amount' => 50000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER987654321',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 75000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER555555555',
-                'donor_name' => 'Jane Smith',
-                'anonymous' => false,
-                'message' => 'Semoga cepat terkumpul!',
-                'amount' => 100000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER111111111',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 25000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER222222222',
-                'donor_name' => 'Alice Johnson',
-                'anonymous' => false,
-                'message' => 'Semoga sukses!',
-                'amount' => 150000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER333333333',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 30000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER444444444',
-                'donor_name' => 'Bob Williams',
-                'anonymous' => false,
-                'message' => 'Semoga cepat terkumpul!',
-                'amount' => 200000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER666666666',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 5000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER777777777',
-                'donor_name' => 'Charlie Brown',
-                'anonymous' => false,
-                'message' => 'Semoga sukses!',
-                'amount' => 120000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER888888888',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 80000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER999999999',
-                'donor_name' => 'David Lee',
-                'anonymous' => false,
-                'message' => 'Semoga cepat terkumpul!',
-                'amount' => 90000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER000000000',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 60000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER121212121',
-                'donor_name' => 'Eve Adams',
-                'anonymous' => false,
-                'message' => 'Semoga sukses!',
-                'amount' => 110000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER131313131',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 70000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER141414141',
-                'donor_name' => 'Frank Miller',
-                'anonymous' => false,
-                'message' => 'Semoga cepat terkumpul!',
-                'amount' => 130000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER151515151',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 40000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER161616161',
-                'donor_name' => 'Grace Wilson',
-                'anonymous' => false,
-                'message' => 'Semoga sukses!',
-                'amount' => 140000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER171717171',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 9000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER181818181',
-                'donor_name' => 'Henry Davis',
-                'anonymous' => false,
-                'message' => 'Semoga cepat terkumpul!',
-                'amount' => 160000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER191919191',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 20000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER202020202',
-                'donor_name' => 'Ivy Martinez',
-                'anonymous' => false,
-                'message' => 'Semoga sukses!',
-                'amount' => 170000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-            [
-                'user_id' => $donatur->id,
-                'campaign_id' => $campaign->id,
-                'order_id' => 'ORDER212121212',
-                'donor_name' => null,
-                'anonymous' => true,
-                'message' => null,
-                'amount' => 30000,
-                'status' => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'paid_at' => null,
-            ],
-        ]);
+        $messages = [
+            'Semoga bermanfaat!',
+            'Semoga cepat terkumpul!',
+            'Semoga sukses!',
+            'Bantu semampunya',
+            'Semoga menjadi amal jariyah',
+            'Sedikit untuk berbagi',
+            'Semoga Allah membalas kebaikan kalian',
+            'Inspirasi sekali campaign-nya',
+            'Terus semangat!',
+            'Barakallahu fiikum',
+            'Semoga lekas capai target',
+            'Happy to help!',
+            'Kebagian rezeki nih',
+            'Sinergi untuk kebaikan',
+            null,
+            null,
+            null,
+            null,
+            null,
+        ];
+
+        $donations = [];
+        $orderCount = 0;
+
+        foreach ($campaigns as $campaign) {
+            // Hitung berapa donasi yang sudah ada untuk campaign ini
+            $existingTotal = Donation::where('campaign_id', $campaign->id)
+                ->where('status', 'success')
+                ->sum('amount');
+
+            $targetDonations = rand(5, 25);
+            $remainingAmount = $campaign->current_amount - $existingTotal;
+
+            if ($remainingAmount <= 0) {
+                continue;
+            }
+
+            for ($i = 0; $i < $targetDonations; $i++) {
+                $orderCount++;
+                $donatur = $donaturs->random();
+                $isAnonymous = (bool) rand(0, 3); // 25% anonymous
+                $status = rand(0, 10) < 8 ? 'success' : (rand(0, 1) ? 'pending' : 'failed');
+                $amount = min(
+                    $remainingAmount,
+                    rand(1, 50) * 10000 // 10.000 - 500.000
+                );
+
+                if ($amount <= 0) continue;
+
+                $remainingAmount -= $amount;
+
+                $donations[] = [
+                    'user_id' => $donatur->id,
+                    'campaign_id' => $campaign->id,
+                    'order_id' => 'ORDER-' . now()->format('Ymd') . '-' . str_pad($orderCount, 6, '0', STR_PAD_LEFT) . Str::random(3),
+                    'amount' => $amount,
+                    'donor_name' => $isAnonymous ? null : $donatur->name,
+                    'anonymous' => $isAnonymous,
+                    'message' => $messages[array_rand($messages)],
+                    'status' => $status,
+                    'paid_at' => $status === 'success' ? now()->subDays(rand(0, 10)) : null,
+                    'created_at' => now()->subDays(rand(0, 10)),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        // Insert dalam chunks untuk menghindari memory issues
+        foreach (array_chunk($donations, 500) as $chunk) {
+            Donation::insert($chunk);
+        }
+
+        $this->command->info('✅ Berhasil menambahkan ' . count($donations) . ' donasi');
     }
 }

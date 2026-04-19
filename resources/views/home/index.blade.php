@@ -293,14 +293,6 @@
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800">Update dari Pengelola</h2>
                     <p class="text-slate-500 mt-2">Perkembangan terbaru dari campaign yang sedang berlangsung</p>
                 </div>
-                <a href="{{ route('updates.latest') }}"
-                    class="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-bold text-sm transition-colors group">
-                    Lihat Semua Update
-                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
-                        stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                </a>
             </div>
 
             @if ($updates->count())
