@@ -46,6 +46,31 @@
             {{-- MAIN INFO CARD --}}
             @php
                 $typeColors = [
+                    'profile_updated' => [
+                        'bg' => 'bg-slate-100',
+                        'text' => 'text-slate-600',
+                        'ring' => 'ring-slate-500/20',
+                    ],
+                    'profile_photo_updated' => [
+                        'bg' => 'bg-violet-100',
+                        'text' => 'text-violet-600',
+                        'ring' => 'ring-violet-500/20',
+                    ],
+                    'profile_photo_removed' => [
+                        'bg' => 'bg-violet-100',
+                        'text' => 'text-violet-600',
+                        'ring' => 'ring-violet-500/20',
+                    ],
+                    'password_changed' => [
+                        'bg' => 'bg-amber-100',
+                        'text' => 'text-amber-600',
+                        'ring' => 'ring-amber-500/20',
+                    ],
+                    'user_self_deleted' => [
+                        'bg' => 'bg-red-100',
+                        'text' => 'text-red-600',
+                        'ring' => 'ring-red-500/20',
+                    ],
                     'donation_success' => [
                         'bg' => 'bg-emerald-100',
                         'text' => 'text-emerald-600',
@@ -127,6 +152,11 @@
                 ];
 
                 $typeIcons = [
+                    'profile_updated' => 'Profile Diperbarui',
+                    'profile_photo_updated' => 'Foto Profile Diperbarui',
+                    'profile_photo_removed' => 'Foto Profile Dihapus',
+                    'password_changed' => 'Password Diubah',
+                    'user_self_deleted' => 'Akun Dihapus Sendiri',
                     'donation_success' =>
                         'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
                     'pengelola_request' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
@@ -256,13 +286,19 @@
                 {{-- DILAKUKAN OLEH --}}
                 <div class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 p-5">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </div>
+                        @if ($notification->actor && $notification->actor->profile_photo_path)
+                            <img src="{{ Storage::disk('public')->url($notification->actor->profile_photo_path) }}"
+                                alt="{{ $notification->actor->name }}"
+                                class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
+                        @else
+                            <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                        @endif
                         <div class="min-w-0">
                             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Dilakukan Oleh</p>
                             <p class="text-sm font-bold text-slate-800">{{ $notification->actor->name ?? 'System' }}</p>
@@ -276,12 +312,18 @@
                 {{-- UNTUK PENGGUNA --}}
                 <div class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 p-5">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                        </div>
+                        @if ($notification->user && $notification->user->profile_photo_path)
+                            <img src="{{ Storage::disk('public')->url($notification->user->profile_photo_path) }}"
+                                alt="{{ $notification->user->name }}"
+                                class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
+                        @else
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </div>
+                        @endif
                         <div class="min-w-0">
                             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Target Pengguna
                             </p>

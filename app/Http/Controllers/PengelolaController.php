@@ -26,23 +26,32 @@ class PengelolaController extends Controller
 
     public function submit(Request $request)
     {
-        $request->validate(
-            [
-                'phone'           => 'required|string|unique:users,phone|min:10|max:15',
-                'ktp'             => 'required|image|mimes:jpg,jpeg,png|max:2048',
-                'bank_id'         => 'required|exists:banks,id',
-                'account_number'  => 'required|string|max:100',
-            ],
-            [
-                'phone.required'          => 'Nomor handphone wajib diisi.',
-                'phone.unique'            => 'Nomor handphone sudah terdaftar.',
-                'ktp.required'            => 'Foto KTP wajib diunggah.',
-                'bank_id.required'        => 'Bank wajib dipilih.',
-                'account_number.required' => 'Nomor rekening wajib diisi.',
-            ]
-        );
-
         $user = Auth::user();
+
+        // ✅ ATURAN VALIDASI DINAMIS
+        $rules = [
+            'ktp'             => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'bank_id'         => 'required|exists:banks,id',
+            'account_number'  => 'required|string|max:100',
+        ];
+
+        // Hanya validasi phone jika user BELUM punya nomor HP
+        if (!$user->phone) {
+            $rules['phone'] = 'required|string|unique:users,phone|min:10|max:15';
+        }
+
+        $request->validate($rules, [
+            'ktp.required'            => 'Foto KTP wajib diunggah.',
+            'bank_id.required'        => 'Bank wajib dipilih.',
+            'account_number.required' => 'Nomor rekening wajib diisi.',
+            'phone.required'          => 'Nomor handphone wajib diisi.',
+            'phone.unique'            => 'Nomor handphone sudah terdaftar.',
+        ]);
+
+        // ✅ JIKA SUDAH PUNYA NO HP, ISI MANUAL KE REQUEST AGAR VALIDASI UNIQUE LOLOS
+        if ($user->phone) {
+            $request->merge(['phone' => $user->phone]);
+        }
 
         // 🚫 CEK SUDAH PERNAH AJUAN
         if ($user->ktp_path && $user->is_approved === false) {
@@ -60,12 +69,18 @@ class PengelolaController extends Controller
         $ktpPath = $request->file('ktp')->store('ktp');
 
         // 🔄 UPDATE USER
-        $user->update([
-            'phone'        => $request->phone,
+        $userData = [
             'ktp_path'     => $ktpPath,
             'role'         => 'pengelola',
             'is_approved'  => false,
-        ]);
+        ];
+
+        // Hanya update phone jika user belum punya dan ada inputan baru
+        if (!$user->phone && $request->phone) {
+            $userData['phone'] = $request->phone;
+        }
+
+        $user->update($userData);
 
         // 💳 SIMPAN KE PIVOT
         UserBank::create([

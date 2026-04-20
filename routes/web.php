@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminPayoutController;
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Pengelola\CampaignUpdateController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserBankController;
 use App\Http\Controllers\WithdrawController;
 use Illuminate\Support\Facades\Route;
@@ -91,6 +92,15 @@ Route::get('/campaign/{campaign:slug}', [CampaignController::class, 'show'])
 
 Route::middleware('auth')->group(function () {
 
+    // =============================================
+    // PROFILE
+    // =============================================
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    Route::delete('/profile/photo', [ProfileController::class, 'removePhoto'])->name('profile.photo.remove');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
@@ -134,6 +144,8 @@ Route::middleware('auth')->group(function () {
         ->name('notifications.read-all');
 
     Route::get('/donasi-saya', [DashboardController::class, 'myDonations'])->name('my.donations');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
 

@@ -67,10 +67,15 @@
                         <div class="flex flex-wrap items-center gap-3 mt-3">
                             {{-- PENGGALANG --}}
                             <div class="flex items-center gap-2">
-                                <div
-                                    class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-[11px] font-bold text-blue-600">
-                                    {{ strtoupper(substr($campaign->user->name ?? '?', 0, 1)) }}
-                                </div>
+                                @if ($campaign->user->profile_photo_path)
+                                    <img src="{{ $campaign->user->profile_photo_url }}"
+                                        class="w-7 h-7 rounded-lg object-cover">
+                                @else
+                                    <div
+                                        class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-[11px] font-bold text-blue-600">
+                                        {{ $campaign->user->initial }}
+                                    </div>
+                                @endif
                                 <div>
                                     <p class="text-sm font-semibold text-slate-700">{{ $campaign->user->name ?? '-' }}</p>
                                     <p class="text-[11px] text-slate-400">{{ $campaign->user->email ?? '-' }}</p>
@@ -327,10 +332,15 @@
                                 <div class="bg-slate-50 rounded-xl p-4">
                                     <p class="font-bold text-slate-800 text-sm line-clamp-2">{{ $campaign->title }}</p>
                                     <div class="flex items-center gap-2 mt-2">
-                                        <div
-                                            class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[9px] font-bold text-blue-600">
-                                            {{ strtoupper(substr($campaign->user->name ?? '?', 0, 1)) }}
-                                        </div>
+                                        @if ($campaign->user->profile_photo_path)
+                                            <img src="{{ $campaign->user->profile_photo_url }}"
+                                                class="w-5 h-5 rounded-full object-cover">
+                                        @else
+                                            <div
+                                                class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[9px] font-bold text-blue-600">
+                                                {{ $campaign->user->initial }}
+                                            </div>
+                                        @endif
                                         <span class="text-xs text-slate-500">{{ $campaign->user->name ?? '-' }}</span>
                                     </div>
                                 </div>

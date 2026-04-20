@@ -94,15 +94,22 @@
                             {{-- AUTHOR INFO --}}
                             @if ($campaign->user)
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                        <span class="text-xs font-bold text-emerald-700">
-                                            {{ strtoupper(substr($campaign->user->name, 0, 1)) }}
-                                        </span>
-                                    </div>
+                                    @if ($campaign->user->profile_photo_path)
+                                        <img src="{{ $campaign->user->profile_photo_url }}"
+                                            alt="{{ $campaign->user->name }}"
+                                            class="w-8 h-8 rounded-full object-cover flex-shrink-0 ring-2 ring-white shadow-sm">
+                                    @else
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                            <span class="text-xs font-bold text-emerald-700">
+                                                {{ strtoupper(substr($campaign->user->name, 0, 1)) }}
+                                            </span>
+                                        </div>
+                                    @endif
                                     <div class="min-w-0">
                                         <p class="text-xs font-semibold text-slate-700 truncate">
-                                            {{ $campaign->user->name }}</p>
+                                            {{ $campaign->user->name }}
+                                        </p>
                                         <p class="text-[10px] text-slate-400">Pengelola Campaign</p>
                                     </div>
                                 </div>
@@ -110,15 +117,13 @@
                         </div>
                     </div>
 
-                    {{-- CONTENT (FIXED OVERFLOW) --}}
-                    {{-- Menghapus max-w-none agar teks mengikuti lebar container dan tidak terpotong --}}
+                    {{-- CONTENT --}}
                     <div
                         class="prose prose-slate prose-sm sm:prose-base lg:prose-lg w-full text-slate-600 leading-relaxed break-words">
                         {!! nl2br(e($update->content)) !!}
                     </div>
 
                     {{-- ==================== KOMENTAR SECTION ==================== --}}
-                    {{-- Tambahkan x-data untuk logika Toggle dan Submit --}}
                     <div class="border-t border-slate-200 mt-10 pt-8" x-data="{ showAll: false, isSubmitting: false, deleteModalOpen: false, deleteUrl: '' }" x-cloak>
 
                         {{-- Header --}}
@@ -138,7 +143,14 @@
                         {{-- COMMENT LIST --}}
                         <div class="space-y-4 mb-8">
                             @forelse($update->comments as $comment)
-                                {{-- Hanya tampilkan jika showAll = true ATAU index < 3 --}}
+                                @php
+                                    $commentUser = $comment->user;
+                                    $isGuest = is_null($comment->user_id);
+                                    $hasPhoto = !$isGuest && $commentUser && $commentUser->profile_photo_path;
+                                    $displayName = $commentUser?->name ?? ($comment->name ?? 'Tamu');
+                                    $initial = strtoupper(substr($displayName, 0, 1));
+                                @endphp
+
                                 <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 p-4 sm:p-5 transition-all duration-300"
                                     id="comment-card-{{ $comment->id }}" x-show="showAll || {{ $loop->index }} < 3"
                                     x-transition:enter="transition ease-out duration-300"
@@ -147,23 +159,48 @@
 
                                     <div class="flex items-start gap-3 sm:gap-4">
 
-                                        {{-- Avatar --}}
+                                        {{-- ============================================= --}}
+                                        {{-- ✅ AVATAR: FOTO PROFILE / GUEST / INITIAL --}}
+                                        {{-- ============================================= --}}
                                         <div class="flex-shrink-0">
-                                            <div
-                                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center text-xs sm:text-sm font-bold text-teal-700">
-                                                {{ strtoupper(substr($comment->user->name ?? 'U', 0, 1)) }}
-                                            </div>
+                                            @if ($isGuest)
+                                                {{-- GUEST: icon user default --}}
+                                                <div
+                                                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
+                                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" fill="none"
+                                                        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                            @elseif ($hasPhoto)
+                                                {{-- FOTO PROFILE --}}
+                                                <img src="{{ $commentUser->profile_photo_url }}" alt="{{ $displayName }}"
+                                                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-white shadow-sm">
+                                            @else
+                                                {{-- INITIAL --}}
+                                                <div
+                                                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center text-xs sm:text-sm font-bold text-teal-700">
+                                                    {{ $initial }}
+                                                </div>
+                                            @endif
                                         </div>
 
                                         <div class="flex-1 min-w-0">
                                             <div
                                                 class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 mb-2">
-                                                <div class="flex items-center gap-2">
+                                                <div class="flex items-center gap-2 min-w-0">
                                                     <p class="font-semibold text-slate-700 text-sm truncate">
-                                                        {{ $comment->user->name ?? 'User' }}
+                                                        {{ $displayName }}
                                                     </p>
+                                                    @if ($isGuest)
+                                                        <span
+                                                            class="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded flex-shrink-0">
+                                                            Tamu
+                                                        </span>
+                                                    @endif
                                                     <span
-                                                        class="text-[10px] text-slate-400">{{ $comment->created_at->diffForHumans() }}</span>
+                                                        class="text-[10px] text-slate-400 whitespace-nowrap">{{ $comment->created_at->diffForHumans() }}</span>
                                                 </div>
 
                                                 {{-- ACTION BUTTONS (EDIT/DELETE) --}}
@@ -180,8 +217,7 @@
                                                             </svg>
                                                         </button>
 
-                                                        {{-- DELETE BUTTON TRIGGER --}}
-                                                        {{-- Klik tombol ini akan membuka Modal --}}
+                                                        {{-- DELETE BUTTON --}}
                                                         <button type="button"
                                                             @click="deleteUrl = '{{ route('campaign.updates.comment.destroy', [$campaign->slug, $update->id, $comment->id]) }}'; deleteModalOpen = true"
                                                             class="text-slate-400 hover:text-red-600 transition-colors p-1 rounded hover:bg-red-50"
@@ -200,10 +236,11 @@
                                             <div id="content-display-{{ $comment->id }}">
                                                 <p
                                                     class="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap break-words">
-                                                    {{ $comment->content }}</p>
+                                                    {{ $comment->content }}
+                                                </p>
                                             </div>
 
-                                            {{-- EDIT FORM (Hidden by default) --}}
+                                            {{-- EDIT FORM --}}
                                             <div id="content-edit-{{ $comment->id }}" class="hidden">
                                                 <form
                                                     action="{{ route('campaign.updates.comment.update', [$campaign->slug, $update->id, $comment->id]) }}"
@@ -240,7 +277,7 @@
                                 </div>
                             @endforelse
 
-                            {{-- TOMBOL TOGGLE (Hanya muncul jika komentar > 3) --}}
+                            {{-- TOMBOL TOGGLE --}}
                             @if ($update->comments->count() > 3)
                                 <div class="text-center mt-4" x-show="!showAll || {{ $update->comments->count() <= 3 }}">
                                     <button @click="showAll = !showAll"
@@ -260,7 +297,6 @@
                             <div
                                 class="bg-white rounded-2xl p-1 sm:p-2 border border-slate-200 shadow-sm focus-within:ring-2 focus-within:ring-teal-500/10 focus-within:border-teal-300 transition-all">
 
-                                {{-- INPUT NAMA (Hanya muncul jika BELUM LOGIN) --}}
                                 @if (!auth()->check())
                                     <div class="px-4 pb-2">
                                         <input type="text" name="name"
@@ -289,15 +325,11 @@
                             </div>
                         </form>
 
-                        {{-- ==================== MODAL DELETE KOMENTAR ==================== --}}
+                        {{-- ==================== MODAL DELETE ==================== --}}
                         <div x-show="deleteModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4"
                             x-cloak role="dialog" aria-modal="true">
-
-                            {{-- BACKDROP --}}
                             <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
                                 @click="deleteModalOpen = false"></div>
-
-                            {{-- MODAL CONTENT --}}
                             <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform transition-all"
                                 x-transition:enter="transition ease-out duration-300"
                                 x-transition:enter-start="opacity-0 scale-90"
@@ -305,8 +337,6 @@
                                 x-transition:leave="transition ease-in duration-200"
                                 x-transition:leave-start="opacity-100 scale-100"
                                 x-transition:leave-end="opacity-0 scale-90">
-
-                                {{-- ICON WARNING --}}
                                 <div
                                     class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
                                     <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor"
@@ -315,23 +345,17 @@
                                             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                     </svg>
                                 </div>
-
                                 <h3 class="text-lg font-bold text-slate-800 text-center mb-2">Hapus Komentar?</h3>
                                 <p class="text-sm text-slate-500 text-center mb-6">
                                     Apakah Anda yakin ingin menghapus komentar ini? Tindakan ini tidak dapat dibatalkan.
                                 </p>
-
-                                {{-- FORM DELETE (DINAMIS) --}}
-                                {{-- Action form akan diisi secara otomatis saat tombol delete diklik --}}
                                 <form :action="deleteUrl" method="POST" class="flex gap-3">
                                     @csrf
                                     @method('DELETE')
-
                                     <button type="button" @click="deleteModalOpen = false"
                                         class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
                                         Batal
                                     </button>
-
                                     <button type="submit"
                                         class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/30 transition-all">
                                         Ya, Hapus
@@ -341,43 +365,57 @@
                         </div>
 
                     </div>
-                    {{-- ==================== END KOMENTAR SECTION ==================== --}}
+                    {{-- ==================== END KOMENTAR ==================== ---
 
-                    {{-- NAVIGATION PREV/NEXT --}}
+                    {{-- ==================== NAVIGATION PREV/NEXT ==================== --}}
                     @if ($prevUpdate || $nextUpdate)
                         <div
                             class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-8 pt-6 border-t border-slate-100">
-                            @if ($prevUpdate)
-                                <a href="{{ route('campaign.updates.show', [$campaign->slug, $prevUpdate->id]) }}"
-                                    class="... order-2 sm:order-1">...</a>
-                            @else
-                                <div class="order-2 sm:order-1"></div>
-                            @endif
-                            @if ($nextUpdate)
-                                <a href="{{ route('campaign.updates.show', [$campaign->slug, $nextUpdate->id]) }}"
-                                    class="... order-1 sm:order-2">...</a>
-                            @else
-                                <div class="order-1 sm:order-2"></div>
-                            @endif
-                        </div>
-                    @endif
 
-                    {{-- NAVIGATION PREV/NEXT --}}
-                    @if ($prevUpdate || $nextUpdate)
-                        <div
-                            class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-8 pt-6 border-t border-slate-100">
+                            {{-- PREV BUTTON --}}
                             @if ($prevUpdate)
                                 <a href="{{ route('campaign.updates.show', [$campaign->slug, $prevUpdate->id]) }}"
-                                    class="... order-2 sm:order-1">...</a>
+                                    class="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-slate-200 hover:border-teal-300 hover:bg-teal-50/50 transition-all group order-2 sm:order-1">
+                                    <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-600 transition-colors flex-shrink-0"
+                                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                    <div class="min-w-0 text-right">
+                                        <p
+                                            class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-medium">
+                                            Sebelumnya</p>
+                                        <p
+                                            class="text-sm font-semibold text-slate-700 group-hover:text-teal-700 transition-colors truncate mt-0.5">
+                                            {{ $prevUpdate->title }}
+                                        </p>
+                                    </div>
+                                </a>
                             @else
                                 <div class="order-2 sm:order-1"></div>
                             @endif
+
+                            {{-- NEXT BUTTON --}}
                             @if ($nextUpdate)
                                 <a href="{{ route('campaign.updates.show', [$campaign->slug, $nextUpdate->id]) }}"
-                                    class="... order-1 sm:order-2">...</a>
+                                    class="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-slate-200 hover:border-teal-300 hover:bg-teal-50/50 transition-all group order-1 sm:order-2 ml-auto sm:ml-0">
+                                    <div class="min-w-0 text-left">
+                                        <p
+                                            class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-medium">
+                                            Selanjutnya</p>
+                                        <p
+                                            class="text-sm font-semibold text-slate-700 group-hover:text-teal-700 transition-colors truncate mt-0.5">
+                                            {{ $nextUpdate->title }}
+                                        </p>
+                                    </div>
+                                    <svg class="w-5 h-5 text-slate-400 group-hover:text-teal-600 transition-colors flex-shrink-0"
+                                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </a>
                             @else
                                 <div class="order-1 sm:order-2"></div>
                             @endif
+
                         </div>
                     @endif
 
@@ -386,7 +424,7 @@
         </div>
     </div>
 
-    {{-- Simple Script for Toggle Edit --}}
+    {{-- Script Toggle Edit --}}
     <script>
         function toggleEdit(id) {
             const displayDiv = document.getElementById('content-display-' + id);

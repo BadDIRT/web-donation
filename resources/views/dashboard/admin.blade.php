@@ -371,10 +371,19 @@
                                     <tr class="hover:bg-slate-50/50 transition-colors">
                                         <td class="px-5 py-4">
                                             <div class="flex items-center gap-3">
-                                                <div
-                                                    class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
-                                                    {{ $donation->anonymous ? 'A' : strtoupper(substr($donation->donor_name ?? ($donation->user->name ?? '?'), 0, 1)) }}
-                                                </div>
+                                                @if ($donation->anonymous)
+                                                    <div
+                                                        class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
+                                                        A</div>
+                                                @elseif ($donation->user && $donation->user->profile_photo_path)
+                                                    <img src="{{ $donation->user->profile_photo_url }}"
+                                                        class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                                                @else
+                                                    <div
+                                                        class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
+                                                        {{ strtoupper(substr($donation->donor_name ?? ($donation->user->name ?? '?'), 0, 1)) }}
+                                                    </div>
+                                                @endif
                                                 <div class="min-w-0">
                                                     <p class="text-sm font-semibold text-slate-700 truncate max-w-[120px]">
                                                         {{ $donation->anonymous ? 'Anonim' : $donation->donor_name ?? ($donation->user->name ?? 'Guest') }}
@@ -434,10 +443,15 @@
                     <div class="divide-y divide-slate-100">
                         @forelse ($latestUsers as $user)
                             <div class="flex items-center gap-3 px-5 py-4 hover:bg-slate-50/50 transition-colors">
-                                <div
-                                    class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 flex-shrink-0">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                </div>
+                                @if ($user->profile_photo_path)
+                                    <img src="{{ $user->profile_photo_url }}"
+                                        class="w-9 h-9 rounded-full object-cover flex-shrink-0">
+                                @else
+                                    <div
+                                        class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 flex-shrink-0">
+                                        {{ $user->initial }}
+                                    </div>
+                                @endif
                                 <div class="min-w-0 flex-1">
                                     <p class="text-sm font-semibold text-slate-700 truncate">{{ $user->name }}</p>
                                     <p class="text-[11px] text-slate-400 truncate">{{ $user->email }}</p>

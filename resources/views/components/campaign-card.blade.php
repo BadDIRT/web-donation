@@ -39,9 +39,15 @@
 
         {{-- ================= PENGELOLA (SOCIAL PROOF) ================= --}}
         <div class="flex items-center gap-2 mt-2 mb-3">
-            <div class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 flex-shrink-0">
-                <span class="text-[10px] font-bold uppercase">{{ $campaign->user->name[0] ?? 'U' }}</span>
-            </div>
+            @if ($campaign->user->profile_photo_path)
+                <img src="{{ $campaign->user->profile_photo_url }}"
+                    class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+            @else
+                <div
+                    class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 flex-shrink-0">
+                    <span class="text-[10px] font-bold uppercase">{{ $campaign->user->initial }}</span>
+                </div>
+            @endif
             <p class="text-xs text-gray-500">
                 Oleh <span class="font-medium text-gray-700">{{ $campaign->user->name }}</span>
             </p>

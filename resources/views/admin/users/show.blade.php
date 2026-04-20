@@ -37,11 +37,16 @@
                     <div class="relative flex items-end h-full px-6 pb-5">
                         <div class="flex items-end gap-4 w-full">
                             {{-- AVATAR --}}
-                            <div
-                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl font-extrabold shadow-xl border-4 border-white flex-shrink-0
-                            {{ $user->role === 'admin' ? 'bg-gradient-to-br from-red-400 to-rose-500 text-white' : ($user->role === 'pengelola' ? 'bg-gradient-to-br from-violet-400 to-purple-500 text-white' : 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white') }}">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                            </div>
+                            @if ($user->profile_photo_path)
+                                <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}"
+                                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-xl border-4 border-white flex-shrink-0">
+                            @else
+                                <div
+                                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl font-extrabold shadow-xl border-4 border-white flex-shrink-0
+        {{ $user->role === 'admin' ? 'bg-gradient-to-br from-red-400 to-rose-500 text-white' : ($user->role === 'pengelola' ? 'bg-gradient-to-br from-violet-400 to-purple-500 text-white' : 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white') }}">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
 
                             <div class="pb-1 min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
@@ -452,11 +457,16 @@
                     <div class="px-6 py-5">
                         {{-- USER PREVIEW --}}
                         <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl mb-5">
-                            <div
-                                class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold
-                            {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'pengelola' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600') }}">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                            </div>
+                            @if ($user->profile_photo_path)
+                                <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}"
+                                    class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
+                            @else
+                                <div
+                                    class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold
+        {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'pengelola' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600') }}">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
                             <div>
                                 <p class="font-bold text-slate-800 text-sm">{{ $user->name }}</p>
                                 <p class="text-xs text-slate-400">{{ $user->email }}</p>
@@ -535,10 +545,16 @@
                     <div class="px-6 py-5">
                         {{-- USER PREVIEW --}}
                         <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl mb-4">
-                            <div
-                                class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-sm font-bold text-red-600">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                            </div>
+                            @if ($user->profile_photo_path)
+                                <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}"
+                                    class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
+                            @else
+                                <div
+                                    class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold
+        {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'pengelola' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600') }}">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                            @endif
                             <div>
                                 <p class="font-bold text-slate-800 text-sm">{{ $user->name }}</p>
                                 <p class="text-xs text-slate-400">{{ $user->email }}</p>

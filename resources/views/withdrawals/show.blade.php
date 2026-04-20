@@ -69,13 +69,18 @@
                 {{-- PENGELOLA --}}
                 <div class="bg-white rounded-2xl shadow-sm shadow-black/5 border border-slate-100 p-5">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </div>
+                        @if ($withdraw->user->profile_photo_path)
+                            <img src="{{ $withdraw->user->profile_photo_url }}"
+                                class="w-10 h-10 rounded-xl object-cover flex-shrink-0">
+                        @else
+                            <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                        @endif
                         <div class="min-w-0">
                             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pengelola</p>
                             <p class="text-sm font-bold text-slate-800 truncate">{{ $withdraw->user->name }}</p>

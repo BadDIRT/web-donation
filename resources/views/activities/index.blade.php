@@ -114,7 +114,8 @@
                                         {{ request('type') == 'campaign_update' ? 'selected' : '' }}>Kabar terbaru campaign
                                     </option>
                                     <option value="campaign_update_deleted"
-                                        {{ request('type') == 'campaign_update_deleted' ? 'selected' : '' }}>Kabar terbaru campaign dihapus
+                                        {{ request('type') == 'campaign_update_deleted' ? 'selected' : '' }}>Kabar terbaru
+                                        campaign dihapus
                                     </option>
                                     <option value="campaign_updated"
                                         {{ request('type') == 'campaign_updated' ? 'selected' : '' }}>Campaign Diperbarui
@@ -145,8 +146,24 @@
                                         User Diperbarui</option>
                                     <option value="user_deleted" {{ request('type') == 'user_deleted' ? 'selected' : '' }}>
                                         User Dihapus</option>
-                                    <option value="comment_update" {{ request('type') == 'comment_update' ? 'selected' : '' }}>
+                                    <option value="comment_update"
+                                        {{ request('type') == 'comment_update' ? 'selected' : '' }}>
                                         Komen baru</option>
+                                    <option value="profile_updated"
+                                        {{ request('type') == 'profile_updated' ? 'selected' : '' }}>Profile Diperbarui
+                                    </option>
+                                    <option value="profile_photo_updated"
+                                        {{ request('type') == 'profile_photo_updated' ? 'selected' : '' }}>Foto Profile
+                                        Diperbarui</option>
+                                    <option value="profile_photo_removed"
+                                        {{ request('type') == 'profile_photo_removed' ? 'selected' : '' }}>Foto Profile
+                                        Dihapus</option>
+                                    <option value="password_changed"
+                                        {{ request('type') == 'password_changed' ? 'selected' : '' }}>Password Diubah
+                                    </option>
+                                    <option value="user_self_deleted"
+                                        {{ request('type') == 'user_self_deleted' ? 'selected' : '' }}>Akun Dihapus Sendiri
+                                    </option>
                                 </optgroup>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -160,7 +177,8 @@
                         {{-- APPLY --}}
                         <button type="submit"
                             class="px-5 py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-indigo-500 to-violet-500 text-white hover:from-indigo-600 hover:to-violet-600 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transition-all flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                             </svg>
@@ -217,6 +235,11 @@
 
                 @php
                     $typeColors = [
+                        'profile_updated' => ['bg-slate-100', 'text-slate-600'],
+                        'profile_photo_updated' => ['bg-violet-100', 'text-violet-600'],
+                        'profile_photo_removed' => ['bg-violet-100', 'text-violet-600'],
+                        'password_changed' => ['bg-amber-100', 'text-amber-600'],
+                        'user_self_deleted' => ['bg-red-100', 'text-red-600'],
                         'donation_success' => ['bg-emerald-100', 'text-emerald-600'],
                         'pengelola_request' => ['bg-amber-100', 'text-amber-600'],
                         'pengelola_submitted' => ['bg-amber-100', 'text-amber-600'],
@@ -238,6 +261,16 @@
                     ];
 
                     $typeIcons = [
+                        'profile_updated' =>
+                            'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
+                        'profile_photo_updated' =>
+                            'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z',
+                        'profile_photo_removed' =>
+                            'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z',
+                        'password_changed' =>
+                            'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z',
+                        'user_self_deleted' =>
+                            'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16',
                         'donation_success' =>
                             'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
                         'pengelola_request' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
@@ -317,10 +350,16 @@
                                         class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 pt-3 border-t border-slate-100">
                                         {{-- ACTOR --}}
                                         <div class="flex items-center gap-1.5">
-                                            <div
-                                                class="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-500 flex-shrink-0">
-                                                {{ strtoupper(substr($notif->actor->name ?? 'S', 0, 1)) }}
-                                            </div>
+                                            @if ($notif->actor && $notif->actor->profile_photo_path)
+                                                <img src="{{ Storage::disk('public')->url($notif->actor->profile_photo_path) }}"
+                                                    alt="{{ $notif->actor->name }}"
+                                                    class="w-5 h-5 rounded-full object-cover flex-shrink-0">
+                                            @else
+                                                <div
+                                                    class="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-500 flex-shrink-0">
+                                                    {{ strtoupper(substr($notif->actor->name ?? 'S', 0, 1)) }}
+                                                </div>
+                                            @endif
                                             <span
                                                 class="text-xs text-slate-600 font-medium">{{ $notif->actor->name ?? 'System' }}</span>
                                         </div>

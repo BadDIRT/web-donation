@@ -123,10 +123,15 @@
 
                                         {{-- PENGELOLA --}}
                                         <div class="flex items-center gap-2">
-                                            <div
-                                                class="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center text-[10px] font-bold text-violet-600 flex-shrink-0">
-                                                {{ strtoupper(substr($w->user->name ?? '?', 0, 1)) }}
-                                            </div>
+                                            @if ($w->user->profile_photo_path)
+                                                <img src="{{ $w->user->profile_photo_url }}"
+                                                    class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+                                            @else
+                                                <div
+                                                    class="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center text-[10px] font-bold text-violet-600 flex-shrink-0">
+                                                    {{ $w->user->initial }}
+                                                </div>
+                                            @endif
                                             <div>
                                                 <p class="text-xs font-medium text-slate-700">{{ $w->user->name ?? '-' }}
                                                 </p>

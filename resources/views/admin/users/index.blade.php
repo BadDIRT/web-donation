@@ -180,11 +180,16 @@
 
                                 {{-- AVATAR & INFO --}}
                                 <div class="flex items-center gap-4 flex-1 min-w-0">
-                                    <div
-                                        class="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0
-                                        {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'pengelola' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600') }}">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                                    </div>
+                                    @if ($user->profile_photo_path)
+                                        <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}"
+                                            class="w-12 h-12 rounded-xl object-cover flex-shrink-0 shadow-sm">
+                                    @else
+                                        <div
+                                            class="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0
+        {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'pengelola' ? 'bg-violet-100 text-violet-600' : 'bg-blue-100 text-blue-600') }}">
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        </div>
+                                    @endif
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center gap-2 flex-wrap">
                                             <h3 class="text-base font-bold text-slate-800 truncate">{{ $user->name }}

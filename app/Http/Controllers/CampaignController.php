@@ -79,10 +79,11 @@ class CampaignController extends Controller
 
         $topDonors = $campaign->donations()
             ->where('status', 'success')
-            ->selectRaw('donor_name, SUM(amount) as total')
-            ->groupBy('donor_name')
+            ->selectRaw('user_id, donor_name, SUM(amount) as total')
+            ->groupBy('user_id', 'donor_name')
             ->orderByDesc('total')
             ->take(5)
+            ->with('user')
             ->get();
 
         return view('campaign.show', compact('campaign', 'topDonors'));
@@ -436,6 +437,8 @@ class CampaignController extends Controller
         }
 
         $campaign->load(['user', 'category']);
+
+        $update->load('comments.user');
 
         $prevUpdate = CampaignUpdate::where('campaign_id', $campaign->id)
             ->where('id', '<', $update->id)

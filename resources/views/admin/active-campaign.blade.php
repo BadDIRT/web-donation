@@ -241,10 +241,15 @@
                                         class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 pt-3 border-t border-slate-100">
                                         {{-- PENGGALANG --}}
                                         <div class="flex items-center gap-2">
-                                            <div
-                                                class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600 flex-shrink-0">
-                                                {{ strtoupper(substr($campaign->user->name ?? '?', 0, 1)) }}
-                                            </div>
+                                            @if ($campaign->user->profile_photo_path)
+                                                <img src="{{ $campaign->user->profile_photo_url }}"
+                                                    class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+                                            @else
+                                                <div
+                                                    class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600 flex-shrink-0">
+                                                    {{ $campaign->user->initial }}
+                                                </div>
+                                            @endif
                                             <span
                                                 class="text-xs text-slate-600 font-medium">{{ $campaign->user->name ?? '-' }}</span>
                                         </div>

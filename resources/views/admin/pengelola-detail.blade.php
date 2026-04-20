@@ -25,10 +25,15 @@
                     <div class="px-6 sm:px-8 pb-6">
                         <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10">
                             {{-- AVATAR --}}
-                            <div class="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-lg flex items-center justify-center text-2xl font-bold text-violet-600 flex-shrink-0"
-                                style="background: linear-gradient(135deg, #ede9fe, #ddd6fe);">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                            </div>
+                            @if ($user->profile_photo_path)
+                                <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}"
+                                    class="w-20 h-20 rounded-2xl object-cover flex-shrink-0 shadow-lg border-4 border-white">
+                            @else
+                                <div class="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-lg flex items-center justify-center text-2xl font-bold text-violet-600 flex-shrink-0"
+                                    style="background: linear-gradient(135deg, #ede9fe, #ddd6fe);">
+                                    {{ $user->initial }}
+                                </div>
+                            @endif
 
                             <div class="flex-1 min-w-0 sm:pb-1">
                                 <div class="flex items-center gap-2 flex-wrap">

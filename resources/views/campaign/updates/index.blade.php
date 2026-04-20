@@ -77,11 +77,16 @@
                             {{-- FOOTER INFO --}}
                             <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
                                 @if ($campaign->user)
-                                    <div
-                                        class="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                        <span
-                                            class="text-[9px] font-bold text-emerald-700">{{ strtoupper(substr($campaign->user->name, 0, 1)) }}</span>
-                                    </div>
+                                    @if ($campaign->user->profile_photo_path)
+                                        <img src="{{ $campaign->user->profile_photo_url }}"
+                                            class="w-5 h-5 rounded-full object-cover flex-shrink-0">
+                                    @else
+                                        <div
+                                            class="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                            <span
+                                                class="text-[9px] font-bold text-emerald-700">{{ $campaign->user->initial }}</span>
+                                        </div>
+                                    @endif
                                     <span class="text-[10px] text-slate-400">{{ $campaign->user->name }}</span>
                                     <span class="text-[10px] text-slate-300">•</span>
                                 @endif
@@ -152,11 +157,16 @@
                             {{-- FOOTER INFO --}}
                             <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
                                 @if ($campaign->user)
-                                    <div
-                                        class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                        <span
-                                            class="text-[10px] font-bold text-emerald-700">{{ strtoupper(substr($campaign->user->name, 0, 1)) }}</span>
-                                    </div>
+                                    @if ($campaign->user->profile_photo_path)
+                                        <img src="{{ $campaign->user->profile_photo_url }}"
+                                            class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+                                    @else
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                            <span
+                                                class="text-[10px] font-bold text-emerald-700">{{ $campaign->user->initial }}</span>
+                                        </div>
+                                    @endif
                                     <span class="text-xs text-slate-400 font-medium">{{ $campaign->user->name }}</span>
                                     <span class="text-xs text-slate-300">•</span>
                                 @endif

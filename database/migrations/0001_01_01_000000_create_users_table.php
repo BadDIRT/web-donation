@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_approved')->default(false); // untuk pengelola
             $table->string('phone')->nullable()->unique();
             $table->string('ktp_path')->nullable();
+            $table->string('profile_photo_path', 2048)->nullable();
             $table->decimal('total_withdrawal', 15, 2)->nullable();
             $table->rememberToken();
             $table->timestamps();
@@ -46,6 +47,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('profile_photo_path');
+        });
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

@@ -87,7 +87,7 @@ class AdminController extends Controller
             'type'     => 'pengelola_approve'
         ]);
 
-        return back()->with('success', 'Pengelola disetujui');
+        return redirect()->route('admin.pengelola')->with('success', 'Pengelola disetujui');
     }
 
     public function campaignList(Request $request)
@@ -136,7 +136,7 @@ class AdminController extends Controller
             'type'     => 'campaign_reject',
         ]);
 
-        return back()->with('success', 'Campaign ditolak');
+        return redirect()->route('admin.campaign')->with('success', 'Campaign ditolak');
     }
 
     public function approveCampaign(Campaign $campaign)
@@ -154,7 +154,7 @@ class AdminController extends Controller
             'type'     => 'campaign_approve',
         ]);
 
-        return back()->with('success', 'Campaign disetujui');
+        return redirect()->route('admin.campaign')->with('success', 'Campaign disetujui');
     }
 
     public function showPengelola(User $user)
@@ -182,7 +182,6 @@ class AdminController extends Controller
         $user->update([
             'role'        => 'donatur',
             'is_approved' => false,
-            'phone'       => null,
             'ktp_path'    => null,
         ]);
 
@@ -194,7 +193,7 @@ class AdminController extends Controller
             'type'     => 'pengelola_reject'
         ]);
 
-        return back()->with('success', 'Pengajuan berhasil ditolak.');
+        return redirect()->route('admin.pengelola')->with('success', 'Pengajuan berhasil ditolak.');
     }
 
     public function viewKtp(User $user)

@@ -214,14 +214,22 @@
                             <tr class="hover:bg-slate-50/50 transition-colors">
                                 <td class="px-5 py-4">
                                     <div class="flex items-center gap-2.5">
-                                        <div
-                                            class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
-                                        </div>
+                                        @if ($donation->anonymous)
+                                            <div
+                                                class="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center flex-shrink-0">
+                                                <span class="text-[10px] font-bold text-slate-500">A</span>
+                                            </div>
+                                        @elseif ($donation->user && $donation->user->profile_photo_path)
+                                            <img src="{{ $donation->user->profile_photo_url }}"
+                                                class="w-8 h-8 rounded-lg object-cover flex-shrink-0">
+                                        @else
+                                            <div
+                                                class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                <span class="text-[10px] font-bold text-emerald-700">
+                                                    {{ strtoupper(substr($donation->donor_name ?? '?', 0, 1)) }}
+                                                </span>
+                                            </div>
+                                        @endif
                                         <div class="min-w-0">
                                             <p class="font-semibold text-slate-700 text-sm">
                                                 {{ $donation->anonymous ? 'Hamba Allah' : $donation->donor_name ?? 'Donatur' }}

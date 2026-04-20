@@ -18,14 +18,18 @@
 
             {{-- HEADER --}}
             <div class="flex items-center gap-3 mb-8">
-                <div
-                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 6v6m0 0v6m0 0h6m-6 4h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z" />
-                    </svg>
-                </div>
+                @if (auth()->user()->profile_photo_path)
+                    <img src="{{ auth()->user()->profile_photo_url }}" class="w-12 h-12 rounded-2xl object-cover shadow-lg">
+                @else
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 6v6m0 0v6m0 0h6m-6 4h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                @endif
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Ajukan Penggalangan Dana</h1>
                     <p class="text-slate-500 text-sm mt-1">Lengkapi data berikut untuk proses verifikasi</p>
@@ -110,33 +114,35 @@
                         </div>
 
                         {{-- PHONE --}}
-                        <div>
-                            <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-2">
-                                Nomor Telepon <span class="text-red-400">*</span>
-                            </label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor"
-                                        stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3 5a2 2 0 012-2V4a2 2 0 012-2h4m-1 11h2a1 1 0 011 1v1H7m10 11V7M3 15a4 4 0 004 4h4" />
-                                    </svg>
-                                </div>
-                                <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx"
-                                    class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all {{ $errors->has('phone') ? 'border-red-400 ring-2 ring-red-200 bg-red-50' : '' }}"
-                                    required>
-                                @error('phone')
-                                    <p class="mt-1.5 flex items-center gap-1.5">
-                                        <svg class="w-3.5 h-3.5 text-red-500 flex-shrink-0" fill="none"
-                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        @unless (auth()->user()->phone)
+                            <div>
+                                <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-2">
+                                    Nomor Telepon <span class="text-red-400">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor"
+                                            stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                d="M3 5a2 2 0 012-2V4a2 2 0 012-2h4m-1 11h2a1 1 0 011 1v1H7m10 11V7M3 15a4 4 0 004 4h4" />
                                         </svg>
-                                    <p class="text-xs text-red-600 font-medium">{{ $message }}</p>
-                                    </p>
-                                @enderror
+                                    </div>
+                                    <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx"
+                                        class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all {{ $errors->has('phone') ? 'border-red-400 ring-2 ring-red-200 bg-red-50' : '' }}"
+                                        required>
+                                    @error('phone')
+                                        <p class="mt-1.5 flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 text-red-500 flex-shrink-0" fill="none"
+                                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        <p class="text-xs text-red-600 font-medium">{{ $message }}</p>
+                                        </p>
+                                    @enderror
+                                </div>
                             </div>
-                        </div>
+                        @endunless
                     </div>
 
                     {{-- DIVIDER --}}

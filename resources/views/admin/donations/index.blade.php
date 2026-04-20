@@ -326,19 +326,26 @@
                                 class="bg-white rounded-xl shadow-sm shadow-black/5 border border-slate-100 p-4 hover:shadow-md hover:border-emerald-100 transition-all block">
                                 <div class="flex items-start justify-between gap-3 mb-3">
                                     <div class="flex items-center gap-2.5 min-w-0">
-                                        <div
-                                            class="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0
-                                        {{ $donation->anonymous ? 'bg-slate-100 text-slate-500' : 'bg-emerald-100 text-emerald-700' }}">
-                                            {{ $donation->anonymous ? '?' : strtoupper(substr($donation->donor_name ?? ($donation->user->name ?? '?'), 0, 1)) }}
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="text-sm font-semibold text-slate-700 truncate">
-                                                {{ $donation->anonymous ? 'Anonim' : $donation->donor_name ?? ($donation->user->name ?? 'Guest') }}
-                                            </p>
-                                            <p class="text-[10px] text-slate-400 truncate">
-                                                {{ $donation->anonymous ? 'Hamba Allah' : $donation->user->email ?? '-' }}
-                                            </p>
-                                        </div>
+                                        @if ($donation->anonymous)
+                                            <div
+                                                class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                    stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            </div>
+                                        @elseif ($donation->user && $donation->user->profile_photo_path)
+                                            <img src="{{ $donation->user->profile_photo_url }}" alt=""
+                                                class="w-9 h-9 rounded-lg object-cover flex-shrink-0">
+                                        @else
+                                            <div
+                                                class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
+                                                {{ strtoupper(substr($donation->donor_name ?? ($donation->user->name ?? '?'), 0, 1)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <span
                                         class="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md flex-shrink-0
@@ -454,11 +461,29 @@
                                         <tr class="hover:bg-slate-50/50 transition-colors">
                                             <td class="px-5 py-4">
                                                 <div class="flex items-center gap-3">
-                                                    <div
-                                                        class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0
-                                                    {{ $donation->anonymous ? 'bg-slate-100 text-slate-500' : 'bg-emerald-100 text-emerald-700' }}">
-                                                        {{ $donation->anonymous ? '?' : strtoupper(substr($donation->donor_name ?? ($donation->user->name ?? '?'), 0, 1)) }}
-                                                    </div>
+                                                    {{-- SESUDAH --}}
+                                                    @if ($donation->anonymous)
+                                                        <div
+                                                            class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                                            <svg class="w-4 h-4 text-slate-400" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                            </svg>
+                                                        </div>
+                                                    @elseif ($donation->user && $donation->user->profile_photo_path)
+                                                        <img src="{{ $donation->user->profile_photo_url }}"
+                                                            alt=""
+                                                            class="w-9 h-9 rounded-xl object-cover flex-shrink-0">
+                                                    @else
+                                                        <div
+                                                            class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
+                                                            {{ strtoupper(substr($donation->donor_name ?? ($donation->user->name ?? '?'), 0, 1)) }}
+                                                        </div>
+                                                    @endif
                                                     <div class="min-w-0">
                                                         <div class="flex items-center gap-1.5">
                                                             <p

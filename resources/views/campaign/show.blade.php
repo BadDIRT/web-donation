@@ -39,10 +39,15 @@
                         class="mt-3 sm:mt-4 flex items-center gap-3 text-sm text-white/70 overflow-x-auto whitespace-nowrap">
                         @if ($campaign->user)
                             <div class="flex items-center gap-2">
-                                <div
-                                    class="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                    {{ strtoupper(substr($campaign->user->name, 0, 1)) }}
-                                </div>
+                                @if ($campaign->user->profile_photo_path)
+                                    <img src="{{ $campaign->user->profile_photo_url }}"
+                                        class="w-7 h-7 rounded-full object-cover flex-shrink-0 ring-2 ring-white/30">
+                                @else
+                                    <div
+                                        class="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                        {{ $campaign->user->initial }}
+                                    </div>
+                                @endif
                                 <span>{{ $campaign->user->name }}</span>
                             </div>
                             <span class="text-white/30">•</span>
@@ -245,10 +250,16 @@
                                                                 {{ strtoupper(substr($campaign->user->name, 0, 1)) }}
                                                             </span>
                                                         </div>
-                                                        <span
-                                                            class="text-[11px] text-slate-400 font-medium whitespace-normal break-all min-w-0">
-                                                            {{ $campaign->user->name }}
-                                                        </span>
+                                                        @if ($campaign->user->profile_photo_path)
+                                                            <img src="{{ $campaign->user->profile_photo_url }}"
+                                                                class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+                                                        @else
+                                                            <div
+                                                                class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                                <span
+                                                                    class="text-[10px] font-bold text-emerald-700">{{ $campaign->user->initial }}</span>
+                                                            </div>
+                                                        @endif
                                                         <span class="text-[11px] text-slate-300">•</span>
                                                         <span class="text-[11px] text-slate-400 whitespace-nowrap">
                                                             {{ $update->created_at->diffForHumans() }}
@@ -279,10 +290,10 @@
 
                         <div class="space-y-3">
                             @forelse ($campaign->donations()
-                                                                                                        ->where('status','success')
-                                                                                                        ->latest()
-                                                                                                        ->take(5)
-                                                                                                        ->get() as $donation)
+                                                                                                                        ->where('status','success')
+                                                                                                                        ->latest()
+                                                                                                                        ->take(5)
+                                                                                                                        ->get() as $donation)
                                 <div
                                     class="group bg-slate-50 hover:bg-emerald-50/50 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors duration-200">
                                     <div class="flex items-start justify-between gap-3">
@@ -290,16 +301,27 @@
                                             <div
                                                 class="w-9 h-9 rounded-full {{ $donation->anonymous ? 'bg-slate-200' : 'bg-emerald-100' }} flex items-center justify-center flex-shrink-0">
                                                 @if ($donation->anonymous)
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none"
-                                                        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                    </svg>
+                                                    <div
+                                                        class="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
+                                                        <svg class="w-4 h-4 text-slate-400" fill="none"
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                    </div>
+                                                @elseif ($donation->user && $donation->user->profile_photo_path)
+                                                    <img src="{{ $donation->user->profile_photo_url }}"
+                                                        alt="{{ $donation->user->name }}"
+                                                        class="w-9 h-9 rounded-full object-cover flex-shrink-0 ring-2 ring-white shadow-sm">
                                                 @else
-                                                    <span
-                                                        class="text-xs font-bold text-emerald-700">{{ strtoupper(substr($donation->donor_name, 0, 1)) }}</span>
+                                                    <div
+                                                        class="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                        <span class="text-xs font-bold text-emerald-700">
+                                                            {{ strtoupper(substr($donation->donor_name, 0, 1)) }}
+                                                        </span>
+                                                    </div>
                                                 @endif
                                             </div>
                                             <div class="min-w-0">
@@ -418,19 +440,61 @@
 
                             <div class="space-y-2.5">
                                 @foreach ($topDonors as $index => $donor)
+                                    @php
+                                        $donorName = $donor->donor_name ?? 'Hamba Allah';
+                                        $isAnonim = is_null($donor->donor_name);
+                                        $donorUser = $donor->user;
+                                        $hasPhoto = $donorUser && $donorUser->profile_photo_path;
+                                    @endphp
+
                                     <div
                                         class="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors duration-150">
                                         <div class="flex items-center gap-3 min-w-0">
-                                            <div
-                                                class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-sm
-                                            @if ($index == 0) bg-gradient-to-br from-amber-300 to-amber-500 text-white
-                                            @elseif($index == 1) bg-gradient-to-br from-slate-300 to-slate-400 text-white
-                                            @elseif($index == 2) bg-gradient-to-br from-orange-300 to-orange-500 text-white
-                                            @else bg-slate-100 text-slate-500 @endif">
-                                                {{ $index + 1 }}
+
+                                            {{-- AVATAR --}}
+                                            <div class="relative flex-shrink-0">
+                                                @if ($isAnonim)
+                                                    {{-- ANONIM: icon mata --}}
+                                                    <div
+                                                        class="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center">
+                                                        <svg class="w-4 h-4 text-slate-400" fill="none"
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                    </div>
+                                                @elseif ($hasPhoto)
+                                                    {{-- FOTO PROFILE --}}
+                                                    <img src="{{ $donorUser->profile_photo_url }}"
+                                                        alt="{{ $donorName }}"
+                                                        class="w-9 h-9 rounded-full object-cover shadow-sm">
+                                                @else
+                                                    {{-- INITIAL: background sesuai ranking --}}
+                                                    <div
+                                                        class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-sm
+                                @if ($index == 0) bg-gradient-to-br from-amber-300 to-amber-500 text-white
+                                @elseif($index == 1) bg-gradient-to-br from-slate-300 to-slate-400 text-white
+                                @elseif($index == 2) bg-gradient-to-br from-orange-300 to-orange-500 text-white
+                                @else bg-slate-100 text-slate-500 @endif">
+                                                        {{ strtoupper(substr($donorName, 0, 1)) }}
+                                                    </div>
+                                                @endif
+
+                                                {{-- RANKING BADGE --}}
+                                                <span
+                                                    class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold shadow-sm border-2 border-white
+                            @if ($index == 0) bg-amber-500 text-white
+                            @elseif($index == 1) bg-slate-400 text-white
+                            @elseif($index == 2) bg-orange-500 text-white
+                            @else bg-slate-200 text-slate-500 @endif">
+                                                    {{ $index + 1 }}
+                                                </span>
                                             </div>
+
                                             <p class="font-semibold text-slate-700 truncate text-sm">
-                                                {{ $donor->donor_name ?? 'Hamba Allah' }}
+                                                {{ $donorName }}
                                             </p>
                                         </div>
                                         <p class="text-xs font-bold text-emerald-600 flex-shrink-0 ml-3">

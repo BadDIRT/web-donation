@@ -344,15 +344,18 @@
                                 {{-- FOOTER: Pengelola + Time --}}
                                 <div class="mt-auto pt-3 border-t border-slate-100 flex items-center gap-2">
                                     @if ($update->campaign->user)
-                                        <div
-                                            class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                            <span class="text-[9px] font-bold text-emerald-700">
-                                                {{ strtoupper(substr($update->campaign->user->name, 0, 1)) }}
-                                            </span>
-                                        </div>
-                                        <span class="text-[10px] text-slate-400 truncate">
-                                            {{ $update->campaign->user->name }}
-                                        </span>
+                                        @if ($update->campaign->user->profile_photo_path)
+                                            <img src="{{ $update->campaign->user->profile_photo_url }}"
+                                                class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+                                        @else
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                <span
+                                                    class="text-[9px] font-bold text-emerald-700">{{ $update->campaign->user->initial }}</span>
+                                            </div>
+                                        @endif
+                                        <span
+                                            class="text-[10px] text-slate-400 truncate">{{ $update->campaign->user->name }}</span>
                                     @endif
                                     <span class="text-[10px] text-slate-300">•</span>
                                     <span
@@ -582,8 +585,36 @@
                 @endauth
             </div>
         </section>
-
     </div>
+    {{-- AKUN TERHAPUS - FLASH MESSAGE --}}
+    @if (session('account_deleted'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 8000)"
+            x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2"
+            class="fixed bottom-6 right-6 z-[100] max-w-sm bg-white rounded-2xl shadow-xl shadow-black/10 border border-slate-200/80 overflow-hidden">
+
+            <div class="p-4">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-bold text-slate-800">Akun Berhasil Dihapus</p>
+                        <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">{{ session('account_deleted') }}</p>
+                    </div>
+                    <button @click="show = false" class="text-slate-400 hover:text-slate-600 flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 @push('scripts')

@@ -124,10 +124,19 @@
                                 <tr class="hover:bg-slate-50/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-9 h-9 rounded-full bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-700 flex-shrink-0">
-                                                {{ $donation->anonymous ? 'A' : strtoupper(substr($donation->donor_name ?? auth()->user()->name, 0, 1)) }}
-                                            </div>
+                                            @if ($donation->anonymous)
+                                                <div
+                                                    class="w-9 h-9 rounded-full bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-700 flex-shrink-0">
+                                                    A</div>
+                                            @elseif (auth()->user()->profile_photo_path)
+                                                <img src="{{ auth()->user()->profile_photo_url }}"
+                                                    class="w-9 h-9 rounded-full object-cover flex-shrink-0">
+                                            @else
+                                                <div
+                                                    class="w-9 h-9 rounded-full bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-700 flex-shrink-0">
+                                                    {{ auth()->user()->initial }}
+                                                </div>
+                                            @endif
                                             <div class="min-w-0">
                                                 <p class="font-semibold text-slate-700 truncate max-w-[250px]">
                                                     {{ $donation->campaign->title }}</p>

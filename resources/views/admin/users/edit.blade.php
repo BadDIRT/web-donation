@@ -18,11 +18,17 @@
 
             {{-- HEADER --}}
             <div class="flex items-center gap-4 mb-8">
-                <div
-                    class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-extrabold shadow-lg
-                {{ $user->role === 'admin' ? 'bg-gradient-to-br from-red-400 to-rose-500 text-white shadow-red-500/20' : ($user->role === 'pengelola' ? 'bg-gradient-to-br from-violet-400 to-purple-500 text-white shadow-violet-500/20' : 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white shadow-blue-500/20') }}">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                </div>
+                @if ($user->profile_photo_path)
+                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}"
+                        class="w-14 h-14 rounded-2xl object-cover shadow-lg
+        {{ $user->role === 'admin' ? 'shadow-red-500/20' : ($user->role === 'pengelola' ? 'shadow-violet-500/20' : 'shadow-blue-500/20') }}">
+                @else
+                    <div
+                        class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-extrabold shadow-lg
+        {{ $user->role === 'admin' ? 'bg-gradient-to-br from-red-400 to-rose-500 text-white shadow-red-500/20' : ($user->role === 'pengelola' ? 'bg-gradient-to-br from-violet-400 to-purple-500 text-white shadow-violet-500/20' : 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white shadow-blue-500/20') }}">
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    </div>
+                @endif
                 <div>
                     <div class="flex items-center gap-2 flex-wrap">
                         <h1 class="text-2xl font-extrabold text-slate-800">Edit User</h1>
