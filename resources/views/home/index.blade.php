@@ -17,12 +17,12 @@
         scrollY: 0,
         isMobile: window.innerWidth < 768,
         slidesDesktop: [
-            '{{ asset('storage/images/Hijau-Putih-Donasi-Banner-Lanskap-Desktop1.svg') }}',
+            '{{ asset('storage/images/Hijau-Putih-Donasi-Banner-Lanskap-Desktop.png') }}',
             '{{ asset('storage/images/donasi-desktop-1.svg') }}',
             '{{ asset('storage/images/donasi-desktop-2.svg') }}'
         ],
         slidesMobile: [
-            '{{ asset('storage/images/Hijau-Putih-Donasi-Banner-Lanskap-Mobile1.svg') }}',
+            '{{ asset('storage/images/Hijau-Putih-Donasi-Banner-Lanskap-Mobile.png') }}',
             '{{ asset('storage/images/donasi-1-(mobile).svg') }}',
             '{{ asset('storage/images/donasi-2-(mobile).svg') }}'
         ],
